@@ -1,0 +1,17 @@
+{
+  "name": "boolean-lists-backend",
+  "version": "1.0.0",
+  "description": "Backend for the boolean lists project",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Philipp Fehrmann",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^4.0.2",
+    "typescript": "^2.8.3"
+  }
+}
