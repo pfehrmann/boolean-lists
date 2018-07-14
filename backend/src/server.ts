@@ -37,6 +37,13 @@ SpotifyApi.initialize().then(async (api: SpotifyApi.InitializedSpotifyApi) => {
           await me.createPlaylist("Test Playlist");
         }
         let playlist = await me.playlist("Test Playlist");
+
+        console.log(process.env)
+        if(process.env.SHUFFLE) {
+          console.log(`Shuffling the playlist`);
+          shuffleArray(tracksToAdd);
+        }
+
         playlist.addTracks(tracksToAdd);
     } catch (err) {
         console.log(err);
