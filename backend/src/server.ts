@@ -8,7 +8,8 @@ import * as SpotifyApi from './SpotifyApi';
 let app = express();
 const playlistId = 1;
 
-let songCounts = require('../songCounts.json')
+// Song counts must the be relative or absolute path to a json file
+let songCounts = require(process.env.SONG_COUNTS)
 
 SpotifyApi.initialize().then(async (api: SpotifyApi.InitializedSpotifyApi) => {
     try {
