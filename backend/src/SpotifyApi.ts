@@ -79,7 +79,7 @@ export class User {
     }
 
     public async playlist(name: string): Promise<Playlist> {
-        // BUG this is a very bad idea, if a playlist is existing twice...
+        // BUG this is a very bad idea, if a playlist name is existing twice...
 
         // search local copy first
         if (this.cachedPlaylists) {
