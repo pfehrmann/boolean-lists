@@ -4,6 +4,8 @@ let opn = require('opn');
 let express = require('express');
 import { Request, Response, NextFunction } from 'express';
 import * as SpotifyApi from './SpotifyApi';
+import { getNelementsFromArray, shuffleArray } from './util';
+import * as Nodes from './Nodes';
 
 let app = express();
 const playlistId = 1;
@@ -38,7 +40,6 @@ SpotifyApi.initialize().then(async (api: SpotifyApi.InitializedSpotifyApi) => {
         }
         let playlist = await me.playlist("Test Playlist");
 
-        console.log(process.env)
         if(process.env.SHUFFLE) {
           console.log(`Shuffling the playlist`);
           shuffleArray(tracksToAdd);
@@ -53,25 +54,22 @@ SpotifyApi.initialize().then(async (api: SpotifyApi.InitializedSpotifyApi) => {
 async function getTracksToAdd(me, songCounts): Promise<SpotifyApi.Track[]> {
     let tracksToAdd: SpotifyApi.Track[] = [];
 
+    let playlists: {playlist: Nodes.PlaylistNode, songCount: number}[] = [];
+
     for (let key of Object.keys(songCounts)) {
-        console.log(`Getting key '${key}'...`)
-        let playlist = await me.playlist(key);
-        tracksToAdd = tracksToAdd.concat(await getNrandomTracksFromPlaylist(playlist, songCounts[key]))
+        console.log(`Getting key '${key}'...`);
+        let playlist = await Nodes.IntermediatePlaylist.from(await me.playlist(key));
+        playlists.push({playlist, songCount: songCounts[key]});
     }
-    return tracksToAdd;
+
+    let addNode = new Nodes.AddNode(playlists, true);
+
+    return addNode.getTracks();
 }
 
 async function getNrandomTracksFromPlaylist(playlist: SpotifyApi.Playlist, n: number): Promise<SpotifyApi.Track[]> {
     let tracks = await playlist.tracks();
-    shuffleArray(tracks);
-    return tracks.slice(-n);
-}
-
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]]; // eslint-disable-line no-param-reassign
-    }
+    return getNelementsFromArray(n, tracks, true);
 }
 
 app.listen(3000, () => {
