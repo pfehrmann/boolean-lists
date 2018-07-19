@@ -23,9 +23,23 @@ export abstract class PlaylistNode implements Observable {
       changeListener.eventFired(event);
     }
   }
+
+  public abstract toJSON(): {type: string};
+
+  public static fromJSON(json: {type: string}): Promise<PlaylistNode> {
+    switch (json.type) {
+      case SpotifyPlaylistNode.type: {
+        return SpotifyPlaylistNode.fromJSON(json);
+      }
+      case AddNode.type: {
+        return AddNode.fromJSON(json);
+      }
+    }
+    throw new Error("Cannot deserialize json node.");
+  }
 }
 
-export class IntermediatePlaylist extends PlaylistNode {
+abstract class IntermediatePlaylist extends PlaylistNode {
   private tracks: Track[] = [];
 
   constructor(tracks?: Track[]) {
@@ -50,12 +64,44 @@ export class IntermediatePlaylist extends PlaylistNode {
   public getTracks(): Track[] {
     return [...this.tracks]
   }
+}
 
-  public static async from(spotifyPlaylist: Spotify.Playlist) {
+export class SpotifyPlaylistNode extends IntermediatePlaylist {
+  private userId: string;
+  private id: string;
+
+  private constructor(tracks: Track[]) {
+    super(tracks);
+  }
+
+  static get type(): string {
+    return "SpotifyPlaylistNode";
+  }
+
+  public static async fromUserIdAndId(userId: string, id: string): Promise<SpotifyPlaylistNode> {
+    return SpotifyPlaylistNode.from(await Spotify.Playlist.fromSpotifyUri(userId, id))
+  }
+
+  public static async from(spotifyPlaylist: Spotify.Playlist): Promise<SpotifyPlaylistNode> {
     console.debug(`Creating IntermediatePlaylist from Spotify playlist ${spotifyPlaylist.name}...`);
     let tracks = await spotifyPlaylist.tracks();
     console.debug(`Playlist has ${tracks.length} tracks.`)
-    return new IntermediatePlaylist(tracks);
+    let playlist = new SpotifyPlaylistNode(tracks);
+    playlist.id = spotifyPlaylist.id();
+    playlist.userId = spotifyPlaylist.userId();
+    return playlist;
+  }
+
+  toJSON(): any {
+    return {
+      type: SpotifyPlaylistNode.type,
+      userId: this.userId,
+      id: this.id
+    }
+  }
+
+  public static async fromJSON(json: any): Promise<SpotifyPlaylistNode> {
+    return await SpotifyPlaylistNode.fromUserIdAndId(json.userId, json.id);
   }
 }
 
@@ -85,5 +131,35 @@ export class AddNode extends IntermediatePlaylist {
     let tracks = playlist.getTracks();
     console.debug(`Playlist ${playlist} has ${tracks.length} tracks. Getting ${songCount} tracks from playlist...`);
     return getNelementsFromArray(songCount, tracks, this.randomSelection);
+  }
+
+  static get type(): string {
+    return "AddNode";
+  }
+
+  toJSON() {
+    let playlists: any[] = [];
+    for(let playlist of this.playlists) {
+      playlists.push({playlist: playlist.playlist.toJSON(), songCount: playlist.songCount});
+    }
+
+    return {
+      type: AddNode.type,
+      randomSelection: this.randomSelection,
+      playlists
+    }
+  }
+
+  public static async fromJSON(json: any): Promise<AddNode> {
+    let playlists: {playlist: PlaylistNode, songCount: number}[] = [];
+
+    for(let rawPlaylist of json.playlists) {
+      playlists.push({
+        playlist: await PlaylistNode.fromJSON(rawPlaylist.playlist),
+        songCount: rawPlaylist.songCount
+      });
+    }
+
+    return new AddNode(playlists, json.randomSelection);
   }
 }

@@ -32,6 +32,9 @@ SpotifyApi.initialize().then(async (api: SpotifyApi.InitializedSpotifyApi) => {
         playlistName = 'I don\'t have this playlist!'
         console.log(`user has playlist "${playlistName}": ${!!await me.playlist(playlistName)}`);
 
+        let testPlaylist = await SpotifyApi.Playlist.fromSpotifyUri("12172332235", "5zYaR2xWWYDxeprcjpPjdz");
+        console.log(`Playlist from user with id 12172332235 has name "${await testPlaylist.name()}"`);
+
         let tracksToAdd: SpotifyApi.Track[] = await getTracksToAdd(me, songCounts);
         console.log(`Adding ${tracksToAdd.length} tracks.`);
 
@@ -42,7 +45,7 @@ SpotifyApi.initialize().then(async (api: SpotifyApi.InitializedSpotifyApi) => {
 
         if(process.env.SHUFFLE) {
           console.log(`Shuffling the playlist`);
-          shuffleArray(tracksToAdd);
+          tracksToAdd = shuffleArray(tracksToAdd);
         }
 
         playlist.addTracks(tracksToAdd);
@@ -58,13 +61,17 @@ async function getTracksToAdd(me, songCounts): Promise<SpotifyApi.Track[]> {
 
     for (let key of Object.keys(songCounts)) {
         console.log(`Getting key '${key}'...`);
-        let playlist = await Nodes.IntermediatePlaylist.from(await me.playlist(key));
+        let playlist = await Nodes.SpotifyPlaylistNode.from(await me.playlist(key));
         playlists.push({playlist, songCount: songCounts[key]});
     }
 
     let addNode = new Nodes.AddNode(playlists, true);
 
-    return addNode.getTracks();
+    // Transform to json and the parse again
+    let json = JSON.stringify(addNode.toJSON());
+    let node = await Nodes.PlaylistNode.fromJSON(JSON.parse(json));
+
+    return node.getTracks();
 }
 
 async function getNrandomTracksFromPlaylist(playlist: SpotifyApi.Playlist, n: number): Promise<SpotifyApi.Track[]> {

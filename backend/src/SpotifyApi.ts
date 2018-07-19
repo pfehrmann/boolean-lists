@@ -123,6 +123,14 @@ export class Playlist {
         return this.playlist.name;
     }
 
+    public userId(): string {
+        return this.playlist.owner.id;
+    }
+
+    public id(): string {
+      return this.playlist.id;
+    }
+
     public async addTracks(tracks: Track[]) {
         while (tracks.length > 0) {
             console.log(`${tracks.length} tracks left...`);
@@ -161,6 +169,11 @@ export class Playlist {
             console.log(`Failed to load playlist with id ${this.playlist.id}`);
             console.log(e);
         }
+    }
+
+    public static async fromSpotifyUri(username: string, id: string): Promise<Playlist> {
+      let response = await spotifyApi.getPlaylist(username, id);
+      return new Playlist(response.body);
     }
 }
 
