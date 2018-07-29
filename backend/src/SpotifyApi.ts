@@ -186,4 +186,8 @@ export class Track {
     public uri() {
         return this.track.track.uri;
     }
+
+    public equals(object: Track): boolean {
+      return this.uri() === object.uri();
+    }
 }
