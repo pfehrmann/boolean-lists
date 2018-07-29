@@ -24,6 +24,12 @@ export abstract class PlaylistNode implements Observable {
     }
   }
 
+  public hasTrack(track: Track): boolean {
+    return this.getTracks().some((thisTrack: Track) => {
+      return thisTrack.equals(track);
+    });
+  }
+
   public abstract toJSON(): {type: string};
 
   public static fromJSON(json: {type: string}): Promise<PlaylistNode> {
