@@ -65,6 +65,12 @@ async function getTracksToAdd(me, songCounts): Promise<SpotifyApi.Track[]> {
         playlists.push({playlist, songCount: songCounts[key]});
     }
 
+    let minuend = await Nodes.SpotifyPlaylistNode.from(await me.playlist("Minuend"));
+    let subtrahend = await Nodes.SpotifyPlaylistNode.from(await me.playlist("Subtrahend"));
+    let subtractNode = await new Nodes.SubtractNode(minuend, subtrahend);
+
+    playlists.push({playlist: subtractNode, songCount: 0});
+
     let addNode = new Nodes.AddNode(playlists, true);
 
     // Transform to json and the parse again
