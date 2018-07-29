@@ -24,3 +24,9 @@ export interface Observable {
 export interface ChangeListener {
   eventFired(event: any): any;
 }
+
+export function sleep(ms){
+    return new Promise(resolve=>{
+        setTimeout(resolve,ms)
+    });
+}

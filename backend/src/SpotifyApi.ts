@@ -3,7 +3,7 @@ let opn = require('opn');
 let express = require('express');
 import { Request, Response, NextFunction } from 'express';
 let Cache = require('async-disk-cache');
-
+import { sleep } from './util';
 
 let playlistCache = new Cache('playlist-cache');
 let userCache = new Cache('user-cache');
@@ -14,6 +14,8 @@ var spotifyApi = new SpotifyWebApi({
     clientSecret: process.env.CLIENT_SECRET,
     redirectUri: process.env.REDIRECT_URI,
 });
+
+let sleepDelay = 50;
 
 export function initialize(): Promise<InitializedSpotifyApi> {
     return new Promise((resolve: any, reject: any) => {
@@ -107,6 +109,7 @@ async function getAll<T>(spotifyFunction: (...args: any[]) => Promise<any>, cons
     let items: T[] = result.body.items.map((item: any) => constructor(item));
 
     if (result.body.next) {
+        await sleep(sleepDelay);
         return items.concat(await getAll(spotifyFunction, constructor, args, { offset: result.body.items.length + options.offset }));
     }
     return items;
@@ -138,7 +141,9 @@ export class Playlist {
             tracks = tracks.slice(100);
             let uris: string[] = toAdd.map((track: Track) => track.uri());
             for (let i = 0; i < 3; i++) {
-
+                if(i > 0) {
+                    await sleep(sleepDelay);
+                }
                 try {
                     await spotifyApi.addTracksToPlaylist(this.playlist.owner.id, this.playlist.id, uris);
                     let allTracks = (await this.tracks()).concat(toAdd);
@@ -173,6 +178,7 @@ export class Playlist {
 
     public static async fromSpotifyUri(username: string, id: string): Promise<Playlist> {
       let response = await spotifyApi.getPlaylist(username, id);
+      await sleep(10);
       return new Playlist(response.body);
     }
 }
