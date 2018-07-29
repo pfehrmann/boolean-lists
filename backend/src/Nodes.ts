@@ -40,6 +40,9 @@ export abstract class PlaylistNode implements Observable {
       case AddNode.type: {
         return AddNode.fromJSON(json);
       }
+      case SubtractNode.type: {
+        return SubtractNode.fromJSON(json);
+      }
     }
     throw new Error("Cannot deserialize json node.");
   }
@@ -167,5 +170,42 @@ export class AddNode extends IntermediatePlaylist {
     }
 
     return new AddNode(playlists, json.randomSelection);
+  }
+}
+
+export class SubtractNode extends IntermediatePlaylist {
+  private minuend: PlaylistNode;
+  private subtrahend: PlaylistNode;
+
+  constructor(minuend: PlaylistNode, subtrahend: PlaylistNode) {
+    super();
+    this.minuend = minuend;
+    this.subtrahend = subtrahend;
+    this.initialize();
+  }
+
+  static get type(): string {
+    return "SubtractNode";
+  }
+
+  private initialize() {
+    let tracks = this.minuend.getTracks();
+    tracks = tracks.filter((track: Track) => !this.subtrahend.hasTrack(track));
+
+    this.addTracks(tracks);
+  }
+
+  toJSON() {
+    return {
+      type: SubtractNode.type,
+      minuend: this.minuend.toJSON(),
+      subtrahend: this.subtrahend.toJSON()
+    }
+  }
+
+  static async fromJSON(json: any): Promise<SubtractNode> {
+    let minuend = PlaylistNode.fromJSON(json.minuend);
+    let subtrahend = PlaylistNode.fromJSON(json.subtrahend);
+    return new SubtractNode(await minuend, await subtrahend);
   }
 }
