@@ -19,7 +19,7 @@ let sleepDelay = 50;
 
 export function initialize(): Promise<InitializedSpotifyApi> {
     return new Promise((resolve: any, reject: any) => {
-        let scopes = ['user-read-private', 'playlist-read-private', 'playlist-modify-public', 'playlist-modify-private'];
+        let scopes = ['user-read-private', 'playlist-read-private', 'playlist-modify-public', 'playlist-modify-private', 'user-top-read'];
         let state = 'random-state'
 
         let authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
@@ -50,12 +50,27 @@ export function initialize(): Promise<InitializedSpotifyApi> {
     });
 }
 
+export enum TimeRanges {
+  LONG = "long_term",
+  MEDIUM = "medium_term",
+  SHORT = "short_term"
+}
+
 export class InitializedSpotifyApi {
     constructor() {
     }
 
     public async me(): Promise<User> {
         return new User(spotifyApi.getMe());
+    }
+
+    public async getMyTopTracks(timeRange: TimeRanges): Promise<Track[]> {
+      let tracks: Track[] = [];
+      let rawTracks = await spotifyApi.getMyTopTracks({time_range: timeRange, limit: 50});
+      for(let rawTrack of rawTracks.body.items) {
+        tracks.push(new Track(rawTrack));
+      }
+      return tracks;
     }
 }
 
@@ -190,10 +205,19 @@ export class Track {
     private track: any;
     constructor(track: any) {
         this.track = track;
+
+        let times = 0;
+        while(!this.track.uri && times++ < 5) {
+          this.track = this.track.track;
+        }
+        
+        if(times >= 5) {
+          throw new Error("Could not instanciate Track, uri was not found.");
+        }
     }
 
     public uri() {
-        return this.track.track.uri;
+        return this.track.uri;
     }
 
     public equals(object: Track): boolean {

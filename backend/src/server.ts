@@ -6,6 +6,7 @@ import { Request, Response, NextFunction } from 'express';
 import * as SpotifyApi from './SpotifyApi';
 import { getNelementsFromArray, shuffleArray } from './util';
 import * as Nodes from './Nodes';
+import * as Spotify from './SpotifyApi';
 
 let app = express();
 const playlistId = 1;
@@ -15,6 +16,8 @@ let songCounts = require(process.env.SONG_COUNTS)
 
 SpotifyApi.initialize().then(async (api: SpotifyApi.InitializedSpotifyApi) => {
     try {
+        Nodes.initializeNodes(api);
+
         let me = await api.me();
         let playlists = await me.playlists();
         console.log(`Looking at playlist "${await playlists[playlistId].name()}"`);
@@ -51,6 +54,7 @@ SpotifyApi.initialize().then(async (api: SpotifyApi.InitializedSpotifyApi) => {
         playlist.addTracks(tracksToAdd);
     } catch (err) {
         console.log(err);
+        throw err;
     }
 });
 
@@ -70,6 +74,9 @@ async function getTracksToAdd(me, songCounts): Promise<SpotifyApi.Track[]> {
     let subtractNode = await new Nodes.SubtractNode(minuend, subtrahend);
 
     playlists.push({playlist: subtractNode, songCount: 0});
+
+    let topTrackShort = await Nodes.TopTracksNode.createNew(Spotify.TimeRanges.SHORT);
+    playlists.push({playlist: topTrackShort, songCount: 0})
 
     let addNode = new Nodes.AddNode(playlists, true);
 

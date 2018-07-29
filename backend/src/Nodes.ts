@@ -2,6 +2,13 @@ import { Track } from './SpotifyApi';
 import { shuffleArray, getNelementsFromArray, Observable, ChangeListener } from './util';
 import * as Spotify from './SpotifyApi';
 
+let api: Spotify.InitializedSpotifyApi;
+
+//BUG this introduces temporal coupling. This is bad.
+export function initializeNodes(spotifyApi: Spotify.InitializedSpotifyApi) {
+  api = spotifyApi;
+}
+
 export abstract class PlaylistNode implements Observable {
   private changeListeners: ChangeListener[] = [];
 
@@ -42,6 +49,9 @@ export abstract class PlaylistNode implements Observable {
       }
       case SubtractNode.type: {
         return SubtractNode.fromJSON(json);
+      }
+      case TopTracksNode.type: {
+        return TopTracksNode.fromJSON(json);
       }
     }
     throw new Error("Cannot deserialize json node.");
@@ -207,5 +217,40 @@ export class SubtractNode extends IntermediatePlaylist {
     let minuend = PlaylistNode.fromJSON(json.minuend);
     let subtrahend = PlaylistNode.fromJSON(json.subtrahend);
     return new SubtractNode(await minuend, await subtrahend);
+  }
+}
+
+export class TopTracksNode extends IntermediatePlaylist {
+  private timeRange: Spotify.TimeRanges;
+
+  public static async createNew(timeRange: Spotify.TimeRanges): Promise<TopTracksNode> {
+    let node = new TopTracksNode(timeRange);
+    await node.initialize();
+    return node;
+  }
+
+  private constructor(timeRange) {
+    super();
+    this.timeRange = timeRange;
+  }
+
+  static get type(): string {
+    return "TopTracksNode";
+  }
+
+  private async initialize() {
+    let tracks = await api.getMyTopTracks(this.timeRange);
+    this.addTracks(tracks);
+  }
+
+  toJSON() {
+    return {
+      type: TopTracksNode.type,
+      timeRange: this.timeRange
+    }
+  }
+
+  static async fromJSON(json: any): Promise<TopTracksNode> {
+    return await TopTracksNode.createNew(json.timeRange);
   }
 }
