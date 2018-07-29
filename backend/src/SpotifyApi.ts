@@ -83,7 +83,10 @@ export class User {
     public async playlist(name: string): Promise<Playlist> {
         // BUG this is a very bad idea, if a playlist name is existing twice...
 
-        // search local copy first
+        // make sure, the local copy is available
+        await this.playlists();
+
+        // search local copy
         if (this.cachedPlaylists) {
             for (let playlist of this.cachedPlaylists) {
                 if (await playlist.name() == name) {
