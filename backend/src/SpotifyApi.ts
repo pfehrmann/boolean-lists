@@ -15,9 +15,17 @@ var spotifyApi = new SpotifyWebApi({
     redirectUri: process.env.REDIRECT_URI,
 });
 
+let initializedSpotifyApi;
+
 let sleepDelay = 50;
 
 export function initialize(): Promise<InitializedSpotifyApi> {
+    if(initializedSpotifyApi) {
+        return new Promise((resolve: any, reject: any) => {
+            resolve(initializedSpotifyApi);
+        })
+    }
+
     return new Promise((resolve: any, reject: any) => {
         let scopes = ['user-read-private', 'playlist-read-private', 'playlist-modify-public', 'playlist-modify-private', 'user-top-read'];
         let state = 'random-state'
@@ -36,13 +44,14 @@ export function initialize(): Promise<InitializedSpotifyApi> {
                 spotifyApi.setAccessToken(data.body['access_token']);
                 spotifyApi.setRefreshToken(data.body['refresh_token']);
 
-                resolve(new InitializedSpotifyApi());
+                initializedSpotifyApi = new InitializedSpotifyApi();
+                resolve(initializedSpotifyApi);
             }).catch((error: any) => {
                 reject(error);
             });
             res.end("<script>window.close()</script>");
             server.close();
-        })
+        });
 
         server = app.listen(8080, () => {
             console.log("Listening on port 8080");

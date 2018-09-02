@@ -37,6 +37,7 @@ class App extends React.Component {
 
         this.addPlaylistNode = this.addPlaylistNode.bind(this);
         this.addAddNode = this.addAddNode.bind(this);
+        this.saveToSpotify = this.saveToSpotify.bind(this);
     }
 
     public render() {
@@ -50,6 +51,7 @@ class App extends React.Component {
                     To get started, edit <code>src/App.tsx</code> and save to reload.
                 </p>
                 <div>
+                    <button onClick={this.saveToSpotify}>Save to Spotify</button>
                     <button onClick={this.addPlaylistNode}>Add a PlaylistNode</button>
                     <button onClick={this.addAddNode}>Add an AddNode</button>
                 </div>
@@ -85,6 +87,20 @@ class App extends React.Component {
         const link = playlistNode.getOutPorts()[0].link(addNode.getInPorts()[0]);
 
         this.model.addAll(playlistNode, addNode, link);
+    }
+
+    private async saveToSpotify() {
+        const data = JSON.stringify(this.model.serializeDiagram());
+        logger.info(data);
+
+        const response = await fetch("http://localhost:3000/saveToSpotify", {
+            body: data,
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            method: "POST"
+        });
+        logger.info(await response.json());
     }
 }
 
