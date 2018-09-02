@@ -5,6 +5,7 @@ export class AbstractNodeModel extends SRD.NodeModel {
     public name: string;
     public color: string;
     public ports: { [s: string]: SRD.DefaultPortModel };
+    public configuration: any;
 
     constructor(className: string, name: string, color: string = "rgb(0,192,255)") {
         super(className);
@@ -27,8 +28,9 @@ export class AbstractNodeModel extends SRD.NodeModel {
     }
 
     public serialize(): any {
-        return _.merge(this.serialize(), {
+        return _.merge(super.serialize(), {
             color: this.color,
+            configuration: this.configuration,
             name: this.name
         });
     }
