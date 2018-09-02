@@ -13,13 +13,4 @@ export default class PlaylistNodeModel extends AbstractNodeModel {
             userId: "9v08daxud6qg0kui6dvkvklmo"
         }
     }
-
-    public static convertSrdToBooleanList(srdNode: any, serialized: any): any {
-        return {
-            id: srdNode.configuration.id,
-            type: "SpotifyPlaylistNode",
-            userId: srdNode.configuration.userId
-        }
-    }
-
 }
