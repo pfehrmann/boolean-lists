@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as SRD from "storm-react-diagrams";
 import {AbstractNodeModel} from "./AbstractNodeModel";
-import AddNodeWidget from "./AddNodeWidget";
 
 export abstract class AbstractNodeFactory<T extends AbstractNodeModel> extends SRD.AbstractNodeFactory<T> {
     protected constructor(className: string) {
@@ -9,13 +8,15 @@ export abstract class AbstractNodeFactory<T extends AbstractNodeModel> extends S
     }
 
     public generateReactWidget(diagramEngine: SRD.DiagramEngine, node: T): JSX.Element {
-        return React.createElement(AddNodeWidget, {
+        return React.createElement(this.getClassType(), {
             baseClass: "srd-default-node",
             className: "srd-default-node",
             diagramEngine,
             node
         });
     }
+
+    public abstract getClassType(): any;
 
     public abstract getNewInstance(): T;
 }
