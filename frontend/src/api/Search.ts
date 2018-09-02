@@ -8,8 +8,8 @@ export async function searchPlaylist(name: string) {
                 url: playlist.image.url,
                 width: playlist.image.width
             },
-            name: playlist.name(),
-            userId: playlist.userId()
+            name: playlist.name,
+            userId: playlist.userId
         }
     });
 }
