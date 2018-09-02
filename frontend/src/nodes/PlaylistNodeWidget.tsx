@@ -28,6 +28,10 @@ interface IPlaylistNodeState {
 }
 
 export default class PlaylistNodeWidget extends AbstractNodeWidget<IPlaylistNodeProps> {
+    private static stopPropagation(event: any) {
+        event.stopPropagation();
+    }
+
     public state: IPlaylistNodeState;
 
     constructor(props: IPlaylistNodeProps) {
@@ -46,10 +50,6 @@ export default class PlaylistNodeWidget extends AbstractNodeWidget<IPlaylistNode
         this.handleKeypress = this.handleKeypress.bind(this);
         this.updateSearchQuery = this.updateSearchQuery.bind(this);
         this.handleSelect = this.handleSelect.bind(this);
-    }
-
-    private static stopPropagation(event: any) {
-        event.stopPropagation();
     }
 
     public render() {
