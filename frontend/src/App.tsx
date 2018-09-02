@@ -13,6 +13,8 @@ import logo from './logo.svg';
 import PlaylistNodeFactory from "./nodes/PlaylistNodeFactory";
 import PlaylistNodeModel from "./nodes/PlaylistNodeModel";
 
+import Button from '@material-ui/core/Button';
+
 class App extends React.Component {
     private readonly engine: SRD.DiagramEngine;
     private readonly model: SRD.DiagramModel;
@@ -51,9 +53,10 @@ class App extends React.Component {
                     To get started, edit <code>src/App.tsx</code> and save to reload.
                 </p>
                 <div>
-                    <button onClick={this.saveToSpotify}>Save to Spotify</button>
-                    <button onClick={this.addPlaylistNode}>Add a PlaylistNode</button>
-                    <button onClick={this.addAddNode}>Add an AddNode</button>
+                    <Button variant="contained" color="primary" onClick={this.saveToSpotify}>Save to Spotify</Button>
+                    <Button variant="contained" color="primary" onClick={this.addPlaylistNode}>Add a
+                        PlaylistNode</Button>
+                    <Button variant="contained" color="primary" onClick={this.addAddNode}>Add an AddNode</Button>
                 </div>
                 <Graph engine={this.engine}/>
             </div>
