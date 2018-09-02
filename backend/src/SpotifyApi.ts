@@ -81,6 +81,11 @@ export class InitializedSpotifyApi {
       }
       return tracks;
     }
+
+    public async searchForPlaylists(name: string): Promise<Playlist[]> {
+        let rawPlaylists = await spotifyApi.searchPlaylists(name);
+        return rawPlaylists.body.playlists.items.map((item: any) => new Playlist(item));
+    }
 }
 
 export class User {
@@ -149,7 +154,7 @@ export class Playlist {
         this.playlist = playlist;
     }
 
-    public async name(): Promise<string> {
+    public name(): string {
         return this.playlist.name;
     }
 
@@ -179,6 +184,31 @@ export class Playlist {
                 } catch (err) {
                     console.error(`Failed to add tracks to playlist. Remaining tracks: ${tracks.length + toAdd.length}`);
                     console.error(err);
+                }
+            }
+        }
+    }
+
+    public async addTracks(tracks: Track[]) {
+        while (tracks.length > 0) {
+            console.log(`${tracks.length} tracks left...`);
+            let toAdd = tracks.slice(0, 100);
+            tracks = tracks.slice(100);
+            let uris: string[] = toAdd.map((track: Track) => track.uri());
+            for (let i = 0; i < 3; i++) {
+                if(i > 0) {
+                    await sleep(sleepDelay);
+                }
+                let response;
+                try {
+                    response = await spotifyApi.addTracksToPlaylist(this.playlist.owner.id, this.playlist.id, uris);
+                    let allTracks = (await this.tracks()).concat(toAdd);
+                    this.setTracks(allTracks);
+                    break;
+                } catch (err) {
+                    console.error(`Failed to add tracks to playlist. Remaining tracks: ${tracks.length + toAdd.length}`);
+                    console.error(err);
+                    console.error(response);
                 }
             }
         }

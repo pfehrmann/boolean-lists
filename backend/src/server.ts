@@ -1,3 +1,5 @@
+import {Search} from "./search/Search";
+
 let env = require('dotenv').config();
 let express = require('express');
 import * as SpotifyApi from './SpotifyApi';
@@ -22,6 +24,13 @@ let songCounts = require(process.env.SONG_COUNTS);
 
 SpotifyApi.initialize().then(async (api: SpotifyApi.InitializedSpotifyApi) => {
     Nodes.initializeNodes(api);
+
+    let search = new Search(api);
+    app.use("/search", search.router);
+
+    app.listen(3000, () => {
+        console.log("Listening on port 3000");
+    });
 });
 
 function testApi() {
@@ -101,11 +110,6 @@ async function getTracksToAdd(me, songCounts): Promise<SpotifyApi.Track[]> {
     return node.getTracks();
 }
 
-async function getNrandomTracksFromPlaylist(playlist: SpotifyApi.Playlist, n: number): Promise<SpotifyApi.Track[]> {
-    let tracks = await playlist.tracks();
-    return getNelementsFromArray(n, tracks, true);
-}
-
 app.post("/saveToSpotify", async (req, res: any) => {
     console.log(req.body);
 
@@ -130,10 +134,6 @@ app.post("/saveToSpotify", async (req, res: any) => {
 
         playlist.addTracks(tracksToAdd);
 
-        res.send(JSON.stringify({message: "All is good."}));
+        res.json(JSON.stringify({message: "All is good."}));
     });
-});
-
-app.listen(3000, () => {
-    console.log("Listening on port 3000");
 });
