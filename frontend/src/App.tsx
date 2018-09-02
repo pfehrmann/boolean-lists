@@ -4,6 +4,14 @@ import './App.css';
 import * as SRD from "storm-react-diagrams";
 import Graph from './Graph'
 
+import {SimplePortFactory} from "./nodes/SimplePortFactory";
+import SpotifyPlaylistNodeFactory from "./nodes/SpotifyPlaylistNodeFactory";
+import SpotifyPlaylistNodeModel from "./nodes/SpotifyPlaylistNodeModel";
+import SpotifyPlaylistPortModel from "./nodes/SpotifyPlaylistPortModel";
+
+import AddNodeFactory from "./nodes/AddNodeFactory";
+import AddNodeModel from "./nodes/AddNodeModel";
+
 import logo from './logo.svg';
 
 class App extends React.Component {
@@ -16,6 +24,12 @@ class App extends React.Component {
         const engine = new SRD.DiagramEngine();
         engine.installDefaultFactories();
 
+        // register some other factories as well
+        engine.registerPortFactory(new SimplePortFactory("spotifyPlaylist", () => new SpotifyPlaylistPortModel()));
+        engine.registerNodeFactory(new SpotifyPlaylistNodeFactory());
+
+        engine.registerNodeFactory(new AddNodeFactory());
+
         const model = new SRD.DiagramModel();
         this.model = model;
 
@@ -25,6 +39,7 @@ class App extends React.Component {
         this.engine = engine;
 
         this.addPlaylistNode = this.addPlaylistNode.bind(this);
+        this.addAddNode = this.addAddNode.bind(this);
     }
 
     public render() {
@@ -38,7 +53,8 @@ class App extends React.Component {
                     To get started, edit <code>src/App.tsx</code> and save to reload.
                 </p>
                 <div>
-                    <button onClick={this.addPlaylistNode}>Add a Playlistnode</button>
+                    <button onClick={this.addPlaylistNode}>Add a PlaylistNode</button>
+                    <button onClick={this.addAddNode}>Add an AddNode</button>
                 </div>
                 <Graph engine={this.engine}/>
             </div>
@@ -54,18 +70,48 @@ class App extends React.Component {
         this.engine.repaintCanvas();
     }
 
+    public addAddNode() {
+        const node = new AddNodeModel();
+        node.setPosition(50, 10);
+
+        this.model.addNode(node);
+        this.engine.repaintCanvas();
+    }
+
     private addDefaultNodes() {
+        // 3-A) create a default node
         const node1 = new SRD.DefaultNodeModel("Node 1", "rgb(0,192,255)");
         const port1 = node1.addOutPort("Out");
-        node1.setPosition(100, 100);
+        node1.setPosition(100, 150);
 
-        const node2 = new SRD.DefaultNodeModel("Node 2", "rgb(192,255,0)");
-        const port2 = node2.addInPort("In");
-        node2.setPosition(400, 100);
+        // 3-B) create our new custom node
+        const node2 = new SpotifyPlaylistNodeModel();
+        node2.setPosition(250, 108);
 
-        const link1 = port1.link(port2);
+        const node3 = new SRD.DefaultNodeModel("Node 3", "red");
+        node3.addInPort("In");
+        node3.setPosition(500, 150);
 
-        this.model.addAll(node1, node2, link1);
+        // 3-C) link the 2 nodes together
+        let link1;
+        const portLeft = node2.getPort("left");
+        if (portLeft) {
+            link1 = port1.link(portLeft);
+        }
+
+        let link2;
+        const portRight = node2.getPort("right");
+        if (portRight) {
+            link2 = port1.link(portRight);
+        }
+
+        // 4) add the models to the root graph
+        if ((link1) && (link2)) {
+            this.model.addAll(node1, node2, node3, link1, link2);
+        } else {
+            alert("Could not create links!");
+        }
+
     }
 }
 
