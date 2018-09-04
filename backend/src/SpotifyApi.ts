@@ -166,26 +166,11 @@ export class Playlist {
       return this.playlist.id;
     }
 
-    public async addTracks(tracks: Track[]) {
-        while (tracks.length > 0) {
-            console.log(`${tracks.length} tracks left...`);
-            let toAdd = tracks.slice(0, 100);
-            tracks = tracks.slice(100);
-            let uris: string[] = toAdd.map((track: Track) => track.uri());
-            for (let i = 0; i < 3; i++) {
-                if(i > 0) {
-                    await sleep(sleepDelay);
-                }
-                try {
-                    await spotifyApi.addTracksToPlaylist(this.playlist.owner.id, this.playlist.id, uris);
-                    let allTracks = (await this.tracks()).concat(toAdd);
-                    this.setTracks(allTracks);
-                    break;
-                } catch (err) {
-                    console.error(`Failed to add tracks to playlist. Remaining tracks: ${tracks.length + toAdd.length}`);
-                    console.error(err);
-                }
-            }
+    public image() {
+        return {
+            height: this.playlist.images[0].height,
+            width: this.playlist.images[0].width,
+            url: this.playlist.images[0].url
         }
     }
 
@@ -249,7 +234,7 @@ export class Track {
         while(!this.track.uri && times++ < 5) {
           this.track = this.track.track;
         }
-        
+
         if(times >= 5) {
           throw new Error("Could not instanciate Track, uri was not found.");
         }
