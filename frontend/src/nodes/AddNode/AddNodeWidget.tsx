@@ -1,6 +1,6 @@
 import * as SRD from "storm-react-diagrams";
 
-import {AbstractNodeWidget, IAbstractNodeProps} from "./AbstractNodeWidget";
+import {AbstractNodeWidget, IAbstractNodeProps} from "../AbstractNodeWidget";
 import AddNodeModel from "./AddNodeModel";
 
 export interface IAddNodeProps extends IAbstractNodeProps<AddNodeModel> {

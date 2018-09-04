@@ -1,4 +1,4 @@
-import {AbstractNodeFactory} from "./AbstractNodeFactory";
+import {AbstractNodeFactory} from "../AbstractNodeFactory";
 import PlaylistNodeModel from "./PlaylistNodeModel";
 import PlaylistNodeWidget from "./PlaylistNodeWidget";
 

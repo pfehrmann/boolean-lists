@@ -9,10 +9,10 @@ import * as _ from "lodash";
 import * as React from "react";
 import * as SRD from "storm-react-diagrams";
 import * as logger from "winston";
-import * as Search from "../api/Search";
+import * as Search from "../../api/Search";
 
-import {PlaylistItem} from "../components/PlaylistItem";
-import {AbstractNodeWidget, IAbstractNodeProps} from "./AbstractNodeWidget";
+import {PlaylistItem} from "../../components/PlaylistItem";
+import {AbstractNodeWidget, IAbstractNodeProps} from "../AbstractNodeWidget";
 import PlaylistNodeModel from "./PlaylistNodeModel";
 
 export interface IPlaylistNodeProps extends IAbstractNodeProps<PlaylistNodeModel> {

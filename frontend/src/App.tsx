@@ -4,14 +4,14 @@ import './App.css';
 import * as SRD from "storm-react-diagrams";
 import Graph from './Graph'
 
-import AddNodeFactory from "./nodes/AddNodeFactory";
-import AddNodeModel from "./nodes/AddNodeModel";
+import AddNodeFactory from "./nodes/AddNode/AddNodeFactory";
+import AddNodeModel from "./nodes/AddNode/AddNodeModel";
 
 import * as logger from 'winston';
 
 import logo from './logo.svg';
-import PlaylistNodeFactory from "./nodes/PlaylistNodeFactory";
-import PlaylistNodeModel from "./nodes/PlaylistNodeModel";
+import PlaylistNodeFactory from "./nodes/PlaylistNode/PlaylistNodeFactory";
+import PlaylistNodeModel from "./nodes/PlaylistNode/PlaylistNodeModel";
 
 import Button from '@material-ui/core/Button';
 

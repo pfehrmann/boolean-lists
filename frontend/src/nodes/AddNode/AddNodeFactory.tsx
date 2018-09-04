@@ -1,4 +1,4 @@
-import {AbstractNodeFactory} from "./AbstractNodeFactory";
+import {AbstractNodeFactory} from "../AbstractNodeFactory";
 import AddNodeModel from "./AddNodeModel";
 import AddNodeWidget from "./AddNodeWidget";
 

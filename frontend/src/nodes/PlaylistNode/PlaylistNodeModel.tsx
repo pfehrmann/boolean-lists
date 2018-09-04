@@ -1,4 +1,4 @@
-import {AbstractNodeModel} from "./AbstractNodeModel";
+import {AbstractNodeModel} from "../AbstractNodeModel";
 
 export default class PlaylistNodeModel extends AbstractNodeModel {
 
