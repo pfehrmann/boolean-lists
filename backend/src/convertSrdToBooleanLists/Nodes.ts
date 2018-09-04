@@ -17,6 +17,33 @@ export function convertAddNode(srdNode: any, serialized: any): any {
     }
 }
 
+export function convertSubtractNode(srdNode: any, serialized: any): any {
+    const inPorts = SerializationConverter.getInPorts(srdNode);
+    const inPort = inPorts.find((port: any) => {
+        return port.label === "In";
+    });
+
+    const subtractPort = inPorts.find((port: any) => {
+        return port.label === "Subtract";
+    });
+
+    const inPlaylists = SerializationConverter.getChildNodesOfPort(inPort, serialized, srdNode);
+    if(inPlaylists.length > 1) {
+        throw new TooManyChildrenError(`Found more than one child for port 'In' of node '${srdNode}'`);
+    }
+
+    const subtractPlaylists = SerializationConverter.getChildNodesOfPort(subtractPort, serialized, srdNode);
+    if(subtractPlaylists.length > 1) {
+        throw new TooManyChildrenError(`Found more than one child for port 'Subtract' of node '${srdNode}'`);
+    }
+
+    return {
+        minuend: SerializationConverter.convertSrdNodeToBooleanList(inPlaylists[0], serialized),
+        subtrahend: SerializationConverter.convertSrdNodeToBooleanList(subtractPlaylists[0], serialized),
+        type: "SubtractNode"
+    }
+}
+
 export function convertPlaylistNode(srdNode: any, serialized: any): any {
     return {
         id: srdNode.configuration.id,

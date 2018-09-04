@@ -71,6 +71,9 @@ export function convertSrdNodeToBooleanList(srdNode: any, serialized: any): any 
         case "randomize-node": {
             return convert.convertRandomizeNode(srdNode, serialized);
         }
+        case "subtract-node": {
+            return convert.convertSubtractNode(srdNode, serialized);
+        }
     }
     throw new UnknownNodeTypeError("Node type '" + srdNode.type + "' is unknown.")
 }
@@ -78,24 +81,37 @@ export function convertSrdNodeToBooleanList(srdNode: any, serialized: any): any 
 export function getChildNodes(srdNode: any, serialized: any): any[] {
     const inPorts = getInPorts(srdNode);
 
-    let links = _.flatten(inPorts.map((port: any) => port.links));
-    links = links.map((linkId: any) => serialized.links.find((link: any) => link.id === linkId));
+    const connectedNodes = _.flatten(inPorts.map((port: any) => {
+        return getChildNodesOfPort(port, serialized);
+    }));
 
-    const connectedNodes = _.flatten(links.map((link: any) => {
+    return connectedNodes.filter((node: any) => node.id !== srdNode.id);
+}
+
+export function getChildNodesOfPort(inPort: any, serialized: any, node?: any): any[] {
+    let links = inPort.links.map((linkId: any) => serialized.links.find((link: any) => link.id === linkId));
+
+    const nodes = _.flatten(links.map((link: any) => {
         return [
             serialized.nodes.find((node: any) => node.id === link.target),
             serialized.nodes.find((node: any) => node.id === link.source)
         ]
     }));
 
-    return connectedNodes.filter((node: any) => node.id !== srdNode.id);
+    if(!node) {
+        return nodes;
+    }
+
+    return nodes.filter((other: any) => {
+        return other.id !== node.id;
+    })
 }
 
-function getInPorts(node: any): any[] {
+export function getInPorts(srdNode: any): any[] {
     let ports = [];
 
-    if(node.ports) {
-        ports = node.ports.filter((port: any) => {
+    if(srdNode.ports) {
+        ports = srdNode.ports.filter((port: any) => {
             return port.in === true;
         })
     }

@@ -25,6 +25,9 @@ import LimitNodeModel from "./nodes/LimitNode/LimitNodeModel";
 import RandomizeNodeFactory from "./nodes/RandomizeNode/RandomizeNodeFactory";
 import RandomizeNodeModel from "./nodes/RandomizeNode/RandomizeNodeModel";
 
+import SubtractNodeFactory from "./nodes/SubtractNode/SubtractNodeFactory";
+import SubtractNodeModel from "./nodes/SubtractNode/SubtractNodeModel";
+
 interface IAppState {
     configOpen: boolean;
     serializedGraph: string;
@@ -54,6 +57,7 @@ class App extends React.Component {
         engine.registerNodeFactory(new PlaylistNodeFactory());
         engine.registerNodeFactory(new LimitNodeFactory());
         engine.registerNodeFactory(new RandomizeNodeFactory());
+        engine.registerNodeFactory(new SubtractNodeFactory());
 
         const model = new SRD.DiagramModel();
         this.model = model;
@@ -68,6 +72,7 @@ class App extends React.Component {
         this.saveToSpotify = this.saveToSpotify.bind(this);
         this.addLimitNode = this.addLimitNode.bind(this);
         this.addRandomizeNode = this.addRandomizeNode.bind(this);
+        this.addSubtractNode = this.addSubtractNode.bind(this);
 
         this.handleClose = this.handleClose.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
@@ -91,6 +96,8 @@ class App extends React.Component {
                     <Button variant="contained" color="primary" onClick={this.addPlaylistNode}>Add a
                         PlaylistNode</Button>
                     <Button variant="contained" color="primary" onClick={this.addAddNode}>Add an AddNode</Button>
+                    <Button variant="contained" color="primary" onClick={this.addSubtractNode}>Add a
+                        SubtractNode</Button>
                     <Button variant="contained" color="primary" onClick={this.addLimitNode}>Add a LimitNode</Button>
                     <Button variant="contained" color="primary" onClick={this.addRandomizeNode}>Add a
                         RandomizeNode</Button>
@@ -175,6 +182,14 @@ class App extends React.Component {
 
     public addAddNode() {
         const node = AddNodeModel.getInstance();
+        node.setPosition(50, 10);
+
+        this.model.addNode(node);
+        this.engine.repaintCanvas();
+    }
+
+    public addSubtractNode() {
+        const node = SubtractNodeModel.getInstance();
         node.setPosition(50, 10);
 
         this.model.addNode(node);
