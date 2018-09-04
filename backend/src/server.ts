@@ -132,6 +132,6 @@ app.post("/saveToSpotify", async (req, res: any) => {
 
         playlist.addTracks(tracksToAdd);
 
-        res.json(JSON.stringify({message: "All is good."}));
+        res.json(JSON.stringify({message: "Successfully added songs."}));
     });
 });
