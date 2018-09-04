@@ -58,14 +58,20 @@ function getOutPorts(node: any): any[] {
 }
 
 export function convertSrdNodeToBooleanList(srdNode: any, serialized: any): any {
-    if(srdNode.type === "add-node") {
-        return convert.convertAddNode(srdNode, serialized);
+    switch(srdNode.type) {
+        case "add-node": {
+            return convert.convertAddNode(srdNode, serialized);
+        }
+        case "playlist-node": {
+            return convert.convertPlaylistNode(srdNode, serialized);
+        }
+        case "limit-node": {
+            return convert.convertLimitNode(srdNode, serialized);
+        }
+        case "randomize-node": {
+            return convert.convertRandomizeNode(srdNode, serialized);
+        }
     }
-
-    if(srdNode.type === "playlist-node") {
-        return convert.convertPlaylistNode(srdNode, serialized);
-    }
-
     throw new UnknownNodeTypeError("Node type '" + srdNode.type + "' is unknown.")
 }
 
