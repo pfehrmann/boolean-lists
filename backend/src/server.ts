@@ -111,8 +111,6 @@ async function getTracksToAdd(me, songCounts): Promise<SpotifyApi.Track[]> {
 }
 
 app.post("/saveToSpotify", async (req, res: any) => {
-    console.log(req.body);
-
     let serialized = SerializationConverter.convertSrdToBooleanList(req.body);
     let node = await Nodes.PlaylistNode.fromJSON(serialized);
 

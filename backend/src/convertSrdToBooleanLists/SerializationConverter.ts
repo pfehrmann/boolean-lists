@@ -6,7 +6,6 @@ import * as convert from "./Nodes"
 
 export function convertSrdToBooleanList(srdSerialized: any): any {
     const roots = findRoots(srdSerialized);
-    logger.debug(roots);
 
     if(roots.length === 0) {
         logger.warn("No root found");
