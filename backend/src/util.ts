@@ -6,7 +6,7 @@ export function getNelementsFromArray<T>(n: number, array: T[], random: boolean 
   return localArray.splice(-n);
 }
 
-export function shuffleArray(array) {
+export function shuffleArray<T>(array: T[]): T[] {
   let localArray = [...array];
     for (let i = localArray.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
