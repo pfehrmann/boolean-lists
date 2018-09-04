@@ -22,9 +22,10 @@ export class AbstractNodeModel extends SRD.NodeModel {
     }
 
     public deSerialize(object: any, engine: SRD.DiagramEngine) {
-        this.deSerialize(object, engine);
+        super.deSerialize(object, engine);
         this.name = object.name;
         this.color = object.color;
+        this.configuration = object.configuration;
     }
 
     public serialize(): any {
