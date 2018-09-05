@@ -1,6 +1,7 @@
 import {InitializedSpotifyApi} from "../spotify/SpotifyApi";
 import {Track} from "../spotify/Track";
 import {IntermediatePlaylist} from "./IntermediatePlaylist";
+import {fromJSON} from "./JsonParser";
 import {PlaylistNode} from "./Nodes";
 
 export class SubtractNode extends IntermediatePlaylist {
@@ -10,8 +11,8 @@ export class SubtractNode extends IntermediatePlaylist {
     }
 
     public static async fromJSON(api: InitializedSpotifyApi, json: any): Promise<SubtractNode> {
-        const minuend = PlaylistNode.fromJSON(api, json.minuend);
-        const subtrahend = PlaylistNode.fromJSON(api, json.subtrahend);
+        const minuend = fromJSON(api, json.minuend);
+        const subtrahend = fromJSON(api, json.subtrahend);
         return new SubtractNode(await minuend, await subtrahend);
     }
 

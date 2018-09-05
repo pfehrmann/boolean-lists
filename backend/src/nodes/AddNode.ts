@@ -3,6 +3,7 @@ import {InitializedSpotifyApi} from "../spotify/SpotifyApi";
 import {Track} from "../spotify/Track";
 import {getNelementsFromArray} from "../util";
 import {IntermediatePlaylist} from "./IntermediatePlaylist";
+import {fromJSON} from "./JsonParser";
 import {PlaylistNode} from "./Nodes";
 
 export class AddNode extends IntermediatePlaylist {
@@ -16,7 +17,7 @@ export class AddNode extends IntermediatePlaylist {
 
         for (const rawPlaylist of json.playlists) {
             playlists.push({
-                playlist: await PlaylistNode.fromJSON(api, rawPlaylist.playlist),
+                playlist: await fromJSON(api, rawPlaylist.playlist),
                 songCount: rawPlaylist.songCount,
             });
         }

@@ -1,6 +1,7 @@
 import {InitializedSpotifyApi} from "../spotify/SpotifyApi";
 import {shuffleArray} from "../util";
 import {IntermediatePlaylist} from "./IntermediatePlaylist";
+import {fromJSON} from "./JsonParser";
 import {PlaylistNode} from "./Nodes";
 
 export class RandomizeNode extends IntermediatePlaylist {
@@ -9,7 +10,7 @@ export class RandomizeNode extends IntermediatePlaylist {
     }
 
     public static async fromJSON(api: InitializedSpotifyApi, json: any): Promise<RandomizeNode> {
-        const inPlaylist = PlaylistNode.fromJSON(api, json.inPlaylist);
+        const inPlaylist = fromJSON(api, json.inPlaylist);
         return new RandomizeNode(await inPlaylist);
     }
 

@@ -5,6 +5,7 @@ import * as winston from "winston";
 import * as logger from "winston";
 import * as SerializationConverter from "./convertSrdToBooleanLists/SerializationConverter";
 import {AddNode} from "./nodes/AddNode";
+import {fromJSON} from "./nodes/JsonParser";
 import * as Nodes from "./nodes/Nodes";
 import {SpotifyPlaylistNode} from "./nodes/SpotifyPlaylistNode";
 import {SubtractNode} from "./nodes/SubtractNode";
@@ -17,7 +18,7 @@ import {InitializedSpotifyApi} from "./spotify/SpotifyApi";
 import {Track} from "./spotify/Track";
 import {shuffleArray} from "./util";
 
-const env = require("dotenv").config();
+require("dotenv").config();
 
 winston.add(new winston.transports.Console());
 
@@ -36,7 +37,7 @@ SpotifyApi.initialize().then(async (api: SpotifyApi.InitializedSpotifyApi) => {
 
     app.post("/saveToSpotify", async (req, res: any) => {
         const serialized = SerializationConverter.convertSrdToBooleanList(req.body);
-        const node = await Nodes.PlaylistNode.fromJSON(api, serialized);
+        const node = await fromJSON(api, serialized);
 
         let tracksToAdd = await node.getTracks();
         logger.info(`Adding ${tracksToAdd.length} tracks.`);
@@ -110,8 +111,6 @@ function testApi() {
 // testApi();
 
 async function getTracksToAdd(api: InitializedSpotifyApi, me, songCounts): Promise<Track[]> {
-    const tracksToAdd: Track[] = [];
-
     const playlists: Array<{ playlist: Nodes.PlaylistNode, songCount: number }> = [];
 
     for (const key of Object.keys(songCounts)) {
@@ -133,7 +132,7 @@ async function getTracksToAdd(api: InitializedSpotifyApi, me, songCounts): Promi
 
     // Transform to json and the parse again
     const json = JSON.stringify(addNode.toJSON());
-    const node = await Nodes.PlaylistNode.fromJSON(api, JSON.parse(json));
+    const node = await fromJSON(api, JSON.parse(json));
 
     return node.getTracks();
 }

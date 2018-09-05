@@ -1,5 +1,6 @@
 import {InitializedSpotifyApi} from "../spotify/SpotifyApi";
 import {IntermediatePlaylist} from "./IntermediatePlaylist";
+import {fromJSON} from "./JsonParser";
 import {PlaylistNode} from "./Nodes";
 
 export class LimitNode extends IntermediatePlaylist {
@@ -8,7 +9,7 @@ export class LimitNode extends IntermediatePlaylist {
     }
 
     public static async fromJSON(api: InitializedSpotifyApi, json: any): Promise<LimitNode> {
-        const inPlaylist = PlaylistNode.fromJSON(api, json.inPlaylist);
+        const inPlaylist = fromJSON(api, json.inPlaylist);
         const limit = json.limit;
         return new LimitNode(await inPlaylist, limit);
     }
