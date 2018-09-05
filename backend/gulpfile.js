@@ -1,22 +1,28 @@
-var gulp = require("gulp");
-var ts = require("gulp-typescript");
-var tslint = require("gulp-tslint");
+const gulp = require("gulp");
+const ts = require("gulp-typescript");
+const tslint = require("gulp-tslint");
+const nodemon = require("gulp-nodemon");
+const argv = require("yargs").argv;
 
-var tsProject = ts.createProject("tsconfig.json");
+const tsProject = ts.createProject("tsconfig.json");
 
-gulp.task("default", ["tslint", "build", "watch"]);
+if(argv.debug) {
+    gulp.task("default", ["build", "debug", "tslint", "watch"]);
+} else {
+    gulp.task("default", ["build", "start", "tslint", "watch"]);
+}
 
 gulp.task("watch", () => {
-  return gulp.watch("src/**/*", ["tslint", "build"]);
-})
+    gulp.watch("src/**/*.ts", ["tslint", "build"]);
+});
 
 gulp.task("tslint", () => {
-  gulp.src("src/**/*.ts")
+    gulp.src("src/**/*.ts")
         .pipe(tslint({
             formatter: "stylish"
         }))
         .pipe(tslint.report({
-           emitError: false
+            emitError: false
         }))
 });
 
@@ -24,4 +30,21 @@ gulp.task("build", function () {
     return tsProject.src()
         .pipe(tsProject())
         .js.pipe(gulp.dest("dist"));
+});
+
+gulp.task("start", function () {
+    nodemon({
+        script: "dist/server.js",
+        ext: "js html",
+        env: {"NODE_ENV": "development"}
+    });
+});
+
+gulp.task("debug", function () {
+    nodemon({
+        exec: "node --inspect-brk",
+        script: "dist/server.js",
+        ext: "js html",
+        env: {"NODE_ENV": "development"}
+    });
 });

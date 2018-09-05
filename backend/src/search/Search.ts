@@ -1,7 +1,8 @@
-import * as express from "express";
-import * as SpotifyApi from "../SpotifyApi";
 import * as bodyParser from "body-parser";
+import * as express from "express";
 import * as logger from "winston";
+import {Playlist} from "../spotify/Playlist";
+import * as SpotifyApi from "../spotify/SpotifyApi";
 
 export class Search {
     public readonly router: express.Router;
@@ -13,17 +14,17 @@ export class Search {
 
         this.router.get("/playlist", async (req, res) => {
             logger.info(req);
-            let internalPlaylists = await api.searchForPlaylists(req.query.q);
-            let playlists = internalPlaylists.map((playlist: SpotifyApi.Playlist) => {
+            const internalPlaylists = await api.searchForPlaylists(req.query.q);
+            const playlists = internalPlaylists.map((playlist: Playlist) => {
                 return {
+                    id: playlist.id(),
+                    image: playlist.image(),
                     name: playlist.name(),
                     userId: playlist.userId(),
-                    id: playlist.id(),
-                    image: playlist.image()
-                }
+                };
             });
 
             res.json(playlists);
-        })
+        });
     }
 }
