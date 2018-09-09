@@ -1,17 +1,20 @@
 require("dotenv").config();
 
-import * as bodyParser from "body-parser";
 import * as cors from "cors";
 import * as  express from "express";
-import * as winston from "winston";
+import * as session from "express-session";
+import * as Keycloak from "keycloak-connect";
 import * as logger from "winston";
+import * as winston from "winston";
 import * as SerializationConverter from "./convertSrdToBooleanLists/SerializationConverter";
-import apiExampleRouter from "./example/ApiExample";
+import apiExample from "./example/ApiExample";
 import {fromJSON} from "./nodes/JsonParser";
-import {Search} from "./search/Search";
-import * as SpotifyApi from "./spotify/SpotifyApi";
+import search from "./search/Search";
+import * as SpotifyAuthorization from "./spotify/Authorization";
+import {InitializedSpotifyApi} from "./spotify/SpotifyApi";
 
 import {shuffleArray} from "./util";
+const kcConfig = require("../keycloak.json");
 
 winston.add(new winston.transports.Console({
     format: winston.format.combine(
@@ -20,40 +23,49 @@ winston.add(new winston.transports.Console({
     ),
 }));
 
+const sessionStore = new session.MemoryStore();
+const keycloak = new Keycloak({store: sessionStore}, kcConfig);
+
 const app = express();
+
 app.use(cors());
-app.use(bodyParser());
+app.use((req: express.Request, res: any, next: express.NextFunction) => {
+    if (req.query.authorization) {
+        req.headers.authorization = req.query.authorization;
+    }
+    next();
+});
+app.use("/auth/spotify", SpotifyAuthorization.getRouter(keycloak));
+app.use(keycloak.middleware());
+app.use(express.json());
+app.use("/search", keycloak.protect(), SpotifyAuthorization.authorized(), search);
+app.use("/example", keycloak.protect(), SpotifyAuthorization.authorized(), apiExample);
 
-SpotifyApi.initialize().then(async (api: SpotifyApi.InitializedSpotifyApi) => {
-    const search = new Search(api);
-    app.use("/search", search.router);
-    app.use("/example", apiExampleRouter);
+app.post("/saveToSpotify", keycloak.protect(), SpotifyAuthorization.authorized(), async (req, res: any) => {
+    const api: InitializedSpotifyApi = new InitializedSpotifyApi((req as any).api);
+    const serialized = SerializationConverter.convertSrdToBooleanList(req.body);
+    const node = await fromJSON(api, serialized);
 
-    app.post("/saveToSpotify", async (req, res: any) => {
-        const serialized = SerializationConverter.convertSrdToBooleanList(req.body);
-        const node = await fromJSON(api, serialized);
+    let tracksToAdd = await node.getTracks();
+    logger.info(`Adding ${tracksToAdd.length} tracks.`);
 
-        let tracksToAdd = await node.getTracks();
-        logger.info(`Adding ${tracksToAdd.length} tracks.`);
+    const me = await api.me();
 
-        const me = await api.me();
+    if (!await me.playlist("Test Playlist")) {
+        await me.createPlaylist("Test Playlist");
+    }
+    const playlist = await me.playlist("Test Playlist");
 
-        if (!await me.playlist("Test Playlist")) {
-            await me.createPlaylist("Test Playlist");
-        }
-        const playlist = await me.playlist("Test Playlist");
+    if (process.env.SHUFFLE) {
+        logger.info(`Shuffling the playlist`);
+        tracksToAdd = shuffleArray(tracksToAdd);
+    }
 
-        if (process.env.SHUFFLE) {
-            logger.info(`Shuffling the playlist`);
-            tracksToAdd = shuffleArray(tracksToAdd);
-        }
+    playlist.addTracks(tracksToAdd);
 
-        playlist.addTracks(tracksToAdd);
+    res.json(JSON.stringify({message: "Successfully added songs."}));
+});
 
-        res.json(JSON.stringify({message: "Successfully added songs."}));
-    });
-
-    app.listen(3000, () => {
-        logger.info("Listening on port 3000");
-    });
+app.listen(process.env.PORT, () => {
+    logger.info(`Listening on port ${process.env.PORT}`);
 });

@@ -17,8 +17,7 @@ const importedSongCounts = require(process.env.SONG_COUNTS);
 const playlistId = 1;
 const router = express.Router();
 
-async function testApi() {
-    const api = await SpotifyApi.initialize();
+async function testApi(api: InitializedSpotifyApi) {
     try {
         const me = await api.me();
         const playlists = await me.playlists();
@@ -88,7 +87,8 @@ async function getTracksToAdd(api: InitializedSpotifyApi, me, songCounts): Promi
 }
 
 router.get("/", async (req, res) => {
-    await testApi();
+    const api = new InitializedSpotifyApi((req as any).api);
+    await testApi(api);
     res.sendStatus(200);
 });
 

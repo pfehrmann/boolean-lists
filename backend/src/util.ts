@@ -30,3 +30,22 @@ export function sleep(ms = 50) {
         setTimeout(resolve, ms);
     });
 }
+
+export async function getAll<T>(spotifyApi: any,
+                                spotifyFunction: (...args: any[]) => Promise<any>,
+                                constructor: (item: any) => T, args: any[],
+                                options: any = {offset: 0}) {
+    const completeArgs = [...args];
+    completeArgs.push(options);
+
+    const result = await spotifyFunction.apply(spotifyApi, completeArgs);
+    const items: T[] = result.body.items.map((item: any) => constructor(item));
+
+    if (result.body.next) {
+        await sleep();
+        return items.concat(await getAll(spotifyApi, spotifyFunction, constructor, args, {
+            offset: result.body.items.length + options.offset,
+        }));
+    }
+    return items;
+}

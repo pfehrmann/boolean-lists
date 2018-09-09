@@ -3,6 +3,7 @@ const ts = require("gulp-typescript");
 const tslint = require("gulp-tslint");
 const nodemon = require("gulp-nodemon");
 const argv = require("yargs").argv;
+const sourcemaps = require("gulp-sourcemaps");
 
 const tsProject = ts.createProject("tsconfig.json");
 
@@ -28,8 +29,10 @@ gulp.task("tslint", () => {
 
 gulp.task("build", function () {
     return tsProject.src()
+        .pipe(sourcemaps.init())
         .pipe(tsProject())
-        .js.pipe(gulp.dest("dist"));
+        .pipe(sourcemaps.write("."))
+        .pipe(gulp.dest("dist"));
 });
 
 gulp.task("start", function () {
@@ -42,7 +45,7 @@ gulp.task("start", function () {
 
 gulp.task("debug", function () {
     nodemon({
-        exec: "node --inspect-brk",
+        exec: "node --inspect",
         script: "dist/server.js",
         ext: "js html",
         env: {"NODE_ENV": "development"}

@@ -5,6 +5,7 @@
   "dependencies": {
     "@material-ui/core": "^3.0.1",
     "fetch": "^1.1.0",
+    "keycloak-js": "^4.4.0",
     "lodash": "^4.17.10",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",

@@ -1,17 +1,12 @@
 import Button from '@material-ui/core/Button';
+import * as Keycloak from 'keycloak-js';
 import * as React from 'react';
 import * as SRD from "storm-react-diagrams";
 import * as logger from 'winston';
+import * as RequestWrapper from "./api/RequestWrapper";
 import './App.css';
 import Graph from './Graph'
 import logo from './logo.svg';
-
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import TextField from "@material-ui/core/TextField";
 
 import AddNodeFactory from "./nodes/AddNode/AddNodeFactory";
 import AddNodeModel from "./nodes/AddNode/AddNodeModel";
@@ -25,13 +20,14 @@ import LimitNodeModel from "./nodes/LimitNode/LimitNodeModel";
 import RandomizeNodeFactory from "./nodes/RandomizeNode/RandomizeNodeFactory";
 import RandomizeNodeModel from "./nodes/RandomizeNode/RandomizeNodeModel";
 
+import {SerializationDialog} from "./components/SerializationDialog";
 import SubtractNodeFactory from "./nodes/SubtractNode/SubtractNodeFactory";
 import SubtractNodeModel from "./nodes/SubtractNode/SubtractNodeModel";
 
 interface IAppState {
     configOpen: boolean;
-    serializedGraph: string;
-    newGraph: string;
+    loginSpotifyOpen: boolean;
+    keycloak: Keycloak.KeycloakInstance;
 }
 
 class App extends React.Component {
@@ -45,9 +41,11 @@ class App extends React.Component {
 
         this.state = {
             configOpen: false,
-            newGraph: "",
-            serializedGraph: ""
+            keycloak: Keycloak("/keycloak.json"),
+            loginSpotifyOpen: false
         };
+
+        RequestWrapper.setKeycloak(this.state.keycloak);
 
         const engine = new SRD.DiagramEngine();
         engine.installDefaultFactories();
@@ -74,10 +72,10 @@ class App extends React.Component {
         this.addRandomizeNode = this.addRandomizeNode.bind(this);
         this.addSubtractNode = this.addSubtractNode.bind(this);
 
-        this.handleClose = this.handleClose.bind(this);
+        this.connectSpotify = this.connectSpotify.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
+        this.handleClose = this.handleClose.bind(this);
         this.handleSave = this.handleSave.bind(this);
-        this.handleChange = this.handleChange.bind(this);
     }
 
     public render() {
@@ -101,55 +99,22 @@ class App extends React.Component {
                     <Button variant="contained" color="primary" onClick={this.addLimitNode}>Add a LimitNode</Button>
                     <Button variant="contained" color="primary" onClick={this.addRandomizeNode}>Add a
                         RandomizeNode</Button>
+                    <Button variant="contained" color="primary" onClick={this.connectSpotify}>Connect Spotify</Button>
                 </div>
                 <Graph engine={this.engine}/>
-                <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.state.configOpen}>
-                    <DialogTitle id="simple-dialog-title">Serialize/Deserialize</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            Set the maximum number of songs emitted.
-                        </DialogContentText>
-                        <TextField
-                            autoFocus={true}
-                            margin="dense"
-                            multiline={true}
-                            label="Serialized Graph"
-                            type="text"
-                            disabled={true}
-                            fullWidth={true}
-                            rowsMax={10}
-                            value={this.state.serializedGraph}
-                        />
-                        <TextField
-                            autoFocus={true}
-                            margin="dense"
-                            multiline={true}
-                            label="New Serialized Graph"
-                            type="text"
-                            fullWidth={true}
-                            rowsMax={20}
-                            rows={20}
-                            onChange={this.handleChange}
-                            value={this.state.newGraph}
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.handleClose} color="primary">
-                            Cancel
-                        </Button>
-                        <Button onClick={this.handleSave} color="primary">
-                            Set Graph
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+                <SerializationDialog model={this.model} onSave={this.handleSave} onClose={this.handleClose} configOpen={this.state.configOpen}/>
             </div>
         );
     }
 
-    public handleChange(event: any) {
+    public componentDidMount() {
+        this.state.keycloak.init({onLoad: 'login-required'});
+    }
+
+    public handleOpen() {
         this.setState({
-            newGraph: event.target.value
-        })
+            configOpen: true
+        });
     }
 
     public handleClose() {
@@ -158,15 +123,8 @@ class App extends React.Component {
         });
     }
 
-    public handleOpen() {
-        this.setState({
-            configOpen: true,
-            serializedGraph: JSON.stringify(this.model.serializeDiagram(), null, 2)
-        });
-    }
-
-    public handleSave() {
-        this.model.deSerializeDiagram(JSON.parse(this.state.newGraph), this.engine);
+    public handleSave(graph: string) {
+        this.model.deSerializeDiagram(JSON.parse(graph), this.engine);
         this.setState({
             configOpen: false
         })
@@ -225,14 +183,18 @@ class App extends React.Component {
         this.model.addAll(playlistNode, addNode, link);
     }
 
+    private connectSpotify() {
+        window.location.assign(`${process.env.REACT_APP_API_BASE}/auth/spotify/login?url=${process.env.REACT_APP_API_BASE}&authorization=Bearer ${this.state.keycloak.token}`);
+    }
+
     private async saveToSpotify() {
         const data = JSON.stringify(this.model.serializeDiagram());
         logger.info(data);
 
-        const response = await fetch("http://localhost:3000/saveToSpotify", {
+        const response = await RequestWrapper.authorizedFetch(`${process.env.REACT_APP_API_BASE}/saveToSpotify`, {
             body: data,
             headers: {
-                "Content-Type": "application/json; charset=utf-8"
+                "Content-Type": "application/json; charset=utf-8",
             },
             method: "POST"
         });

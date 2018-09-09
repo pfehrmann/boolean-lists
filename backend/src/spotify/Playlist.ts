@@ -1,6 +1,7 @@
 import * as logger from "winston";
 import {sleep} from "../util";
-import {getAll, InitializedSpotifyApi} from "./SpotifyApi";
+import {getAll} from "../util";
+import {InitializedSpotifyApi} from "./SpotifyApi";
 import {Track} from "./Track";
 const Cache = require("async-disk-cache");
 
@@ -69,7 +70,7 @@ export class Playlist {
 
     public async tracks(): Promise<Track[]> {
         if (!await playlistCache.has(this.playlist.id)) {
-            const tracks = await getAll<Track>(this.api,
+            const tracks = await getAll<Track>(this.api.spotifyApi,
                 this.api.spotifyApi.getPlaylistTracks,
                 (e) => new Track(e),
                 [this.playlist.owner.id, this.playlist.id]);

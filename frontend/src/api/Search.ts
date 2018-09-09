@@ -1,5 +1,7 @@
+import {authorizedFetch} from "./RequestWrapper";
+
 export async function searchPlaylist(name: string) {
-    const untypedPlaylists = await (await fetch(`http://localhost:3000/search/playlist?q=${ name }`)).json();
+    const untypedPlaylists = await (await authorizedFetch(`${process.env.REACT_APP_API_BASE}/search/playlist?q=${ name }`)).json();
     return untypedPlaylists.map((playlist: any) => {
         return {
             id: playlist.id,
