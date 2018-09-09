@@ -5,24 +5,19 @@ import * as SRD from "storm-react-diagrams";
 import * as logger from 'winston';
 import * as RequestWrapper from "./api/RequestWrapper";
 import './App.css';
+import {SerializationDialog} from "./components/SerializationDialog";
 import Graph from './Graph'
 import logo from './logo.svg';
 
 import AddNodeFactory from "./nodes/AddNode/AddNodeFactory";
-import AddNodeModel from "./nodes/AddNode/AddNodeModel";
-
-import PlaylistNodeFactory from "./nodes/PlaylistNode/PlaylistNodeFactory";
-import PlaylistNodeModel from "./nodes/PlaylistNode/PlaylistNodeModel";
-
 import LimitNodeFactory from "./nodes/LimitNode/LimitNodeFactory";
-import LimitNodeModel from "./nodes/LimitNode/LimitNodeModel";
-
+import PlaylistNodeFactory from "./nodes/PlaylistNode/PlaylistNodeFactory";
 import RandomizeNodeFactory from "./nodes/RandomizeNode/RandomizeNodeFactory";
-import RandomizeNodeModel from "./nodes/RandomizeNode/RandomizeNodeModel";
-
-import {SerializationDialog} from "./components/SerializationDialog";
 import SubtractNodeFactory from "./nodes/SubtractNode/SubtractNodeFactory";
-import SubtractNodeModel from "./nodes/SubtractNode/SubtractNodeModel";
+
+import {AddNodesElement} from "./components/AddNodesElement";
+import AddNodeModel from "./nodes/AddNode/AddNodeModel";
+import PlaylistNodeModel from "./nodes/PlaylistNode/PlaylistNodeModel";
 
 interface IAppState {
     configOpen: boolean;
@@ -65,12 +60,7 @@ class App extends React.Component {
         engine.setDiagramModel(model);
         this.engine = engine;
 
-        this.addPlaylistNode = this.addPlaylistNode.bind(this);
-        this.addAddNode = this.addAddNode.bind(this);
         this.saveToSpotify = this.saveToSpotify.bind(this);
-        this.addLimitNode = this.addLimitNode.bind(this);
-        this.addRandomizeNode = this.addRandomizeNode.bind(this);
-        this.addSubtractNode = this.addSubtractNode.bind(this);
 
         this.connectSpotify = this.connectSpotify.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
@@ -91,15 +81,8 @@ class App extends React.Component {
                 <div>
                     <Button variant="contained" color="primary" onClick={this.handleOpen}>Serialization</Button>
                     <Button variant="contained" color="primary" onClick={this.saveToSpotify}>Save to Spotify</Button>
-                    <Button variant="contained" color="primary" onClick={this.addPlaylistNode}>Add a
-                        PlaylistNode</Button>
-                    <Button variant="contained" color="primary" onClick={this.addAddNode}>Add an AddNode</Button>
-                    <Button variant="contained" color="primary" onClick={this.addSubtractNode}>Add a
-                        SubtractNode</Button>
-                    <Button variant="contained" color="primary" onClick={this.addLimitNode}>Add a LimitNode</Button>
-                    <Button variant="contained" color="primary" onClick={this.addRandomizeNode}>Add a
-                        RandomizeNode</Button>
                     <Button variant="contained" color="primary" onClick={this.connectSpotify}>Connect Spotify</Button>
+                    <AddNodesElement engine={this.engine} model={this.model}/>
                 </div>
                 <Graph engine={this.engine}/>
                 <SerializationDialog model={this.model} onSave={this.handleSave} onClose={this.handleClose} configOpen={this.state.configOpen}/>
@@ -128,46 +111,6 @@ class App extends React.Component {
         this.setState({
             configOpen: false
         })
-    }
-
-    public addPlaylistNode() {
-        const node = PlaylistNodeModel.getInstance();
-        node.setPosition(0, 0);
-
-        this.model.addAll(node);
-        this.engine.repaintCanvas();
-    }
-
-    public addAddNode() {
-        const node = AddNodeModel.getInstance();
-        node.setPosition(50, 10);
-
-        this.model.addNode(node);
-        this.engine.repaintCanvas();
-    }
-
-    public addSubtractNode() {
-        const node = SubtractNodeModel.getInstance();
-        node.setPosition(50, 10);
-
-        this.model.addNode(node);
-        this.engine.repaintCanvas();
-    }
-
-    public addLimitNode() {
-        const node = LimitNodeModel.getInstance();
-        node.setPosition(50, 10);
-
-        this.model.addNode(node);
-        this.engine.repaintCanvas();
-    }
-
-    public addRandomizeNode() {
-        const node = RandomizeNodeModel.getInstance();
-        node.setPosition(50, 10);
-
-        this.model.addNode(node);
-        this.engine.repaintCanvas();
     }
 
     private addDefaultNodes() {
