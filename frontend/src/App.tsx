@@ -184,7 +184,7 @@ class App extends React.Component {
     }
 
     private connectSpotify() {
-        window.location.assign(`${process.env.REACT_APP_API_BASE}/auth/spotify/login?url=${process.env.REACT_APP_API_BASE}&authorization=Bearer ${this.state.keycloak.token}`);
+        window.location.assign(`${process.env.REACT_APP_API_BASE}/auth/spotify/login?url=${window.location.href}&authorization=Bearer ${this.state.keycloak.token}`);
     }
 
     private async saveToSpotify() {
