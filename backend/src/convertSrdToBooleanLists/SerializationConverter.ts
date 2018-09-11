@@ -77,6 +77,9 @@ export function convertSrdNodeToBooleanList(srdNode: any, serialized: any): any 
         case "my-top-tracks-node": {
             return convert.convertMyTopTracksNode(srdNode, serialized);
         }
+        case "album-node": {
+            return convert.convertAlbumNode(srdNode, serialized);
+        }
     }
     throw new UnknownNodeTypeError("Node type '" + srdNode.type + "' is unknown.");
 }

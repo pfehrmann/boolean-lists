@@ -15,3 +15,23 @@ export async function searchPlaylist(name: string) {
         }
     });
 }
+
+export async function searchAlbum(name: string) {
+    const untypedAlbums = await (await authorizedFetch(`${process.env.REACT_APP_API_BASE}/search/album?q=${ name }`)).json();
+    return untypedAlbums.map((album: any) => {
+        const artists: Array<{id: string, name: string}> = [];
+        for (const artist of album.artists) {
+            artists.push(artist);
+        }
+        return {
+            artists,
+            id: album.id,
+            image: {
+                height: album.image.height,
+                url: album.image.url,
+                width: album.image.width
+            },
+            name: album.name,
+        }
+    });
+}

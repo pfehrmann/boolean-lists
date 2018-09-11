@@ -10,6 +10,7 @@ import Graph from './Graph'
 import logo from './logo.svg';
 
 import AddNodeFactory from "./nodes/AddNode/AddNodeFactory";
+import AlbumNodeFactory from "./nodes/AlbumNode/AlbumNodeFactory";
 import LimitNodeFactory from "./nodes/LimitNode/LimitNodeFactory";
 import MyTopTracksNodeFactory from "./nodes/MyTopTracksNode/MyTopTracksNodeFactory";
 import PlaylistNodeFactory from "./nodes/PlaylistNode/PlaylistNodeFactory";
@@ -53,6 +54,7 @@ class App extends React.Component {
         engine.registerNodeFactory(new RandomizeNodeFactory());
         engine.registerNodeFactory(new SubtractNodeFactory());
         engine.registerNodeFactory(new MyTopTracksNodeFactory());
+        engine.registerNodeFactory(new AlbumNodeFactory());
 
         const model = new SRD.DiagramModel();
         this.model = model;

@@ -1,4 +1,5 @@
 import {getAll} from "../util";
+import {Album} from "./Album";
 import {Playlist} from "./Playlist";
 import {Track} from "./Track";
 import {User} from "./User";
@@ -33,9 +34,20 @@ export class InitializedSpotifyApi {
         return tracks;
     }
 
-    public async searchForPlaylists(name: string): Promise<Playlist[]> {
-        const rawPlaylists = await this.spotifyApi.searchPlaylists(name);
+    public async searchForPlaylists(query: string, options: { market?: string, limit?: number, offset?: number } = {
+        limit: 20,
+        offset: 0,
+    }): Promise<Playlist[]> {
+        const rawPlaylists = await this.spotifyApi.searchPlaylists(query, options);
         return rawPlaylists.body.playlists.items.map((item: any) => new Playlist(this, item));
+    }
+
+    public async searchForAlbums(query: string, options: { market?: string, limit?: number, offset?: number } = {
+        limit: 20,
+        offset: 0,
+    }): Promise<Album[]> {
+        const rawAlbums = await this.spotifyApi.searchAlbums(query, options);
+        return rawAlbums.body.albums.items.map((item: any) => new Album(this, item));
     }
 
     public async getAllUserPlaylists(id: any) {

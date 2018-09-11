@@ -83,3 +83,10 @@ export function convertMyTopTracksNode(srdNode: any, serialized: any): any {
         type: "TopTracksNode",
     };
 }
+
+export function convertAlbumNode(srdNode: any, serialized: any): any {
+    return {
+        id: srdNode.configuration.id,
+        type: "AlbumNode",
+    };
+}

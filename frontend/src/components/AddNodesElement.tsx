@@ -2,6 +2,7 @@ import Button from '@material-ui/core/Button';
 import * as React from "react";
 import * as SRD from "storm-react-diagrams";
 import AddNodeModel from "../nodes/AddNode/AddNodeModel";
+import AlbumNodeModel from "../nodes/AlbumNode/AlbumNodeModel";
 import LimitNodeModel from "../nodes/LimitNode/LimitNodeModel";
 import MyTopTracksNodeModel from "../nodes/MyTopTracksNode/MyTopTracksNodeModel";
 import PlaylistNodeModel from "../nodes/PlaylistNode/PlaylistNodeModel";
@@ -24,6 +25,7 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
         this.addRandomizeNode = this.addRandomizeNode.bind(this);
         this.addSubtractNode = this.addSubtractNode.bind(this);
         this.addMyTopTracksNode = this.addMyTopTracksNode.bind(this);
+        this.addAlbumNode = this.addAlbumNode.bind(this);
     }
 
     public render() {
@@ -35,6 +37,7 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
                 <Button variant="contained" color="primary" onClick={this.addLimitNode}>Add a LimitNode</Button>
                 <Button variant="contained" color="primary" onClick={this.addRandomizeNode}>Add a RandomizeNode</Button>
                 <Button variant="contained" color="primary" onClick={this.addMyTopTracksNode}>Add a MyTopTracksNode</Button>
+                <Button variant="contained" color="primary" onClick={this.addAlbumNode}>Add a AlbumNode</Button>
             </div>);
     }
 
@@ -80,6 +83,14 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
 
     public addMyTopTracksNode() {
         const node = MyTopTracksNodeModel.getInstance();
+        node.setPosition(50, 10);
+
+        this.props.model.addNode(node);
+        this.props.engine.repaintCanvas();
+    }
+
+    public addAlbumNode() {
+        const node = AlbumNodeModel.getInstance();
         node.setPosition(50, 10);
 
         this.props.model.addNode(node);

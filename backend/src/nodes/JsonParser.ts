@@ -1,5 +1,6 @@
 import {InitializedSpotifyApi} from "../spotify/SpotifyApi";
 import {AddNode} from "./AddNode";
+import {AlbumNode} from "./AlbumNode";
 import {IntermediatePlaylist} from "./IntermediatePlaylist";
 import {LimitNode} from "./LimitNode";
 import {RandomizeNode} from "./RandomizeNode";
@@ -26,6 +27,9 @@ export function fromJSON(api: InitializedSpotifyApi, json: { type: string }): Pr
         }
         case RandomizeNode.type: {
             return RandomizeNode.fromJSON(api, json);
+        }
+        case AlbumNode.type: {
+            return AlbumNode.fromJSON(api, json);
         }
     }
     throw new Error("Cannot deserialize json node.");

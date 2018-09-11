@@ -28,6 +28,10 @@ const keycloak = new Keycloak({store: sessionStore}, kcConfig);
 
 const app = express();
 
+app.use((err, req, res, next) => {
+    logger.error(err);
+    next(err);
+});
 app.use(cors());
 app.use((req: express.Request, res: any, next: express.NextFunction) => {
     if (req.query.authorization) {
@@ -44,6 +48,7 @@ app.use("/example", keycloak.protect(), SpotifyAuthorization.authorized(), apiEx
 app.post("/saveToSpotify", keycloak.protect(), SpotifyAuthorization.authorized(), async (req, res: any) => {
     const api: InitializedSpotifyApi = new InitializedSpotifyApi((req as any).api);
     const serialized = SerializationConverter.convertSrdToBooleanList(req.body);
+    logger.info("Using parsed node", serialized);
     const node = await fromJSON(api, serialized);
 
     let tracksToAdd = await node.getTracks();
