@@ -3,8 +3,8 @@ import * as Keycloak from 'keycloak-js';
 import * as React from 'react';
 import * as SRD from "storm-react-diagrams";
 import * as logger from 'winston';
-import * as RequestWrapper from "./api/RequestWrapper";
-import './App.css';
+import * as RequestWrapper from "../api/RequestWrapper";
+import '../App.css';
 import {SerializationDialog} from "./components/SerializationDialog";
 import Graph from './Graph'
 
