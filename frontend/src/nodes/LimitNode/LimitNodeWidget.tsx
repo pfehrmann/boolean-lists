@@ -11,25 +11,25 @@ import * as SRD from "storm-react-diagrams";
 import {AbstractNodeWidget, IAbstractNodeProps} from "../AbstractNodeWidget";
 import LimitNodeModel from "./LimitNodeModel";
 
-export interface IPlaylistNodeProps extends IAbstractNodeProps<LimitNodeModel> {
+export interface ILimitNodeProps extends IAbstractNodeProps<LimitNodeModel> {
     node: LimitNodeModel;
     diagramEngine: SRD.DiagramEngine;
 }
 
-interface IPlaylistNodeState {
+interface ILimitNodeState {
     configOpen: boolean;
     limit: number;
     oldLimit: number;
 }
 
-export default class LimitNodeWidget extends AbstractNodeWidget<IPlaylistNodeProps> {
+export default class LimitNodeWidget extends AbstractNodeWidget<ILimitNodeProps> {
     private static stopPropagation(event: any) {
         event.stopPropagation();
     }
 
-    public state: IPlaylistNodeState;
+    public state: ILimitNodeState;
 
-    constructor(props: IPlaylistNodeProps) {
+    constructor(props: ILimitNodeProps) {
         super("limit-node", props);
 
         this.state = {
