@@ -11,6 +11,7 @@ import logo from './logo.svg';
 
 import AddNodeFactory from "./nodes/AddNode/AddNodeFactory";
 import LimitNodeFactory from "./nodes/LimitNode/LimitNodeFactory";
+import MyTopTracksNodeFactory from "./nodes/MyTopTracksNode/MyTopTracksNodeFactory";
 import PlaylistNodeFactory from "./nodes/PlaylistNode/PlaylistNodeFactory";
 import RandomizeNodeFactory from "./nodes/RandomizeNode/RandomizeNodeFactory";
 import SubtractNodeFactory from "./nodes/SubtractNode/SubtractNodeFactory";
@@ -51,6 +52,7 @@ class App extends React.Component {
         engine.registerNodeFactory(new LimitNodeFactory());
         engine.registerNodeFactory(new RandomizeNodeFactory());
         engine.registerNodeFactory(new SubtractNodeFactory());
+        engine.registerNodeFactory(new MyTopTracksNodeFactory());
 
         const model = new SRD.DiagramModel();
         this.model = model;

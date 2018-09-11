@@ -76,3 +76,10 @@ export function convertRandomizeNode(srdNode: any, serialized: any): any {
         type: "RandomizeNode",
     };
 }
+
+export function convertMyTopTracksNode(srdNode: any, serialized: any): any {
+    return {
+        timeRange: srdNode.configuration.timeRange,
+        type: "TopTracksNode",
+    };
+}
