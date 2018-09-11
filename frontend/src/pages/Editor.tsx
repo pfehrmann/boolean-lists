@@ -5,20 +5,20 @@ import * as SRD from "storm-react-diagrams";
 import * as logger from 'winston';
 import * as RequestWrapper from "../api/RequestWrapper";
 import '../App.css';
-import {SerializationDialog} from "./components/SerializationDialog";
-import Graph from './Graph'
+import Graph from '../components/Graph'
+import {SerializationDialog} from "../components/SerializationDialog";
 
-import AddNodeFactory from "./nodes/AddNode/AddNodeFactory";
-import AlbumNodeFactory from "./nodes/AlbumNode/AlbumNodeFactory";
-import LimitNodeFactory from "./nodes/LimitNode/LimitNodeFactory";
-import MyTopTracksNodeFactory from "./nodes/MyTopTracksNode/MyTopTracksNodeFactory";
-import PlaylistNodeFactory from "./nodes/PlaylistNode/PlaylistNodeFactory";
-import RandomizeNodeFactory from "./nodes/RandomizeNode/RandomizeNodeFactory";
-import SubtractNodeFactory from "./nodes/SubtractNode/SubtractNodeFactory";
+import AddNodeFactory from "../nodes/AddNode/AddNodeFactory";
+import AlbumNodeFactory from "../nodes/AlbumNode/AlbumNodeFactory";
+import LimitNodeFactory from "../nodes/LimitNode/LimitNodeFactory";
+import MyTopTracksNodeFactory from "../nodes/MyTopTracksNode/MyTopTracksNodeFactory";
+import PlaylistNodeFactory from "../nodes/PlaylistNode/PlaylistNodeFactory";
+import RandomizeNodeFactory from "../nodes/RandomizeNode/RandomizeNodeFactory";
+import SubtractNodeFactory from "../nodes/SubtractNode/SubtractNodeFactory";
 
-import {AddNodesElement} from "./components/AddNodesElement";
-import AddNodeModel from "./nodes/AddNode/AddNodeModel";
-import PlaylistNodeModel from "./nodes/PlaylistNode/PlaylistNodeModel";
+import {AddNodesElement} from "../components/AddNodesElement";
+import AddNodeModel from "../nodes/AddNode/AddNodeModel";
+import PlaylistNodeModel from "../nodes/PlaylistNode/PlaylistNodeModel";
 
 interface IEditorState {
     configOpen: boolean;
