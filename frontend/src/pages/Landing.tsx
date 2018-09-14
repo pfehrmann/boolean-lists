@@ -1,5 +1,6 @@
 import * as React from 'react';
 import '../App.css';
+import * as concert from './concert.jpg';
 
 class Landing extends React.Component {
     constructor(props: any) {
@@ -8,8 +9,8 @@ class Landing extends React.Component {
 
     public render() {
         return (
-            <div className="App">
-                Landing
+            <div>
+                <img src={concert} className={"header-image"}/>
             </div>
         );
     }

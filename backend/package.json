@@ -4,8 +4,8 @@
   "description": "Backend for the boolean lists project",
   "main": "dist/index.js",
   "scripts": {
-    "start": "nodemon dist/server.js",
-    "debug": "nodemon --inspect-brk dist/server.js",
+    "start": "gulp",
+    "debug": "gulp --debug",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Philipp Fehrmann",

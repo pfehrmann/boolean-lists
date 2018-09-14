@@ -96,7 +96,7 @@ export default class MyTopTracksNodeWidget extends AbstractNodeWidget<IMyTopTrac
 
     private handleChange (event: any) {
         this.setState({ [event.target.name]: event.target.value });
-    };
+    }
 
     private handleSave() {
         this.setState({

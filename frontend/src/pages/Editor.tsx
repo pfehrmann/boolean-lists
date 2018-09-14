@@ -4,9 +4,10 @@ import * as React from 'react';
 import * as SRD from "storm-react-diagrams";
 import * as logger from 'winston';
 import * as RequestWrapper from "../api/RequestWrapper";
-import '../App.css';
 import Graph from '../components/Graph'
+import {SaveDialog} from "../components/SaveDialog";
 import {SerializationDialog} from "../components/SerializationDialog";
+import './Editor.css';
 
 import AddNodeFactory from "../nodes/AddNode/AddNodeFactory";
 import AlbumNodeFactory from "../nodes/AlbumNode/AlbumNodeFactory";
@@ -20,28 +21,38 @@ import {AddNodesElement} from "../components/AddNodesElement";
 import AddNodeModel from "../nodes/AddNode/AddNodeModel";
 import PlaylistNodeModel from "../nodes/PlaylistNode/PlaylistNodeModel";
 
+import * as User from '../api/User';
+
 interface IEditorState {
     configOpen: boolean;
     loginSpotifyOpen: boolean;
     keycloak: Keycloak.KeycloakInstance;
+    saveOpen: boolean;
+    name: string;
+    description: string;
 }
 
-class Editor extends React.Component {
+interface IEditorProps {
+    match?: any;
+}
+
+class Editor extends React.Component<IEditorProps> {
     public state: IEditorState;
 
     private readonly engine: SRD.DiagramEngine;
     private readonly model: SRD.DiagramModel;
 
-    constructor(props: any) {
+    constructor(props: IEditorProps) {
         super(props);
 
         this.state = {
             configOpen: false,
-            keycloak: Keycloak("/keycloak.json"),
-            loginSpotifyOpen: false
+            description: "",
+            keycloak: (window as any).keycloak,
+            loginSpotifyOpen: false,
+            name: "",
+            saveOpen: false
         };
-
-        RequestWrapper.setKeycloak(this.state.keycloak);
 
         const engine = new SRD.DiagramEngine();
         engine.installDefaultFactories();
@@ -58,8 +69,6 @@ class Editor extends React.Component {
         const model = new SRD.DiagramModel();
         this.model = model;
 
-        this.addDefaultNodes();
-
         engine.setDiagramModel(model);
         this.engine = engine;
 
@@ -69,6 +78,7 @@ class Editor extends React.Component {
         this.handleOpen = this.handleOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.handleSave = this.handleSave.bind(this);
+        this.savePlaylist = this.savePlaylist.bind(this);
     }
 
     public render() {
@@ -78,17 +88,36 @@ class Editor extends React.Component {
                     <Button variant="contained" color="primary" onClick={this.handleOpen}>Serialization</Button>
                     <Button variant="contained" color="primary" onClick={this.saveToSpotify}>Save to Spotify</Button>
                     <Button variant="contained" color="primary" onClick={this.connectSpotify}>Connect Spotify</Button>
+                    <Button variant="contained" color="primary" onClick={this.savePlaylist}>Save BooleanList</Button>
                     <AddNodesElement engine={this.engine} model={this.model}/>
                 </div>
                 <Graph engine={this.engine}/>
                 <SerializationDialog model={this.model} onSave={this.handleSave} onClose={this.handleClose}
                                      configOpen={this.state.configOpen}/>
+                <SaveDialog model={this.model} open={this.state.saveOpen} onClose={this.handleClose} name={this.state.name} description={this.state.description}/>
             </div>
         );
     }
 
-    public componentDidMount() {
-        this.state.keycloak.init({onLoad: 'login-required'});
+    public async componentDidMount() {
+        if (!this.state.keycloak.authenticated) {
+            this.state.keycloak.login().error(() => {
+                alert("login failed.");
+            });
+        }
+
+        const id = this.props.match.params.id;
+        if (id) {
+            const playlist = await User.playlist(id);
+            this.setState({
+                description: playlist.description,
+                name: playlist.name
+            });
+            this.model.deSerializeDiagram(JSON.parse(playlist.graph), this.engine);
+            this.engine.repaintCanvas();
+        } else {
+            this.addDefaultNodes();
+        }
     }
 
     public handleOpen() {
@@ -97,9 +126,16 @@ class Editor extends React.Component {
         });
     }
 
+    public savePlaylist() {
+        this.setState({
+            saveOpen: true
+        });
+    }
+
     public handleClose() {
         this.setState({
-            configOpen: false
+            configOpen: false,
+            saveOpen: false
         });
     }
 

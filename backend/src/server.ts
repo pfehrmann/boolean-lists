@@ -12,6 +12,7 @@ import {fromJSON} from "./nodes/JsonParser";
 import search from "./search/Search";
 import * as SpotifyAuthorization from "./spotify/Authorization";
 import {InitializedSpotifyApi} from "./spotify/SpotifyApi";
+import Users from "./users/Users";
 
 import {shuffleArray} from "./util";
 const kcConfig = require("../keycloak.json");
@@ -44,6 +45,7 @@ app.use(keycloak.middleware());
 app.use(express.json());
 app.use("/search", keycloak.protect(), SpotifyAuthorization.authorized(), search);
 app.use("/example", keycloak.protect(), SpotifyAuthorization.authorized(), apiExample);
+app.use("/user", keycloak.protect(), Users);
 
 app.post("/saveToSpotify", keycloak.protect(), SpotifyAuthorization.authorized(), async (req, res: any) => {
     const api: InitializedSpotifyApi = new InitializedSpotifyApi((req as any).api);

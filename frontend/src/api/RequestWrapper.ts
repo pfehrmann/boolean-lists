@@ -1,6 +1,7 @@
-let keycloak: Keycloak.KeycloakInstance;
+import * as Keycloak from "keycloak-js";
 
 export async function authorizedFetch(input?: Request | string, init?: RequestInit): Promise<Response> {
+    const keycloak: Keycloak.KeycloakInstance = (window as any).keycloak;
     await keycloak.updateToken(30);
     if(!keycloak.token) {
         throw new Error("Not authorized");
@@ -22,8 +23,4 @@ export async function authorizedFetch(input?: Request | string, init?: RequestIn
     }
 
     return await fetch(input, init);
-}
-
-export function setKeycloak(keycloakInstance: Keycloak.KeycloakInstance) {
-    keycloak = keycloakInstance;
 }

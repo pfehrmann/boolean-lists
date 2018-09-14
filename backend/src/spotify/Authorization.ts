@@ -1,23 +1,10 @@
 import * as express from "express";
-import * as mongoose from "mongoose";
 import * as SpotifyWebApi from "spotify-web-api-node";
 import * as uuid from "uuid/v1";
+import {User} from "../users/Users";
 
 const authRequests: Map<string, (spotifyWebApi: any, res: express.Response) => any> =
     new Map<string, (spotifyWebApi: any, res: express.Response) => any>();
-
-mongoose.connect(process.env.MONGOOSE_CONNECTION_STRING);
-
-const Schema = mongoose.Schema;
-
-const UserSchema = new Schema({
-    accessToken: String,
-    expiresAt: Number,
-    id: String,
-    refreshToken: String,
-});
-
-const User = mongoose.model("User", UserSchema);
 
 export function authorized(): express.Handler {
     return async (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -37,7 +24,7 @@ async function addApiToRequest(req: express.Request) {
     const user = await User.findOne({id: userId});
 
     if (user) {
-        if (user.accessToken && user.refreshToken) {
+        if (user.authorization && user.authorization.accessToken && user.authorization.refreshToken) {
             let api = userToSpotifyApi(user);
 
             if (Date.now() > user.expiresAt) {
@@ -53,19 +40,19 @@ async function addApiToRequest(req: express.Request) {
 
 function userToSpotifyApi(user: any) {
     const api = createSpotifyApi();
-    api.setAccessToken(user.accessToken);
-    api.setRefreshToken(user.refreshToken);
+    api.setAccessToken(user.authorization.accessToken);
+    api.setRefreshToken(user.authorization.refreshToken);
     return api;
 }
 
 async function refreshCredentials(user: any) {
     const api = userToSpotifyApi(user);
     const response = await api.refreshAccessToken();
-    user.accessToken = response.body.access_token;
+    user.authorization.accessToken = response.body.access_token;
     if (response.body.refreshToken) {
-        user.refreshToken = response.body.refresh_token;
+        user.authorization.refreshToken = response.body.refresh_token;
     }
-    user.expiresAt = response.body.expires_in * 1000 + Date.now();
+    user.authorization.expiresAt = response.body.expires_in * 1000 + Date.now();
     user.save();
     return userToSpotifyApi(user);
 }
@@ -109,9 +96,12 @@ export function getRouter(keycloak: any): express.Router {
             // save tokens to db
             const userId: string = (req as any).kauth.grant.access_token.content.sub;
             const user = await User.findOne({id: userId});
-            user.accessToken = spotifyApi.getAccessToken();
-            user.refreshToken = spotifyApi.getRefreshToken();
-            user.expiresAt = spotifyApi.expiresAt;
+            if (!user.authorization) {
+                user.authorization = {};
+            }
+            user.authorization.accessToken = spotifyApi.getAccessToken();
+            user.authorization.refreshToken = spotifyApi.getRefreshToken();
+            user.authorization.expiresAt = spotifyApi.expiresAt;
             user.save();
 
             authorizedRes.redirect(req.query.url);

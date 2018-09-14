@@ -1,0 +1,10 @@
+{
+  "realm": "boolean-lists",
+  "auth-server-url": "http://localhost:8080/auth",
+  "ssl-required": "none",
+  "resource": "node-backend",
+  "credentials": {
+    "secret": "2a0192c4-b888-401f-bccd-1c14f09d7f26"
+  },
+  "confidential-port": 0
+}
