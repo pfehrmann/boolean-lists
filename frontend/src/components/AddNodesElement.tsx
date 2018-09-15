@@ -32,13 +32,7 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
             anchorEl: undefined
         };
 
-        this.addPlaylistNode = this.addPlaylistNode.bind(this);
-        this.addAddNode = this.addAddNode.bind(this);
-        this.addLimitNode = this.addLimitNode.bind(this);
-        this.addRandomizeNode = this.addRandomizeNode.bind(this);
-        this.addSubtractNode = this.addSubtractNode.bind(this);
-        this.addMyTopTracksNode = this.addMyTopTracksNode.bind(this);
-        this.addAlbumNode = this.addAlbumNode.bind(this);
+        this.addNode = this.addNode.bind(this);
 
         this.handleClick = this.handleClick.bind(this);
         this.handleClose = this.handleClose.bind(this);
@@ -63,13 +57,13 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
                     open={Boolean(this.state.anchorEl)}
                     onClose={this.handleClose}
                 >
-                    <MenuItem onClick={this.addPlaylistNode}>Add a PlaylistNode</MenuItem>
-                    <MenuItem onClick={this.addAddNode}>Add an AddNode</MenuItem>
-                    <MenuItem onClick={this.addSubtractNode}>Add a SubtractNode</MenuItem>
-                    <MenuItem onClick={this.addLimitNode}>Add a LimitNode</MenuItem>
-                    <MenuItem onClick={this.addRandomizeNode}>Add a RandomizeNode</MenuItem>
-                    <MenuItem onClick={this.addMyTopTracksNode}>Add a MyTopTracksNode</MenuItem>
-                    <MenuItem onClick={this.addAlbumNode}>Add a AlbumNode</MenuItem>
+                    <MenuItem onClick={this.addNode(PlaylistNodeModel.getInstance)}>Add a PlaylistNode</MenuItem>
+                    <MenuItem onClick={this.addNode(AddNodeModel.getInstance)}>Add an AddNode</MenuItem>
+                    <MenuItem onClick={this.addNode(SubtractNodeModel.getInstance)}>Add a SubtractNode</MenuItem>
+                    <MenuItem onClick={this.addNode(LimitNodeModel.getInstance)}>Add a LimitNode</MenuItem>
+                    <MenuItem onClick={this.addNode(RandomizeNodeModel.getInstance)}>Add a RandomizeNode</MenuItem>
+                    <MenuItem onClick={this.addNode(MyTopTracksNodeModel.getInstance)}>Add a MyTopTracksNode</MenuItem>
+                    <MenuItem onClick={this.addNode(AlbumNodeModel.getInstance)}>Add a AlbumNode</MenuItem>
                 </Menu>
             </div>
         );
@@ -83,66 +77,14 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
         this.setState({ anchorEl: undefined });
     };
 
-    public addPlaylistNode() {
-        this.handleClose();
-        const node = PlaylistNodeModel.getInstance();
-        node.setPosition(0, 0);
+    public addNode(nodeFunction: () => SRD.NodeModel): () => any {
+        return () => {
+            this.handleClose();
+            const node = nodeFunction();
+            node.setPosition(50, 10);
 
-        this.props.model.addAll(node);
-        this.props.engine.repaintCanvas();
-    }
-
-    public addAddNode() {
-        this.handleClose();
-        const node = AddNodeModel.getInstance();
-        node.setPosition(50, 10);
-
-        this.props.model.addNode(node);
-        this.props.engine.repaintCanvas();
-    }
-
-    public addSubtractNode() {
-        this.handleClose();
-        const node = SubtractNodeModel.getInstance();
-        node.setPosition(50, 10);
-
-        this.props.model.addNode(node);
-        this.props.engine.repaintCanvas();
-    }
-
-    public addLimitNode() {
-        this.handleClose();
-        const node = LimitNodeModel.getInstance();
-        node.setPosition(50, 10);
-
-        this.props.model.addNode(node);
-        this.props.engine.repaintCanvas();
-    }
-
-    public addRandomizeNode() {
-        this.handleClose();
-        const node = RandomizeNodeModel.getInstance();
-        node.setPosition(50, 10);
-
-        this.props.model.addNode(node);
-        this.props.engine.repaintCanvas();
-    }
-
-    public addMyTopTracksNode() {
-        this.handleClose();
-        const node = MyTopTracksNodeModel.getInstance();
-        node.setPosition(50, 10);
-
-        this.props.model.addNode(node);
-        this.props.engine.repaintCanvas();
-    }
-
-    public addAlbumNode() {
-        this.handleClose();
-        const node = AlbumNodeModel.getInstance();
-        node.setPosition(50, 10);
-
-        this.props.model.addNode(node);
-        this.props.engine.repaintCanvas();
+            this.props.model.addNode(node);
+            this.props.engine.repaintCanvas();
+        }
     }
 }
