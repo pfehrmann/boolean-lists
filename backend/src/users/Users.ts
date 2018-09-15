@@ -46,9 +46,7 @@ router.get("/playlists", async (req, res) => {
     const user = await getOrCreateUser(id);
 
     const playlists: IPlaylist[] = [];
-    for (const key of user.playlists.keys()) {
-        let playlist = user.playlists[key];
-        playlist = playlist._doc[Object.keys(playlist._doc)[0]];
+    for (const playlist of user.playlists) {
         playlists.push({
             description: playlist.description,
             graph: playlist.graph,
@@ -63,30 +61,39 @@ router.get("/playlist/:id", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
     const user = await getOrCreateUser(id);
 
-    const mongoosePlaylist = user.playlists.map((playlistItem: any) => {
-        const name = Object.keys(playlistItem._doc)[0];
-        return playlistItem._doc[name];
-    }).find((playlistItem: any) => playlistItem.name === req.params.id);
-
-    const playlist = {
-            description: mongoosePlaylist.description,
-            graph: mongoosePlaylist.graph,
-            name: mongoosePlaylist.name,
-        };
-
-    res.json(playlist);
+    const playlist = findPlaylist(user, req.params.id);
+    if (playlist) {
+        res.json({
+            description: playlist.description,
+            graph: playlist.graph,
+            name: playlist.name,
+        });
+    } else {
+        res.sendStatus(404);
+    }
 });
+
+function findPlaylist(user: any, name: string) {
+    return user.playlists.find((playlistItem: any) => playlistItem.name === name);
+}
 
 router.post("/playlists", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
     logger.info(`Searching user with id ${id}`);
     const user = await getOrCreateUser(id);
 
-    user.playlists.push({
-        description: req.body.description,
-        graph: req.body.graph,
-        name: req.body.name,
-    });
+    const playlist = findPlaylist(user, req.body.name);
+    if (playlist) {
+        playlist.description = req.body.description;
+        playlist.graph = req.body.graph;
+        playlist.name = req.body.name;
+    } else {
+        user.playlists.push({
+            description: req.body.description,
+            graph: req.body.graph,
+            name: req.body.name,
+        });
+    }
     await user.save();
 
     res.sendStatus(200);
