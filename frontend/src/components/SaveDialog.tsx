@@ -33,10 +33,11 @@ export class SaveDialog extends React.Component<ISerializationDialog> {
         this.handleClose = this.handleClose.bind(this);
         this.handleSave = this.handleSave.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.handleOpen = this.handleOpen.bind(this);
     }
 
     public render() {
-        return (<Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.props.open}>
+        return (<Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.props.open} onEnter={this.handleOpen}>
             <DialogTitle id="simple-dialog-title">Save BooleanList</DialogTitle>
             <DialogContent>
                 <DialogContentText>
@@ -59,7 +60,7 @@ export class SaveDialog extends React.Component<ISerializationDialog> {
                     fullWidth={true}
                     inputProps={{name: "description"}}
                     onChange={this.handleChange}
-                    value={this.props.description}
+                    value={this.state.description}
                 />
             </DialogContent>
             <DialogActions>
@@ -67,7 +68,7 @@ export class SaveDialog extends React.Component<ISerializationDialog> {
                     Cancel
                 </Button>
                 <Button onClick={this.handleSave} color="primary">
-                    Set Graph
+                    Save BooleanList
                 </Button>
             </DialogActions>
         </Dialog>);
@@ -81,11 +82,26 @@ export class SaveDialog extends React.Component<ISerializationDialog> {
         this.props.onClose();
     }
 
+    private handleOpen() {
+        if(!this.state.name) {
+            this.setState({
+                name: this.props.name
+            });
+        }
+
+        if(!this.state.description) {
+            this.setState({
+                name: this.props.name
+            });
+        }
+    }
+
     private handleSave() {
         User.addPlaylist({
             description: this.state.description,
             graph: JSON.stringify(this.props.model.serializeDiagram()),
             name: this.state.name
-        })
+        });
+        this.handleClose();
     }
 }
