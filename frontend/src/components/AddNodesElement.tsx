@@ -16,6 +16,7 @@ import SubtractNodeModel from "../nodes/SubtractNode/SubtractNodeModel";
 interface IAddNodesElementProps {
     engine: SRD.DiagramEngine;
     model: SRD.DiagramModel;
+    className: any;
 }
 
 interface IAddNodesElementState {
@@ -45,7 +46,7 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
 
     public render() {
         return (
-            <div>
+            <div className={this.props.className}>
                 <Button
                     variant="fab"
                     color="primary"

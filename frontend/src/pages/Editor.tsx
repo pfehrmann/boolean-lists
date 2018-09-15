@@ -1,4 +1,7 @@
 import Button from '@material-ui/core/Button';
+import {withStyles} from '@material-ui/core/styles';
+import {Theme} from "@material-ui/core/styles/createMuiTheme";
+import {StyleRules} from "@material-ui/core/styles/withStyles";
 import * as Keycloak from 'keycloak-js';
 import * as React from 'react';
 import * as SRD from "storm-react-diagrams";
@@ -23,6 +26,7 @@ import PlaylistNodeModel from "../nodes/PlaylistNode/PlaylistNodeModel";
 
 import * as User from '../api/User';
 
+
 interface IEditorState {
     configOpen: boolean;
     loginSpotifyOpen: boolean;
@@ -34,6 +38,7 @@ interface IEditorState {
 
 interface IEditorProps {
     match?: any;
+    classes: any;
 }
 
 class Editor extends React.Component<IEditorProps> {
@@ -89,9 +94,9 @@ class Editor extends React.Component<IEditorProps> {
                     <Button variant="contained" color="primary" onClick={this.saveToSpotify}>Save to Spotify</Button>
                     <Button variant="contained" color="primary" onClick={this.connectSpotify}>Connect Spotify</Button>
                     <Button variant="contained" color="primary" onClick={this.savePlaylist}>Save BooleanList</Button>
-                    <AddNodesElement engine={this.engine} model={this.model}/>
                 </div>
                 <Graph engine={this.engine}/>
+                <AddNodesElement engine={this.engine} model={this.model} className={this.props.classes.fab}/>
                 <SerializationDialog model={this.model} onSave={this.handleSave} onClose={this.handleClose}
                                      configOpen={this.state.configOpen}/>
                 <SaveDialog model={this.model} open={this.state.saveOpen} onClose={this.handleClose} name={this.state.name} description={this.state.description}/>
@@ -178,4 +183,14 @@ class Editor extends React.Component<IEditorProps> {
     }
 }
 
-export default Editor;
+function styles(theme: Theme): StyleRules {
+    return {
+        fab: {
+            bottom: theme.spacing.unit * 2,
+            position: 'absolute',
+            right: theme.spacing.unit * 2,
+        }
+    }
+}
+
+export default withStyles(styles, {withTheme: true})(Editor);

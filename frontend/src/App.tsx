@@ -55,8 +55,11 @@ class App extends React.Component<{ classes: any }> {
     public render() {
         return (
             <BrowserRouter>
-                <div>
-                    <AppBar position="static">
+                <div style={{minHeight: "100vh", maxHeight: "100vh", display: "flex", flexFlow: "column"}}>
+                    <AppBar position="static" elevation={0} style={{flex: "0 1 auto"}}>
+                        <Toolbar />
+                    </AppBar>
+                    <AppBar position="fixed">
                         <Toolbar>
                             <IconButton className={this.props.classes.menuButton} color="inherit" aria-label="Menu"
                                         onClick={this.toggleDrawer(true)}>
@@ -104,10 +107,11 @@ class App extends React.Component<{ classes: any }> {
                             </List>
                         </div>
                     </Drawer>
-
-                    <Route exact={true} path="/" component={Landing}/>
-                    <Route path="/editor/:id?" component={Editor}/>
-                    <Route path="/playlists" component={Playlists}/>
+                    <div style={{display: "flex", flexFlow: "column", flex: "1 1 auto"}}>
+                        <Route exact={true} path="/" component={Landing}/>
+                        <Route path="/editor/:id?" component={Editor}/>
+                        <Route path="/playlists" component={Playlists}/>
+                    </div>
                 </div>
             </BrowserRouter>
         );
