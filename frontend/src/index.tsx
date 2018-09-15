@@ -33,8 +33,9 @@ async function initialize() {
 
     ReactDOM.render(
             <MuiThemeProvider theme={theme}>
-                <CssBaseline />
+                <CssBaseline>
                 <App/>
+                </CssBaseline>
             </MuiThemeProvider>,
         document.getElementById('root') as HTMLElement
     );
