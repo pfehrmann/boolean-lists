@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as User from '../api/User';
 import '../App.css';
-
 // import Button from '@material-ui/core/Button';
 import {Grid} from "@material-ui/core";
 import Card from '@material-ui/core/Card';
@@ -14,6 +13,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 import EditIcon from '@material-ui/icons/Edit';
+import {Link} from 'react-router-dom';
 
 class Landing extends React.Component {
     public state: { playlists: Array<{ name: string, description: string, graph: string }> };
@@ -35,23 +35,27 @@ class Landing extends React.Component {
                             <Typography color="textSecondary">
                                 Your playlists
                             </Typography>
-                            <List style={{ maxWidth: '500px' }}>
+                            <List style={{maxWidth: '500px'}}>
                                 {
                                     this.state.playlists.map((playlist, index) => {
                                         return (
                                             <div key={index}>
                                                 <ListItem>
                                                     <ListItemText>
-                                                        <a href={`/editor/${playlist.name}`}>{playlist.name}</a>
+                                                        {playlist.name}
                                                     </ListItemText>
-                                                    <ListItemSecondaryAction>
-                                                        <IconButton>
-                                                            <EditIcon/>
-                                                        </IconButton>
-                                                    </ListItemSecondaryAction>
+                                                    <Link to={`/editor/${playlist.name}`}
+                                                          style={{textDecoration: 'none'}}>
+                                                        <ListItemSecondaryAction>
+                                                            <IconButton>
+                                                                <EditIcon/>
+                                                            </IconButton>
+                                                        </ListItemSecondaryAction>
+                                                    </Link>
                                                 </ListItem>
                                                 <Divider inset={true}/>
-                                            </div>)
+                                            </div>
+                                        )
                                     })
                                 }
                             </List>

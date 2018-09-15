@@ -76,7 +76,7 @@ class App extends React.Component<{ classes: any }> {
                             onKeyDown={this.toggleDrawer(false)}
                         >
                             <List>
-                                <Link to="/">
+                                <Link to="/" style={{ textDecoration: 'none' }}>
                                     <ListItem button={true}>
                                         <ListItemIcon>
                                             <HomeIcon/>
@@ -84,7 +84,7 @@ class App extends React.Component<{ classes: any }> {
                                         <ListItemText primary="Home"/>
                                     </ListItem>
                                 </Link>
-                                <Link to="/editor">
+                                <Link to="/editor" style={{ textDecoration: 'none' }}>
                                     <ListItem button={true}>
                                         <ListItemIcon>
                                             <EditIcon/>
@@ -93,7 +93,7 @@ class App extends React.Component<{ classes: any }> {
                                     </ListItem>
                                 </Link>
                                 <Divider/>
-                                <Link to="/playlists">
+                                <Link to="/playlists" style={{ textDecoration: 'none' }}>
                                     <ListItem button={true}>
                                         <ListItemIcon>
                                             <SendIcon/>
