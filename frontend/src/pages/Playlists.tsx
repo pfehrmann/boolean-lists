@@ -1,7 +1,3 @@
-import * as React from 'react';
-import * as User from '../api/User';
-import '../App.css';
-// import Button from '@material-ui/core/Button';
 import {Grid} from "@material-ui/core";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -13,7 +9,10 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 import EditIcon from '@material-ui/icons/Edit';
+import * as React from 'react';
 import {Link} from 'react-router-dom';
+import * as User from '../api/User';
+import '../App.css';
 
 class Landing extends React.Component {
     public state: { playlists: Array<{ name: string, description: string, graph: string }> };
