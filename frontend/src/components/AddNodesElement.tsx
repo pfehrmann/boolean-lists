@@ -84,6 +84,8 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
             node.setPosition(50, 10);
 
             this.props.model.addNode(node);
+            this.props.model.clearSelection();
+            node.setSelected(true);
             this.props.engine.repaintCanvas();
         }
     }
