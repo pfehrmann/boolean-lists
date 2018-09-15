@@ -12,7 +12,6 @@ import EditIcon from '@material-ui/icons/Edit';
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 import * as User from '../api/User';
-import '../App.css';
 
 class Landing extends React.Component {
     public state: { playlists: Array<{ name: string, description: string, graph: string }> };
