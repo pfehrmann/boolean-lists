@@ -1,6 +1,9 @@
 import {authorizedFetch} from "./RequestWrapper";
 
 export async function searchPlaylist(name: string) {
+    if(!name) {
+        return [];
+    }
     const untypedPlaylists = await (await authorizedFetch(`${process.env.REACT_APP_API_BASE}/search/playlist?q=${ name }`)).json();
     return untypedPlaylists.map((playlist: any) => {
         return {
@@ -17,6 +20,10 @@ export async function searchPlaylist(name: string) {
 }
 
 export async function searchAlbum(name: string) {
+    if(!name) {
+        return [];
+    }
+
     const untypedAlbums = await (await authorizedFetch(`${process.env.REACT_APP_API_BASE}/search/album?q=${ name }`)).json();
     return untypedAlbums.map((album: any) => {
         const artists: Array<{id: string, name: string}> = [];
