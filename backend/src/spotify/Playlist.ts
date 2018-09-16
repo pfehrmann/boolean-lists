@@ -9,9 +9,15 @@ const playlistCache = new Cache("playlist-cache");
 
 export class Playlist {
     public static async fromSpotifyUri(api: InitializedSpotifyApi, username: string, id: string): Promise<Playlist> {
-        const response = await api.spotifyApi.getPlaylist(username, id);
-        await sleep(10);
-        return new Playlist(api, response.body);
+        const key = JSON.stringify({username, id});
+        if (! await playlistCache.has(key)) {
+            const response = await api.spotifyApi.getPlaylist(username, id);
+            const playlist = new Playlist(api, response.body);
+            playlistCache.set(key, JSON.stringify(response.body));
+            return playlist;
+        } else {
+            return new Playlist(api, JSON.parse((await playlistCache.get(key)).value));
+        }
     }
 
     private api: InitializedSpotifyApi;
