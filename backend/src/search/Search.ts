@@ -10,19 +10,24 @@ const router: express.Router = express.Router();
 router.use(bodyParser.json());
 
 router.get("/playlist", async (req, res) => {
-    const api = new InitializedSpotifyApi((req as any).api);
-    logger.info(req);
-    const internalPlaylists = await api.searchForPlaylists(req.query.q);
-    const playlists = internalPlaylists.map((playlist: Playlist) => {
-        return {
-            id: playlist.id(),
-            image: playlist.image(),
-            name: playlist.name(),
-            userId: playlist.userId(),
-        };
-    });
+    try {
+        const api = new InitializedSpotifyApi((req as any).api);
+        const internalPlaylists = await api.searchForPlaylists(req.query.q);
+        logger.info(internalPlaylists);
+        const playlists = internalPlaylists.map((playlist: Playlist) => {
+            return {
+                id: playlist.id(),
+                image: playlist.image(),
+                name: playlist.name(),
+                userId: playlist.userId(),
+            };
+        });
 
-    res.json(playlists);
+        res.json(playlists);
+    } catch (error) {
+        logger.error(error.trace);
+        res.sendStatus(500);
+    }
 });
 
 router.get("/album", async (req, res) => {
