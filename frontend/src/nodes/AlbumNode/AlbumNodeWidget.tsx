@@ -11,6 +11,7 @@ import * as SRD from "storm-react-diagrams";
 import * as logger from "winston";
 import * as Search from "../../api/Search";
 
+import List from "@material-ui/core/List/List";
 import {AlbumItem} from "../../components/AlbumItem";
 import {AbstractNodeWidget, IAbstractNodeProps} from "../AbstractNodeWidget";
 import AlbumNodeModel from "./AlbumNodeModel";
@@ -74,7 +75,9 @@ export default class AlbumNodeWidget extends AbstractNodeWidget<IAlbumNodeProps>
                         onChange={this.updateSearchQuery}
                         onKeyUp={_.throttle(this.handleKeypress, 250)}
                     />
+                    <List style={{maxWidth: "300px"}}>
                     {this.state.albumItems}
+                    </List>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={this.handleClose} color="primary">

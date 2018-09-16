@@ -4,6 +4,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import List from "@material-ui/core/List";
 import TextField from '@material-ui/core/TextField';
 import * as _ from "lodash";
 import * as React from "react";
@@ -74,7 +75,9 @@ export default class PlaylistNodeWidget extends AbstractNodeWidget<IPlaylistNode
                         onChange={this.updateSearchQuery}
                         onKeyUp={_.throttle(this.handleKeypress, 250)}
                     />
-                    {this.state.playlistItems}
+                    <List style={{maxWidth: "300px"}}>
+                        {this.state.playlistItems}
+                    </List>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={this.handleClose} color="primary">
