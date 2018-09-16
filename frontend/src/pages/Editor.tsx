@@ -179,7 +179,11 @@ class Editor extends React.Component<IEditorProps> {
             },
             method: "POST"
         });
-        logger.info(await response.json());
+        try {
+            logger.info(await response.json());
+        } catch (error) {
+            logger.error(error);
+        }
     }
 }
 
