@@ -1,6 +1,7 @@
 import * as express from "express";
 import * as SpotifyWebApi from "spotify-web-api-node";
 import * as uuid from "uuid/v1";
+import * as logger from "winston";
 import {User} from "../users/Users";
 
 const authRequests: Map<string, (spotifyWebApi: any, res: express.Response) => any> =
@@ -27,8 +28,10 @@ async function addApiToRequest(req: express.Request) {
         if (user.authorization && user.authorization.accessToken && user.authorization.refreshToken) {
             let api = userToSpotifyApi(user);
 
-            if (Date.now() > user.expiresAt) {
+            if (Date.now() > user.authorization.expiresAt) {
                 api = await refreshCredentials(user);
+            } else {
+                logger.debug(`Not refreshing token, valid util ${user.authorization.expiresAt}`);
             }
 
             (req as any).api = api;
@@ -46,6 +49,7 @@ function userToSpotifyApi(user: any) {
 }
 
 async function refreshCredentials(user: any) {
+    logger.info("Refershing credentials...");
     const api = userToSpotifyApi(user);
     const response = await api.refreshAccessToken();
     user.authorization.accessToken = response.body.access_token;
