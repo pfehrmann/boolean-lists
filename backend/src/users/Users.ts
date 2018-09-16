@@ -47,11 +47,13 @@ router.get("/playlists", async (req, res) => {
 
     const playlists: IPlaylist[] = [];
     for (const playlist of user.playlists) {
-        playlists.push({
-            description: playlist.description,
-            graph: playlist.graph,
-            name: playlist.name,
-        });
+        if (playlist.name && playlist.graph) {
+            playlists.push({
+                description: playlist.description,
+                graph: playlist.graph,
+                name: playlist.name,
+            });
+        }
     }
 
     res.json(playlists);
