@@ -12,7 +12,7 @@ export function convertAddNode(srdNode: any, serialized: any): any {
 
     return {
         playlists,
-        randomSelection: true,
+        randomSelection: false,
         type: "AddNode",
     };
 }
