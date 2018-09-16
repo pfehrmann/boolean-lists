@@ -101,4 +101,19 @@ router.post("/playlists", async (req, res) => {
     res.sendStatus(200);
 });
 
+router.delete("/playlist/:id", async (req, res) => {
+    const id: string = (req as any).kauth.grant.access_token.content.sub;
+    logger.info(`Searching user with id ${id}`);
+    const user = await getOrCreateUser(id);
+
+    const playlist = findPlaylist(user, req.params.id);
+    if (playlist) {
+        logger.info(`Found playlist ${req.params.id}, deleting it`);
+        await playlist.remove();
+        await user.save();
+    }
+
+    res.sendStatus(200);
+});
+
 export default router;

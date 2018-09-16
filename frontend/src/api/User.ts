@@ -34,3 +34,9 @@ export async function playlist(id: string) {
             name: rawPlaylist.name,
     }
 }
+
+export async function deletePlaylist(id: string) {
+    return authorizedFetch(`${process.env.REACT_APP_API_BASE}/user/playlist/${id}`, {
+        method: "DELETE"
+    })
+}
