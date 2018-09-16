@@ -91,7 +91,7 @@ export class SaveDialog extends React.Component<ISerializationDialog> {
 
         if(!this.state.description) {
             this.setState({
-                name: this.props.name
+                description: this.props.description
             });
         }
     }
