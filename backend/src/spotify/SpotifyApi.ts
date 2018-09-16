@@ -4,6 +4,8 @@ import {Playlist} from "./Playlist";
 import {Track} from "./Track";
 import {User} from "./User";
 
+import * as logger from "winston";
+
 export enum TimeRanges {
     LONG = "long_term",
     MEDIUM = "medium_term",
@@ -38,7 +40,9 @@ export class InitializedSpotifyApi {
         limit: 20,
         offset: 0,
     }): Promise<Playlist[]> {
+        logger.info(`Searching for playlists with query '${query}'`);
         const rawPlaylists = await this.spotifyApi.searchPlaylists(query, options);
+        logger.info(`Found some playlists. Mapping to correct objects...`);
         return rawPlaylists.body.playlists.items.map((item: any) => new Playlist(this, item));
     }
 
