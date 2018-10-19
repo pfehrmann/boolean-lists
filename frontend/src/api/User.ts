@@ -1,14 +1,8 @@
-import {authorizedFetch} from "./RequestWrapper";
+import axios from 'axios';
 
 export async function addPlaylist(playlistItem: { description: string; graph: string; name: string }) {
     try {
-        await authorizedFetch(`${process.env.REACT_APP_API_BASE}/user/playlists`, {
-            body: JSON.stringify(playlistItem),
-            headers: {
-                "Content-Type": "application/json; charset=utf-8",
-            },
-            method: "POST",
-        });
+        await axios.post(`${process.env.REACT_APP_API_BASE}/user/playlists`, JSON.stringify(playlistItem));
     } catch(err) {
         alert("Unexpected error");
     }
@@ -16,7 +10,7 @@ export async function addPlaylist(playlistItem: { description: string; graph: st
 
 
 export async function playlists() {
-    const playlistItems = await (await authorizedFetch(`${process.env.REACT_APP_API_BASE}/user/playlists`)).json();
+    const playlistItems = (await axios.get(`${process.env.REACT_APP_API_BASE}/user/playlists`)).data;
     return playlistItems.map((playlistItem: any) => {
         return {
             description: playlistItem.description,
@@ -27,7 +21,7 @@ export async function playlists() {
 }
 
 export async function playlist(id: string) {
-    const rawPlaylist = await (await authorizedFetch(`${process.env.REACT_APP_API_BASE}/user/playlist/${id}`)).json();
+    const rawPlaylist = (await axios.get(`${process.env.REACT_APP_API_BASE}/user/playlist/${id}`)).data;
     return {
             description: rawPlaylist.description,
             graph: rawPlaylist.graph,
@@ -36,7 +30,5 @@ export async function playlist(id: string) {
 }
 
 export async function deletePlaylist(id: string) {
-    return authorizedFetch(`${process.env.REACT_APP_API_BASE}/user/playlist/${id}`, {
-        method: "DELETE"
-    })
+    return axios.delete(`${process.env.REACT_APP_API_BASE}/user/playlist/${id}`);
 }

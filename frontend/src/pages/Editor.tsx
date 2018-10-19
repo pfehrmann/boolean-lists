@@ -2,11 +2,11 @@ import Button from '@material-ui/core/Button';
 import {withStyles} from '@material-ui/core/styles';
 import {Theme} from "@material-ui/core/styles/createMuiTheme";
 import {StyleRules} from "@material-ui/core/styles/withStyles";
+import axios from 'axios';
 import * as Keycloak from 'keycloak-js';
 import * as React from 'react';
 import * as SRD from "storm-react-diagrams";
 import * as logger from 'winston';
-import * as RequestWrapper from "../api/RequestWrapper";
 import Graph from '../components/Graph'
 import {SaveDialog} from "../components/SaveDialog";
 import {SerializationDialog} from "../components/SerializationDialog";
@@ -172,15 +172,9 @@ class Editor extends React.Component<IEditorProps> {
         const data = JSON.stringify(this.model.serializeDiagram());
         logger.info(data);
 
-        const response = await RequestWrapper.authorizedFetch(`${process.env.REACT_APP_API_BASE}/saveToSpotify`, {
-            body: data,
-            headers: {
-                "Content-Type": "application/json; charset=utf-8",
-            },
-            method: "POST"
-        });
+        const response = await axios.post(`${process.env.REACT_APP_API_BASE}/saveToSpotify`, data);
         try {
-            logger.info(await response.json());
+            logger.info(response.data);
         } catch (error) {
             logger.error(error);
         }

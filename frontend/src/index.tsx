@@ -2,6 +2,7 @@ import blue from '@material-ui/core/colors/blue';
 import red from '@material-ui/core/colors/red';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
+import Axios from 'axios';
 import * as Keycloak from "keycloak-js";
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -11,6 +12,8 @@ import './index.css';
 import registerServiceWorker from './registerServiceWorker';
 
 winston.add(new winston.transports.Console());
+
+Axios.defaults.headers.post['Content-Type'] = 'application/json; charset=utf-8';
 
 const theme = createMuiTheme({
     palette: {
@@ -25,9 +28,13 @@ async function initialize() {
     (window as any).keycloak = keycloak;
 
     await keycloak.init({onLoad: 'check-sso'});
+
     if (keycloak.authenticated) {
-        setInterval(() => {
-            keycloak.updateToken(10);
+        Axios.defaults.headers.common.Authorization = "Bearer " + keycloak.token;
+
+        setInterval(async () => {
+            await keycloak.updateToken(10);
+            Axios.defaults.headers.common.Authorization = "Bearer " + keycloak.token;
         }, 10000);
     }
 

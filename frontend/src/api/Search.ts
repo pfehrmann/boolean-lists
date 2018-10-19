@@ -1,10 +1,10 @@
-import {authorizedFetch} from "./RequestWrapper";
+import axios from 'axios';
 
 export async function searchPlaylist(name: string) {
     if(!name) {
         return [];
     }
-    const untypedPlaylists = await (await authorizedFetch(`${process.env.REACT_APP_API_BASE}/search/playlist?q=${ name }`)).json();
+    const untypedPlaylists = (await axios.get(`${process.env.REACT_APP_API_BASE}/search/playlist?q=${ name }`)).data;
     return untypedPlaylists.map((playlist: any) => {
         return {
             id: playlist.id,
@@ -24,7 +24,7 @@ export async function searchAlbum(name: string) {
         return [];
     }
 
-    const untypedAlbums = await (await authorizedFetch(`${process.env.REACT_APP_API_BASE}/search/album?q=${ name }`)).json();
+    const untypedAlbums = (await axios.get(`${process.env.REACT_APP_API_BASE}/search/album?q=${ name }`)).data;
     return untypedAlbums.map((album: any) => {
         const artists: Array<{id: string, name: string}> = [];
         for (const artist of album.artists) {
