@@ -7,10 +7,14 @@ const sourcemaps = require("gulp-sourcemaps");
 
 const tsProject = ts.createProject("tsconfig.json");
 
-if(argv.debug) {
-    gulp.task("default", ["build", "debug", "tslint", "watch"]);
+if(argv.production) {
+    gulp.task("default", ["build", "production", "tslint", "watch"]);
 } else {
-    gulp.task("default", ["build", "start", "tslint", "watch"]);
+    if (argv.debug) {
+        gulp.task("default", ["build", "debug", "tslint", "watch"]);
+    } else {
+        gulp.task("default", ["build", "start", "tslint", "watch"]);
+    }
 }
 
 gulp.task("watch", () => {
@@ -40,6 +44,14 @@ gulp.task("start", function () {
         script: "dist/server.js",
         ext: "js html",
         env: {"NODE_ENV": "development"}
+    });
+});
+
+gulp.task("production", function () {
+    nodemon({
+        script: "dist/server.js",
+        ext: "js html",
+        env: {"NODE_ENV": "production"}
     });
 });
 
