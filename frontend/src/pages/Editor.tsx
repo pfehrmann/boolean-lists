@@ -1,16 +1,16 @@
-import Button from '@material-ui/core/Button';
-import {withStyles} from '@material-ui/core/styles';
+import Button from "@material-ui/core/Button";
+import {withStyles} from "@material-ui/core/styles";
 import {Theme} from "@material-ui/core/styles/createMuiTheme";
 import {StyleRules} from "@material-ui/core/styles/withStyles";
-import axios from 'axios';
-import * as Keycloak from 'keycloak-js';
-import * as React from 'react';
+import axios from "axios";
+import * as Keycloak from "keycloak-js";
+import * as React from "react";
 import * as SRD from "storm-react-diagrams";
-import * as logger from 'winston';
-import Graph from '../components/Graph'
+import * as logger from "winston";
+import Graph from "../components/Graph";
 import {SaveDialog} from "../components/SaveDialog";
 import {SerializationDialog} from "../components/SerializationDialog";
-import './Editor.css';
+import "./Editor.css";
 
 import AddNodeFactory from "../nodes/AddNode/AddNodeFactory";
 import AlbumNodeFactory from "../nodes/AlbumNode/AlbumNodeFactory";
@@ -24,8 +24,7 @@ import {AddNodesElement} from "../components/AddNodesElement";
 import AddNodeModel from "../nodes/AddNode/AddNodeModel";
 import PlaylistNodeModel from "../nodes/PlaylistNode/PlaylistNodeModel";
 
-import * as User from '../api/User';
-
+import * as User from "../api/User";
 
 interface IEditorState {
     configOpen: boolean;
@@ -56,7 +55,7 @@ class Editor extends React.Component<IEditorProps> {
             keycloak: (window as any).keycloak,
             loginSpotifyOpen: false,
             name: "",
-            saveOpen: false
+            saveOpen: false,
         };
 
         const engine = new SRD.DiagramEngine();
@@ -97,9 +96,19 @@ class Editor extends React.Component<IEditorProps> {
                 </div>
                 <Graph engine={this.engine}/>
                 <AddNodesElement engine={this.engine} model={this.model} className={this.props.classes.fab}/>
-                <SerializationDialog model={this.model} onSave={this.handleSave} onClose={this.handleClose}
-                                     configOpen={this.state.configOpen}/>
-                <SaveDialog model={this.model} open={this.state.saveOpen} onClose={this.handleClose} name={this.state.name} description={this.state.description}/>
+                <SerializationDialog
+                    model={this.model}
+                    onSave={this.handleSave}
+                    onClose={this.handleClose}
+                    configOpen={this.state.configOpen}
+                />
+                <SaveDialog
+                    model={this.model}
+                    open={this.state.saveOpen}
+                    onClose={this.handleClose}
+                    name={this.state.name}
+                    description={this.state.description}
+                />
             </div>
         );
     }
@@ -116,7 +125,7 @@ class Editor extends React.Component<IEditorProps> {
             const playlist = await User.playlist(id);
             this.setState({
                 description: playlist.description,
-                name: playlist.name
+                name: playlist.name,
             });
             this.model.deSerializeDiagram(JSON.parse(playlist.graph), this.engine);
             this.engine.repaintCanvas();
@@ -127,28 +136,28 @@ class Editor extends React.Component<IEditorProps> {
 
     public handleOpen() {
         this.setState({
-            configOpen: true
+            configOpen: true,
         });
     }
 
     public savePlaylist() {
         this.setState({
-            saveOpen: true
+            saveOpen: true,
         });
     }
 
     public handleClose() {
         this.setState({
             configOpen: false,
-            saveOpen: false
+            saveOpen: false,
         });
     }
 
     public handleSave(graph: string) {
         this.model.deSerializeDiagram(JSON.parse(graph), this.engine);
         this.setState({
-            configOpen: false
-        })
+            configOpen: false,
+        });
     }
 
     private addDefaultNodes() {
@@ -165,7 +174,9 @@ class Editor extends React.Component<IEditorProps> {
     }
 
     private connectSpotify() {
-        window.location.assign(`${process.env.REACT_APP_API_BASE}/auth/spotify/login?url=${window.location.href}&authorization=Bearer ${this.state.keycloak.token}`);
+        window.location.assign(`${process.env.REACT_APP_API_BASE}/auth/spotify/login` +
+            `?url=${window.location.href}` +
+            `&authorization=Bearer ${this.state.keycloak.token}`);
     }
 
     private async saveToSpotify() {
@@ -185,10 +196,10 @@ function styles(theme: Theme): StyleRules {
     return {
         fab: {
             bottom: theme.spacing.unit * 2,
-            position: 'absolute',
+            position: "absolute",
             right: theme.spacing.unit * 2,
-        }
-    }
+        },
+    };
 }
 
 export default withStyles(styles, {withTheme: true})(Editor);

@@ -1,32 +1,32 @@
 import {Grid} from "@material-ui/core";
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import Divider from "@material-ui/core/Divider";
+import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List/List";
 import ListItem from "@material-ui/core/ListItem/ListItem";
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListItemText from '@material-ui/core/ListItemText';
-import Typography from '@material-ui/core/Typography';
-import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
-import * as React from 'react';
-import {Link} from 'react-router-dom';
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListItemText from "@material-ui/core/ListItemText";
+import Typography from "@material-ui/core/Typography";
+import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
+import * as React from "react";
+import {Link} from "react-router-dom";
 import * as logger from "winston";
-import * as User from '../api/User';
+import * as User from "../api/User";
 
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 
 class Landing extends React.Component {
     public state: {
         playlists: Array<{ name: string, description: string, graph: string }>,
         open: boolean,
-        deletePlaylist: string
+        deletePlaylist: string,
     };
 
     constructor(props: any) {
@@ -35,7 +35,7 @@ class Landing extends React.Component {
         this.state = {
             deletePlaylist: "",
             open: false,
-            playlists: []
+            playlists: [],
         };
 
         this.updatePlaylists = this.updatePlaylists.bind(this);
@@ -45,15 +45,16 @@ class Landing extends React.Component {
     }
 
     public render() {
+        /* tslint:disable */
         return (
-            <Grid container={true} justify={'center'} style={{marginTop: "2em"}}>
+            <Grid container={true} justify={"center"} style={{marginTop: "2em"}}>
                 <Grid item={true} md={6} sm={8} xs={12}>
                     <Card>
                         <CardContent>
                             <Typography color="textSecondary">
                                 Your playlists
                             </Typography>
-                            <List style={{maxWidth: '500px'}}>
+                            <List style={{maxWidth: "500px"}}>
                                 {
                                     this.state.playlists.map((playlist, index) => {
                                         return (
@@ -61,7 +62,7 @@ class Landing extends React.Component {
                                                 <ListItem>
 
                                                     <Link to={`/editor/${playlist.name}`}
-                                                          style={{textDecoration: 'none'}}>
+                                                          style={{textDecoration: "none"}}>
                                                         <IconButton>
                                                             <EditIcon color={"action"}/>
                                                         </IconButton>
@@ -77,7 +78,7 @@ class Landing extends React.Component {
                                                 </ListItem>
                                                 <Divider inset={true}/>
                                             </div>
-                                        )
+                                        );
                                     })
                                 }
                             </List>
@@ -93,8 +94,8 @@ class Landing extends React.Component {
                     <DialogTitle id="alert-dialog-title">Delete playlist?</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            Delete the playlist "{this.state.deletePlaylist}". This action cannot be undone, there will be
-                            no way to recover your playlist.
+                            Delete the playlist "{this.state.deletePlaylist}". This action cannot be undone, there will
+                            be no way to recover your playlist.
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
@@ -108,6 +109,7 @@ class Landing extends React.Component {
                 </Dialog>
             </Grid>
         );
+        /* tslint:enable */
     }
 
     public async componentDidMount() {
@@ -120,7 +122,7 @@ class Landing extends React.Component {
     private async updatePlaylists() {
         const playlists: Array<{ name: string, description: string, graph: string }> = await User.playlists();
         this.setState({
-            playlists
+            playlists,
         });
     }
 
@@ -128,14 +130,14 @@ class Landing extends React.Component {
         return async () => {
             this.setState({
                 deletePlaylist: playlistName,
-                open: true
-            })
-        }
+                open: true,
+            });
+        };
     }
 
     private handleClose() {
         this.setState({
-            open: false
+            open: false,
         });
     }
 
@@ -147,7 +149,7 @@ class Landing extends React.Component {
             logger.error(error.stack);
         }
         this.setState({
-            open: false
+            open: false,
         });
     }
 }

@@ -12,7 +12,7 @@ export abstract class AbstractNodeFactory<T extends AbstractNodeModel> extends S
             baseClass: "srd-default-node",
             className: "srd-default-node",
             diagramEngine,
-            node
+            node,
         });
     }
 

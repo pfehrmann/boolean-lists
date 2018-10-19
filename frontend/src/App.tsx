@@ -1,28 +1,28 @@
-import * as React from 'react';
-import './App.css';
+import * as React from "react";
+import "./App.css";
 import Editor from "./pages/Editor";
 
 import Landing from "./pages/Landing";
-import Playlists from './pages/Playlists';
+import Playlists from "./pages/Playlists";
 
-import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
-import Drawer from '@material-ui/core/Drawer';
-import IconButton from '@material-ui/core/IconButton';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import {withStyles} from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import EditIcon from '@material-ui/icons/Edit';
-import HomeIcon from '@material-ui/icons/Home';
-import MenuIcon from '@material-ui/icons/Menu';
-import SendIcon from '@material-ui/icons/Send';
+import AppBar from "@material-ui/core/AppBar";
+import Button from "@material-ui/core/Button";
+import Divider from "@material-ui/core/Divider";
+import Drawer from "@material-ui/core/Drawer";
+import IconButton from "@material-ui/core/IconButton";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import {withStyles} from "@material-ui/core/styles";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import EditIcon from "@material-ui/icons/Edit";
+import HomeIcon from "@material-ui/icons/Home";
+import MenuIcon from "@material-ui/icons/Menu";
+import SendIcon from "@material-ui/icons/Send";
 
-import {BrowserRouter, Link, Route} from 'react-router-dom'
+import {BrowserRouter, Link, Route} from "react-router-dom";
 
 const styles = {
     grow: {
@@ -34,19 +34,19 @@ const styles = {
     },
     root: {
         flexGrow: 1,
-    }
+    },
 };
 
 class App extends React.Component<{ classes: any }> {
     public state: {
-        menuVisible: boolean
+        menuVisible: boolean,
     };
 
     constructor(props: any) {
         super(props);
 
         this.state = {
-            menuVisible: false
+            menuVisible: false,
         };
 
         this.toggleDrawer = this.toggleDrawer.bind(this);
@@ -61,8 +61,12 @@ class App extends React.Component<{ classes: any }> {
                     </AppBar>
                     <AppBar position="fixed">
                         <Toolbar>
-                            <IconButton className={this.props.classes.menuButton} color="inherit" aria-label="Menu"
-                                        onClick={this.toggleDrawer(true)}>
+                            <IconButton
+                                className={this.props.classes.menuButton}
+                                color="inherit"
+                                aria-label="Menu"
+                                onClick={this.toggleDrawer(true)}
+                            >
                                 <MenuIcon/>
                             </IconButton>
                             <Typography variant="title" color="inherit" className={this.props.classes.grow}>
@@ -79,7 +83,7 @@ class App extends React.Component<{ classes: any }> {
                             onKeyDown={this.toggleDrawer(false)}
                         >
                             <List>
-                                <Link to="/" style={{ textDecoration: 'none' }}>
+                                <Link to="/" style={{ textDecoration: "none" }}>
                                     <ListItem button={true}>
                                         <ListItemIcon>
                                             <HomeIcon/>
@@ -87,7 +91,7 @@ class App extends React.Component<{ classes: any }> {
                                         <ListItemText primary="Home"/>
                                     </ListItem>
                                 </Link>
-                                <Link to="/editor" style={{ textDecoration: 'none' }}>
+                                <Link to="/editor" style={{ textDecoration: "none" }}>
                                     <ListItem button={true}>
                                         <ListItemIcon>
                                             <EditIcon/>
@@ -96,7 +100,7 @@ class App extends React.Component<{ classes: any }> {
                                     </ListItem>
                                 </Link>
                                 <Divider/>
-                                <Link to="/playlists" style={{ textDecoration: 'none' }}>
+                                <Link to="/playlists" style={{ textDecoration: "none" }}>
                                     <ListItem button={true}>
                                         <ListItemIcon>
                                             <SendIcon/>
@@ -122,8 +126,8 @@ class App extends React.Component<{ classes: any }> {
             this.setState({
                 menuVisible: open,
             });
-        }
-    };
+        };
+    }
 }
 
 export default withStyles(styles)(App);

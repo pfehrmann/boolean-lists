@@ -1,13 +1,12 @@
-import axios from 'axios';
+import axios from "axios";
 
 export async function addPlaylist(playlistItem: { description: string; graph: string; name: string }) {
     try {
         await axios.post(`${process.env.REACT_APP_API_BASE}/user/playlists`, JSON.stringify(playlistItem));
-    } catch(err) {
+    } catch (err) {
         alert("Unexpected error");
     }
 }
-
 
 export async function playlists() {
     const playlistItems = (await axios.get(`${process.env.REACT_APP_API_BASE}/user/playlists`)).data;
@@ -16,7 +15,7 @@ export async function playlists() {
             description: playlistItem.description,
             graph: playlistItem.graph,
             name: playlistItem.name,
-        }
+        };
     });
 }
 
@@ -26,7 +25,7 @@ export async function playlist(id: string) {
             description: rawPlaylist.description,
             graph: rawPlaylist.graph,
             name: rawPlaylist.name,
-    }
+    };
 }
 
 export async function deletePlaylist(id: string) {

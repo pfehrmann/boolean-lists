@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axios from "axios";
 
 export async function searchPlaylist(name: string) {
-    if(!name) {
+    if (!name) {
         return [];
     }
     const untypedPlaylists = (await axios.get(`${process.env.REACT_APP_API_BASE}/search/playlist?q=${ name }`)).data;
@@ -11,16 +11,16 @@ export async function searchPlaylist(name: string) {
             image: {
                 height: playlist.image.height,
                 url: playlist.image.url,
-                width: playlist.image.width
+                width: playlist.image.width,
             },
             name: playlist.name,
-            userId: playlist.userId
-        }
+            userId: playlist.userId,
+        };
     });
 }
 
 export async function searchAlbum(name: string) {
-    if(!name) {
+    if (!name) {
         return [];
     }
 
@@ -36,9 +36,9 @@ export async function searchAlbum(name: string) {
             image: {
                 height: album.image.height,
                 url: album.image.url,
-                width: album.image.width
+                width: album.image.width,
             },
             name: album.name,
-        }
+        };
     });
 }

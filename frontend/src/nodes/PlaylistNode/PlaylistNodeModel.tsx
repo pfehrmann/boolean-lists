@@ -15,7 +15,7 @@ export default class PlaylistNodeModel extends AbstractNodeModel {
         this.configuration = {
             id: "14ytmU7xtCIigHDRRYm0Hq",
             type: "SpotifyPlaylistNode",
-            userId: "9v08daxud6qg0kui6dvkvklmo"
-        }
+            userId: "9v08daxud6qg0kui6dvkvklmo",
+        };
     }
 }

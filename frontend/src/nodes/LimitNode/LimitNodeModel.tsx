@@ -15,7 +15,7 @@ export default class LimitNodeModel extends AbstractNodeModel {
 
         this.configuration = {
             limit: 20,
-            type: "LimitNode"
-        }
+            type: "LimitNode",
+        };
     }
 }

@@ -8,7 +8,9 @@ export interface IAbstractNodeProps<T extends AbstractNodeModel = AbstractNodeMo
     diagramEngine: SRD.DiagramEngine;
 }
 
-export abstract class AbstractNodeWidget<T extends IAbstractNodeProps = IAbstractNodeProps, S extends SRD.DefaultNodeState = SRD.DefaultNodeState> extends SRD.BaseWidget<T, S> {
+export abstract class AbstractNodeWidget<
+    T extends IAbstractNodeProps = IAbstractNodeProps,
+    S extends SRD.DefaultNodeState = SRD.DefaultNodeState> extends SRD.BaseWidget<T, S> {
     protected constructor(name: string, props: T) {
         super(name, props);
     }

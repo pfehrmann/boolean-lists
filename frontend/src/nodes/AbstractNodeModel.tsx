@@ -32,18 +32,18 @@ export class AbstractNodeModel extends SRD.NodeModel {
         return _.merge(super.serialize(), {
             color: this.color,
             configuration: this.configuration,
-            name: this.name
+            name: this.name,
         });
     }
 
     public getInPorts(): SRD.DefaultPortModel[] {
-        return _.filter(this.ports, portModel => {
+        return _.filter(this.ports, (portModel) => {
             return portModel.in;
         });
     }
 
     public getOutPorts(): SRD.DefaultPortModel[] {
-        return _.filter(this.ports, portModel => {
+        return _.filter(this.ports, (portModel) => {
             return !portModel.in;
         });
     }

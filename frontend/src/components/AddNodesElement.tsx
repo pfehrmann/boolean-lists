@@ -1,7 +1,7 @@
-import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import AddIcon from '@material-ui/icons/Add';
+import Button from "@material-ui/core/Button";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import AddIcon from "@material-ui/icons/Add";
 import * as React from "react";
 import * as SRD from "storm-react-diagrams";
 
@@ -29,7 +29,7 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
     constructor(props: IAddNodesElementProps) {
         super(props);
         this.state = {
-            anchorEl: undefined
+            anchorEl: undefined,
         };
 
         this.addNode = this.addNode.bind(this);
@@ -71,11 +71,11 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
 
     public handleClick(event: any) {
         this.setState({ anchorEl: event.currentTarget });
-    };
+    }
 
     public handleClose() {
         this.setState({ anchorEl: undefined });
-    };
+    }
 
     public addNode(nodeFunction: () => SRD.NodeModel): () => any {
         return () => {
@@ -87,6 +87,6 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
             this.props.model.clearSelection();
             node.setSelected(true);
             this.props.engine.repaintCanvas();
-        }
+        };
     }
 }

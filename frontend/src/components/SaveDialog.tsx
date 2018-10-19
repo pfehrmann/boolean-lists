@@ -20,7 +20,7 @@ interface ISerializationDialog {
 export class SaveDialog extends React.Component<ISerializationDialog> {
     public state: {
         description: string,
-        name: string
+        name: string,
     };
 
     constructor(props: ISerializationDialog) {
@@ -37,41 +37,48 @@ export class SaveDialog extends React.Component<ISerializationDialog> {
     }
 
     public render() {
-        return (<Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.props.open} onEnter={this.handleOpen}>
-            <DialogTitle id="simple-dialog-title">Save BooleanList</DialogTitle>
-            <DialogContent>
-                <DialogContentText>
-                    Save your BooleanList to your account so you can retrieve it later.
-                </DialogContentText>
-                <TextField
-                    autoFocus={true}
-                    margin="dense"
-                    label="Name"
-                    type="text"
-                    fullWidth={true}
-                    inputProps={{name: "name"}}
-                    onChange={this.handleChange}
-                    value={this.state.name}
-                />
-                <TextField
-                    margin="dense"
-                    label="Description"
-                    type="text"
-                    fullWidth={true}
-                    inputProps={{name: "description"}}
-                    onChange={this.handleChange}
-                    value={this.state.description}
-                />
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={this.handleClose} color="primary">
-                    Cancel
-                </Button>
-                <Button onClick={this.handleSave} color="primary">
-                    Save BooleanList
-                </Button>
-            </DialogActions>
-        </Dialog>);
+        return (
+            <Dialog
+                onClose={this.handleClose}
+                aria-labelledby="simple-dialog-title"
+                open={this.props.open}
+                onEnter={this.handleOpen}
+            >
+                <DialogTitle id="simple-dialog-title">Save BooleanList</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Save your BooleanList to your account so you can retrieve it later.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus={true}
+                        margin="dense"
+                        label="Name"
+                        type="text"
+                        fullWidth={true}
+                        inputProps={{name: "name"}}
+                        onChange={this.handleChange}
+                        value={this.state.name}
+                    />
+                    <TextField
+                        margin="dense"
+                        label="Description"
+                        type="text"
+                        fullWidth={true}
+                        inputProps={{name: "description"}}
+                        onChange={this.handleChange}
+                        value={this.state.description}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={this.handleClose} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={this.handleSave} color="primary">
+                        Save BooleanList
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
     }
 
     private handleChange(event: any) {
@@ -83,15 +90,15 @@ export class SaveDialog extends React.Component<ISerializationDialog> {
     }
 
     private handleOpen() {
-        if(!this.state.name) {
+        if (!this.state.name) {
             this.setState({
-                name: this.props.name
+                name: this.props.name,
             });
         }
 
-        if(!this.state.description) {
+        if (!this.state.description) {
             this.setState({
-                description: this.props.description
+                description: this.props.description,
             });
         }
     }
@@ -100,7 +107,7 @@ export class SaveDialog extends React.Component<ISerializationDialog> {
         User.addPlaylist({
             description: this.state.description,
             graph: JSON.stringify(this.props.model.serializeDiagram()),
-            name: this.state.name
+            name: this.state.name,
         });
         this.handleClose();
     }

@@ -15,6 +15,6 @@ export default class AlbumNodeModel extends AbstractNodeModel {
         this.configuration = {
             id: "14ytmU7xtCIigHDRRYm0Hq",
             type: "AlbumNode",
-        }
+        };
     }
 }

@@ -18,7 +18,7 @@ interface ISerializationDialog {
 export class SerializationDialog extends React.Component<ISerializationDialog> {
     public state: {
         newGraph: string,
-        serializedGraph: string
+        serializedGraph: string,
     };
 
     constructor(props: ISerializationDialog) {
@@ -35,51 +35,58 @@ export class SerializationDialog extends React.Component<ISerializationDialog> {
     }
 
     public render() {
-        return (<Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={this.props.configOpen} onEnter={this.handleEnter}>
-            <DialogTitle id="simple-dialog-title">Serialize/Deserialize</DialogTitle>
-            <DialogContent>
-                <DialogContentText>
-                    Set the maximum number of songs emitted.
-                </DialogContentText>
-                <TextField
-                    autoFocus={true}
-                    margin="dense"
-                    multiline={true}
-                    label="Serialized Graph"
-                    type="text"
-                    disabled={true}
-                    fullWidth={true}
-                    rowsMax={10}
-                    value={this.state.serializedGraph}
-                />
-                <TextField
-                    autoFocus={true}
-                    margin="dense"
-                    multiline={true}
-                    label="New Serialized Graph"
-                    type="text"
-                    fullWidth={true}
-                    rowsMax={20}
-                    rows={20}
-                    onChange={this.handleChange}
-                    value={this.state.newGraph}
-                />
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={this.handleClose} color="primary">
-                    Cancel
-                </Button>
-                <Button onClick={this.handleSave} color="primary">
-                    Set Graph
-                </Button>
-            </DialogActions>
-        </Dialog>);
+        return (
+            <Dialog
+                onClose={this.handleClose}
+                aria-labelledby="simple-dialog-title"
+                open={this.props.configOpen}
+                onEnter={this.handleEnter}
+            >
+                <DialogTitle id="simple-dialog-title">Serialize/Deserialize</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Set the maximum number of songs emitted.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus={true}
+                        margin="dense"
+                        multiline={true}
+                        label="Serialized Graph"
+                        type="text"
+                        disabled={true}
+                        fullWidth={true}
+                        rowsMax={10}
+                        value={this.state.serializedGraph}
+                    />
+                    <TextField
+                        autoFocus={true}
+                        margin="dense"
+                        multiline={true}
+                        label="New Serialized Graph"
+                        type="text"
+                        fullWidth={true}
+                        rowsMax={20}
+                        rows={20}
+                        onChange={this.handleChange}
+                        value={this.state.newGraph}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={this.handleClose} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={this.handleSave} color="primary">
+                        Set Graph
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
     }
 
     private handleChange(event: any) {
         this.setState({
-            newGraph: event.target.value
-        })
+            newGraph: event.target.value,
+        });
     }
 
     private handleClose() {
@@ -88,7 +95,7 @@ export class SerializationDialog extends React.Component<ISerializationDialog> {
 
     private handleEnter() {
         this.setState({
-            serializedGraph: JSON.stringify(this.props.model.serializeDiagram(), null, 2)
+            serializedGraph: JSON.stringify(this.props.model.serializeDiagram(), null, 2),
         });
     }
 

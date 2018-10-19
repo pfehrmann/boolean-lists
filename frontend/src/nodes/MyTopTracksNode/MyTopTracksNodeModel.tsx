@@ -14,7 +14,7 @@ export default class MyTopTracksNodeModel extends AbstractNodeModel {
 
         this.configuration = {
             timeRange: 20,
-            type: "MyTopTracksNode"
-        }
+            type: "MyTopTracksNode",
+        };
     }
 }
