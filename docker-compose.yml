@@ -6,32 +6,32 @@ volumes:
 
 services:
   # stores data for keycloak
-  mysql:
-      image: mysql:5.7
-      volumes:
-        - mysql_data:/var/lib/mysql
-      environment:
-        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-        MYSQL_DATABASE: keycloak
-        MYSQL_USER: keycloak
-        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  #mysql:
+  #    image: mysql:5.5
+  #    volumes:
+  #      - mysql_data:/var/lib/mysql
+  #    environment:
+  ##      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+  ##      MYSQL_DATABASE: keycloak
+  #      MYSQL_USER: keycloak
+  ##      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  #    ports:
+  #      - 3306:3306
   keycloak:
-      image: jboss/keycloak
+      image: jboss/keycloak:4.4.0.Final
       environment:
         DB_VENDOR: h2
-#        DB_ADDR: mysql
-#        DB_DATABASE: keycloak
-#        DB_USER: keycloak
-#        DB_PASSWORD: ${DB_PASSWORD}
+        # DB_VENDOR: MYSQL
+        # DB_ADDR: mysql
+        # DB_DATABASE: keycloak
+        # DB_USER: keycloak
+        # DB_PASSWORD: ${MYSQL_PASSWORD}
         KEYCLOAK_USER: admin
         KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD}
-        # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the MySQL JDBC driver documentation in order to use it.
-        #JDBC_PARAMS: "connectTimeout=30000"
       ports:
         - 8080:8080
-#      depends_on:
-#        - mysql
-
+  #    depends_on:
+  #      - mysql
     # stores information for the backend
   mongodb:
     image: mongo:latest
@@ -42,3 +42,25 @@ services:
     container_name: "mongodb"
     ports:
       - 27017:27017
+  #node:
+  #  build: .
+  #  restart: always
+  #  ports:
+  #    - 3000:3000
+  #  environment:
+  #    - SONG_COUNTS
+  #    - SHUFFLE
+  #    - FRONTEND_BUILD_DIR=/usr/src/app/frontend
+  #    - FRONTEND_BUILD_INDEX=/usr/src/app/frontend/index.html
+  #    - PORT=3000
+  #    - CLIENT_ID
+  ##    - CLIENT_SECRET
+  #    - REDIRECT_URI
+  #    - MONGOOSE_CONNECTION_STRING
+  #    - PUBLIC_URL
+  #    - REACT_APP_API_BASE
+  #    - REACT_APP_BASE
+  #    - NODE_ENV=production
+  #  depends_on:
+  #    - keycloak
+  #    - mongodb
