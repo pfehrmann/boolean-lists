@@ -1,4 +1,6 @@
 import Button from "@material-ui/core/Button";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
 import {withStyles} from "@material-ui/core/styles";
 import {Theme} from "@material-ui/core/styles/createMuiTheme";
 import {StyleRules} from "@material-ui/core/styles/withStyles";
@@ -88,13 +90,17 @@ class Editor extends React.Component<IEditorProps> {
     public render() {
         return (
             <div className="editor">
-                <div>
+                <Card>
+                    <CardContent>
                     <Button variant="contained" color="primary" onClick={this.handleOpen}>Serialization</Button>
                     <Button variant="contained" color="primary" onClick={this.saveToSpotify}>Save to Spotify</Button>
                     <Button variant="contained" color="primary" onClick={this.connectSpotify}>Connect Spotify</Button>
                     <Button variant="contained" color="primary" onClick={this.savePlaylist}>Save BooleanList</Button>
-                </div>
-                <Graph engine={this.engine}/>
+                    </CardContent>
+                </Card>
+                <Card className="editor graph">
+                     <Graph engine={this.engine}/>
+                </Card>
                 <AddNodesElement engine={this.engine} model={this.model} className={this.props.classes.fab}/>
                 <SerializationDialog
                     model={this.model}
