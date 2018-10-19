@@ -12,8 +12,6 @@ import * as SpotifyApi from "../spotify/SpotifyApi";
 import {Track} from "../spotify/Track";
 import {shuffleArray} from "../util";
 
-// Song counts must the be relative or absolute path to a json file
-const importedSongCounts = require(process.env.SONG_COUNTS);
 const playlistId = 1;
 const router = express.Router();
 
@@ -39,6 +37,8 @@ async function testApi(api: InitializedSpotifyApi) {
         const testPlaylist = await Playlist.fromSpotifyUri(api, "12172332235", "5zYaR2xWWYDxeprcjpPjdz");
         logger.info(`Playlist from user with id 12172332235 has name "${await testPlaylist.name()}"`);
 
+        // Song counts must the be relative or absolute path to a json file
+        const importedSongCounts = require(process.env.SONG_COUNTS);
         let tracksToAdd: Track[] = await getTracksToAdd(api, me, importedSongCounts);
         logger.info(`Adding ${tracksToAdd.length} tracks.`);
 
