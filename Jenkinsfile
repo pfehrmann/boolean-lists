@@ -17,4 +17,7 @@ pipeline {
       }
     }
   }
+  environment {
+    MYSQL_ROOT_PASSWORD = 'root'
+  }
 }
