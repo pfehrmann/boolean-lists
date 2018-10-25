@@ -39,6 +39,7 @@ const styles = {
 
 class App extends React.Component<{ classes: any }> {
     public state: {
+        loggedIn: boolean,
         menuVisible: boolean,
     };
 
@@ -46,10 +47,13 @@ class App extends React.Component<{ classes: any }> {
         super(props);
 
         this.state = {
+            loggedIn: (window as any).keycloak.authenticated,
             menuVisible: false,
         };
 
         this.toggleDrawer = this.toggleDrawer.bind(this);
+        this.loginOut = this.loginOut.bind(this);
+        this.menuButton = this.menuButton.bind(this);
     }
 
     public render() {
@@ -61,18 +65,16 @@ class App extends React.Component<{ classes: any }> {
                     </AppBar>
                     <AppBar position="fixed">
                         <Toolbar>
-                            <IconButton
-                                className={this.props.classes.menuButton}
-                                color="inherit"
-                                aria-label="Menu"
-                                onClick={this.toggleDrawer(true)}
-                            >
-                                <MenuIcon/>
-                            </IconButton>
+                            {this.menuButton()}
                             <Typography variant="title" color="inherit" className={this.props.classes.grow}>
                                 BooleanLists
                             </Typography>
-                            <Button color="inherit">Login</Button>
+                            <Button
+                                color="inherit"
+                                onClick={this.loginOut}
+                            >
+                                {this.state.loggedIn ? "Logout" : "Login"}
+                            </Button>
                         </Toolbar>
                     </AppBar>
                     <Drawer open={this.state.menuVisible} onClose={this.toggleDrawer(false)}>
@@ -127,6 +129,32 @@ class App extends React.Component<{ classes: any }> {
                 menuVisible: open,
             });
         };
+    }
+
+    private async loginOut() {
+        const keycloak = (window as any).keycloak;
+        if (keycloak.authenticated) {
+            await keycloak.logout();
+        } else {
+            await keycloak.login();
+        }
+    }
+
+    private menuButton() {
+        if (this.state.loggedIn) {
+            return (
+                <IconButton
+                    className={this.props.classes.menuButton}
+                    color="inherit"
+                    aria-label="Menu"
+                    onClick={this.toggleDrawer(true)}
+                >
+                    <MenuIcon/>
+                </IconButton>
+            );
+        } else {
+            return;
+        }
     }
 }
 
