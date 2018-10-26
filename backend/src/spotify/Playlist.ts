@@ -74,6 +74,34 @@ export class Playlist {
         }
     }
 
+    public async clear() {
+        let tracks = await this.tracks();
+        while (tracks.length > 0) {
+            logger.info(`${tracks.length} tracks left...`);
+            const toAdd = tracks.slice(0, 100);
+            tracks = tracks.slice(100);
+            const uris: string[] = toAdd.map((track: Track) => track.uri());
+            for (let i = 0; i < 3; i++) {
+                if (i > 0) {
+                    await sleep();
+                }
+                let response;
+                try {
+                    response = await this.api.spotifyApi
+                        .removeTracksFromPlaylist(this.playlist.owner.id, this.playlist.id, uris);
+                    const allTracks = (await this.tracks()).concat(toAdd);
+                    await this.setTracks(allTracks);
+                    break;
+                } catch (err) {
+                    logger.error(`Failed to add tracks to playlist. Remaining tracks: ${tracks.length + toAdd.length}`);
+                    logger.error(err);
+                    logger.error(response);
+                }
+            }
+        }
+        await playlistCache.delete(this.playlist.id);
+    }
+
     public async tracks(): Promise<Track[]> {
         if (!await playlistCache.has(this.playlist.id)) {
             const tracks = await getAll<Track>(this.api.spotifyApi,

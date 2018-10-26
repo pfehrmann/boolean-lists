@@ -48,7 +48,6 @@ app.get("/", express.static(
   process.env.FRONTEND_BUILD_INDEX ||
   path.join(__dirname, "..", "..", "frontend", "build", "index.html")),
 );
-
 app.use(Api.router(keycloak));
 
 app.listen(process.env.PORT, () => {

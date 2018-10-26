@@ -35,6 +35,7 @@ interface IEditorState {
     saveOpen: boolean;
     name: string;
     description: string;
+    uri?: string;
 }
 
 interface IEditorProps {
@@ -58,6 +59,7 @@ class Editor extends React.Component<IEditorProps> {
             loginSpotifyOpen: false,
             name: "",
             saveOpen: false,
+            uri: undefined,
         };
 
         const engine = new SRD.DiagramEngine();
@@ -186,14 +188,21 @@ class Editor extends React.Component<IEditorProps> {
     }
 
     private async saveToSpotify() {
-        const data = JSON.stringify(this.model.serializeDiagram());
+        const data = JSON.stringify({
+            graph: this.model.serializeDiagram(),
+            playlistName: this.state.name,
+            playlistUri: this.state.uri,
+        });
         logger.info(data);
 
         const response = await axios.post(`${process.env.REACT_APP_API_BASE}/saveToSpotify`, data);
         try {
             logger.info(response.data);
+            this.state.uri = response.data.playlistUri;
+            alert("Success!");
         } catch (error) {
             logger.error(error);
+            alert("Could not save.");
         }
     }
 }
