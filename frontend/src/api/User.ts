@@ -15,6 +15,7 @@ export async function playlists() {
             description: playlistItem.description,
             graph: playlistItem.graph,
             name: playlistItem.name,
+            uri: playlistItem.uri,
         };
     });
 }
@@ -22,9 +23,10 @@ export async function playlists() {
 export async function playlist(id: string) {
     const rawPlaylist = (await axios.get(`${process.env.REACT_APP_API_BASE}/user/playlist/${id}`)).data;
     return {
-            description: rawPlaylist.description,
-            graph: rawPlaylist.graph,
-            name: rawPlaylist.name,
+        description: rawPlaylist.description,
+        graph: rawPlaylist.graph,
+        name: rawPlaylist.name,
+        uri: rawPlaylist.uri,
     };
 }
 

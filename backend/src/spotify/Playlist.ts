@@ -77,10 +77,14 @@ export class Playlist {
     public async clear() {
         let tracks = await this.tracks();
         while (tracks.length > 0) {
-            logger.info(`${tracks.length} tracks left...`);
-            const toAdd = tracks.slice(0, 100);
+            logger.info(`${tracks.length} tracks left to delete...`);
+            const toRemove = tracks.slice(0, 100);
             tracks = tracks.slice(100);
-            const uris: string[] = toAdd.map((track: Track) => track.uri());
+            const uris = toRemove.map((track: Track) => {
+                return {
+                    uri: track.uri(),
+                };
+            });
             for (let i = 0; i < 3; i++) {
                 if (i > 0) {
                     await sleep();
@@ -89,17 +93,16 @@ export class Playlist {
                 try {
                     response = await this.api.spotifyApi
                         .removeTracksFromPlaylist(this.playlist.owner.id, this.playlist.id, uris);
-                    const allTracks = (await this.tracks()).concat(toAdd);
-                    await this.setTracks(allTracks);
+                    await this.setTracks(tracks);
                     break;
                 } catch (err) {
-                    logger.error(`Failed to add tracks to playlist. Remaining tracks: ${tracks.length + toAdd.length}`);
+                    logger.error(`Failed to add tracks to playlist. Remaining tracks: ${tracks.length}`);
                     logger.error(err);
                     logger.error(response);
                 }
             }
         }
-        await playlistCache.delete(this.playlist.id);
+        await playlistCache.remove(this.playlist.id);
     }
 
     public async tracks(): Promise<Track[]> {
