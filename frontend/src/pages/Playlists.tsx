@@ -15,16 +15,18 @@ import {Link} from "react-router-dom";
 import * as logger from "winston";
 import * as User from "../api/User";
 
+import Avatar from "@material-ui/core/Avatar/Avatar";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import {getPlaylist} from "../api/Playlist";
 
 class Landing extends React.Component {
     public state: {
-        playlists: Array<{ name: string, description: string, graph: string }>,
+        playlists: Array<{ name: string, description: string, graph: string, image?: string }>,
         open: boolean,
         deletePlaylist: string,
     };
@@ -60,7 +62,7 @@ class Landing extends React.Component {
                                         return (
                                             <div key={index}>
                                                 <ListItem>
-
+                                                    <Avatar src={playlist.image}/>
                                                     <Link to={`/editor/${playlist.name}`}
                                                           style={{textDecoration: "none"}}>
                                                         <IconButton>
@@ -120,7 +122,20 @@ class Landing extends React.Component {
     }
 
     private async updatePlaylists() {
-        const playlists: Array<{ name: string, description: string, graph: string }> = await User.playlists();
+        let playlists: Array<{
+            name: string,
+            description: string,
+            graph: string,
+            uri?: string,
+            image?: string,
+        }> = await User.playlists();
+        playlists = await Promise.all(playlists.map(async (playlist) => {
+            if (playlist.uri) {
+                const data = (await getPlaylist(playlist.uri)).data;
+                playlist.image = data.image.url;
+            }
+            return playlist;
+        }));
         this.setState({
             playlists,
         });
