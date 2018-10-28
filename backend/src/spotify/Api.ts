@@ -1,7 +1,6 @@
 import * as express from "express";
 import * as logger from "winston";
 import * as SerializationConverter from "../convertSrdToBooleanLists/SerializationConverter";
-import apiExample from "../example/ApiExample";
 import {fromJSON} from "../nodes/JsonParser";
 import search from "../search/Search";
 import Users from "../users/Users";
@@ -17,7 +16,6 @@ export function router(keycloak: any): express.Router {
     myRouter.use(keycloak.middleware());
     myRouter.use(express.json());
     myRouter.use("/search", keycloak.protect(), SpotifyAuthorization.authorized(), search);
-    myRouter.use("/example", keycloak.protect(), SpotifyAuthorization.authorized(), apiExample);
     myRouter.use("/user", keycloak.protect(), Users);
 
     myRouter.post("/saveToSpotify", keycloak.protect(), SpotifyAuthorization.authorized(), async (req, res: any) => {

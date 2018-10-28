@@ -4,7 +4,7 @@
   "ssl-required": "none",
   "resource": "node-backend",
   "credentials": {
-    "secret": "2a0192c4-b888-401f-bccd-1c14f09d7f26"
+    "secret": "e515ad92-4f29-4253-95e8-86b23b2f7e34"
   },
   "confidential-port": 0
 }
