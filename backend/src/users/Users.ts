@@ -83,26 +83,35 @@ function findPlaylist(user: any, name: string) {
     return user.playlists.find((playlistItem: any) => playlistItem.name === name);
 }
 
-router.post("/playlists", async (req, res) => {
-    const id: string = (req as any).kauth.grant.access_token.content.sub;
-    logger.info(`Searching user with id ${id}`);
-    const user = await getOrCreateUser(id);
+export async function savePlaylist(userId: string, playlist: IPlaylist, uri?: string) {
+    logger.info(`Searching user with id ${userId}`);
+    const user = await getOrCreateUser(userId);
+    const graph = typeof playlist.graph !== "string" ? JSON.stringify(playlist.graph) : playlist.graph;
+    if (uri) {
+        playlist.uri = uri;
+    }
 
-    const playlist = findPlaylist(user, req.body.name);
-    if (playlist) {
-        playlist.description = req.body.description;
-        playlist.graph = req.body.graph;
-        playlist.name = req.body.name;
-        playlist.uri = req.body.uri;
+    const playlistEntity = findPlaylist(user, playlist.name);
+    if (playlistEntity) {
+        playlistEntity.description = playlist.description;
+        playlistEntity.graph = graph;
+        playlistEntity.name = playlist.name;
+        playlistEntity.uri = playlist.uri;
     } else {
         user.playlists.push({
-            description: req.body.description,
-            graph: req.body.graph,
-            name: req.body.name,
-            uri: req.body.uri,
+            description: playlist.description,
+            graph,
+            name: playlist.name,
+            uri: playlist.uri,
         });
     }
     await user.save();
+}
+
+router.post("/playlists", async (req, res) => {
+    const id: string = (req as any).kauth.grant.access_token.content.sub;
+
+    savePlaylist(id, req.body);
 
     res.sendStatus(200);
 });

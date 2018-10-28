@@ -85,6 +85,7 @@ class Editor extends React.Component<IEditorProps> {
         this.connectSpotify = this.connectSpotify.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.handleSaveClose = this.handleSaveClose.bind(this);
         this.handleSave = this.handleSave.bind(this);
         this.savePlaylist = this.savePlaylist.bind(this);
     }
@@ -113,7 +114,7 @@ class Editor extends React.Component<IEditorProps> {
                 <SaveDialog
                     model={this.model}
                     open={this.state.saveOpen}
-                    onClose={this.handleClose}
+                    onClose={this.handleSaveClose}
                     name={this.state.name}
                     description={this.state.description}
                 />
@@ -162,6 +163,14 @@ class Editor extends React.Component<IEditorProps> {
         });
     }
 
+    public handleSaveClose(name: string, description: string) {
+        this.setState({
+            description,
+            name,
+            saveOpen: false,
+        });
+    }
+
     public handleSave(graph: string) {
         this.model.deSerializeDiagram(JSON.parse(graph), this.engine);
         this.setState({
@@ -190,9 +199,11 @@ class Editor extends React.Component<IEditorProps> {
 
     private async saveToSpotify() {
         const data = JSON.stringify({
+            description: this.state.description,
             graph: this.model.serializeDiagram(),
-            playlistName: this.state.name,
-            playlistUri: this.state.uri,
+            name: this.state.name,
+            saveToDatabase: true,
+            uri: this.state.uri,
         });
         logger.info(data);
 

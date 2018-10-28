@@ -4,6 +4,7 @@ import * as SerializationConverter from "../convertSrdToBooleanLists/Serializati
 import {fromJSON} from "../nodes/JsonParser";
 import search from "../search/Search";
 import Users from "../users/Users";
+import {savePlaylist} from "../users/Users";
 import {shuffleArray} from "../util";
 import * as SpotifyAuthorization from "./Authorization";
 import {Playlist} from "./Playlist";
@@ -31,10 +32,13 @@ export function router(keycloak: any): express.Router {
             const me = await api.me();
 
             let playlist: Playlist;
-            if (req.body.playlistUri) {
-                playlist = await Playlist.fromSpotifyUri(api, await me.id(), req.body.playlistUri);
-            } else if (req.body.playlistName) {
-                playlist = await me.createPlaylist(req.body.playlistName);
+            if (req.body.uri) {
+                playlist = await Playlist.fromSpotifyUri(api, await me.id(), req.body.uri);
+                if (playlist.name() !== req.body.name) {
+                    playlist = await me.createPlaylist(req.body.name);
+                }
+            } else if (req.body.name) {
+                playlist = await me.createPlaylist(req.body.name);
             } else {
                 throw new Error("Enter a name of a playlist");
             }
@@ -46,6 +50,10 @@ export function router(keycloak: any): express.Router {
 
             await playlist.clear();
             await playlist.addTracks(tracksToAdd);
+
+            if (req.body.saveToDatabase) {
+                await savePlaylist((req as any).kauth.grant.access_token.content.sub, req.body, playlist.id());
+            }
 
             res.json(JSON.stringify({message: "Successfully added songs.", playlistUri: playlist.id()}));
         } catch (error) {

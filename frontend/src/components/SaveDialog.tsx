@@ -12,7 +12,7 @@ import * as User from "../api/User";
 interface ISerializationDialog {
     model: SRD.DiagramModel;
     open: boolean;
-    onClose: () => any;
+    onClose: (name: string, description: string) => any;
     name: string;
     description: string;
 }
@@ -86,7 +86,7 @@ export class SaveDialog extends React.Component<ISerializationDialog> {
     }
 
     private handleClose() {
-        this.props.onClose();
+        this.props.onClose(this.state.name, this.state.description);
     }
 
     private handleOpen() {
