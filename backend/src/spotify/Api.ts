@@ -43,11 +43,6 @@ export function router(keycloak: any): express.Router {
                 throw new Error("Enter a name of a playlist");
             }
 
-            if (process.env.SHUFFLE) {
-                logger.info(`Shuffling the playlist`);
-                tracksToAdd = shuffleArray(tracksToAdd);
-            }
-
             await playlist.clear();
             await playlist.addTracks(tracksToAdd);
 
