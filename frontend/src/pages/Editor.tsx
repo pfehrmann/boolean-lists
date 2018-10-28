@@ -1,9 +1,14 @@
-import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 import {withStyles} from "@material-ui/core/styles";
 import {Theme} from "@material-ui/core/styles/createMuiTheme";
 import {StyleRules} from "@material-ui/core/styles/withStyles";
+import Add from "@material-ui/icons/Add";
+import PlaylistAddCheck from "@material-ui/icons/PlaylistAddCheck";
+import SaveIcon from "@material-ui/icons/Save";
+import TextFields from "@material-ui/icons/TextFields";
+import SpeedDial from "@material-ui/lab/SpeedDial";
+import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
+import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
 import axios from "axios";
 import * as Keycloak from "keycloak-js";
 import * as React from "react";
@@ -33,9 +38,12 @@ interface IEditorState {
     loginSpotifyOpen: boolean;
     keycloak: Keycloak.KeycloakInstance;
     saveOpen: boolean;
+    addNodeOpen: boolean;
     name: string;
     description: string;
     uri?: string;
+    speedDialOpen: boolean;
+    keyupListener: any;
 }
 
 interface IEditorProps {
@@ -53,12 +61,15 @@ class Editor extends React.Component<IEditorProps> {
         super(props);
 
         this.state = {
+            addNodeOpen: false,
             configOpen: false,
             description: "",
             keycloak: (window as any).keycloak,
+            keyupListener: undefined,
             loginSpotifyOpen: false,
             name: "",
             saveOpen: false,
+            speedDialOpen: false,
             uri: undefined,
         };
 
@@ -82,29 +93,84 @@ class Editor extends React.Component<IEditorProps> {
 
         this.saveToSpotify = this.saveToSpotify.bind(this);
 
+        this.handleKeyUp = this.handleKeyUp.bind(this);
         this.connectSpotify = this.connectSpotify.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
+        this.handleOpenAddNode = this.handleOpenAddNode.bind(this);
+        this.handleSpeedDialOpen = this.handleSpeedDialOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.handleCloseDial = this.handleCloseDial.bind(this);
         this.handleSaveClose = this.handleSaveClose.bind(this);
         this.handleSave = this.handleSave.bind(this);
         this.savePlaylist = this.savePlaylist.bind(this);
     }
 
+    public componentWillMount() {
+        const keyupListener = window.addEventListener("keyup", (event) => {
+            if (event.altKey === true && event.key === "N") {
+                this.handleOpenAddNode();
+            }
+        });
+
+        this.setState({
+            keyupListener,
+        });
+    }
+
+    public componentWillUnmount() {
+        window.removeEventListener("keyup", this.state.keyupListener);
+        this.setState({
+            keyupListener: undefined,
+        });
+    }
+
     public render() {
         return (
             <div className="editor">
-                <Card>
-                    <CardContent>
-                    <Button variant="contained" color="primary" onClick={this.handleOpen}>Serialization</Button>
-                    <Button variant="contained" color="primary" onClick={this.saveToSpotify}>Save to Spotify</Button>
-                    <Button variant="contained" color="primary" onClick={this.connectSpotify}>Connect Spotify</Button>
-                    <Button variant="contained" color="primary" onClick={this.savePlaylist}>Save BooleanList</Button>
-                    </CardContent>
-                </Card>
                 <Card className="editor graph">
                      <Graph engine={this.engine}/>
                 </Card>
-                <AddNodesElement engine={this.engine} model={this.model} className={this.props.classes.fab}/>
+                <AddNodesElement
+                    engine={this.engine}
+                    model={this.model}
+                    className={this.props.classes.fab}
+                    open={this.state.addNodeOpen}
+                    onClose={this.handleClose}
+                />
+                <SpeedDial
+                    ariaLabel="SpeedDial example"
+                    className={this.props.classes.speedDial}
+                    icon={<SpeedDialIcon />}
+                    onBlur={this.handleCloseDial}
+                    onClick={this.handleSpeedDialOpen}
+                    onClose={this.handleCloseDial}
+                    onFocus={this.handleSpeedDialOpen}
+                    onMouseEnter={this.handleSpeedDialOpen}
+                    onMouseLeave={this.handleCloseDial}
+                    open={this.state.speedDialOpen}
+                    direction={"up"}
+                >
+                    <SpeedDialAction
+                        icon={<SaveIcon/>}
+                        tooltipTitle={"Save graph"}
+                        onClick={this.savePlaylist}
+                    />
+                    <SpeedDialAction
+                        icon={<PlaylistAddCheck/>}
+                        tooltipTitle={"Save to Spotify"}
+                        onClick={this.saveToSpotify}
+                    />
+                    <SpeedDialAction
+                        icon={<TextFields/>}
+                        tooltipTitle={"Serialization"}
+                        onClick={this.handleOpen}
+                    />
+                    <SpeedDialAction
+                        icon={<Add/>}
+                        tooltipTitle={"Add Node ([Alt]+[Shift]+N)"}
+                        onClick={this.handleOpenAddNode}
+                    />
+                </SpeedDial>
                 <SerializationDialog
                     model={this.model}
                     onSave={this.handleSave}
@@ -120,6 +186,10 @@ class Editor extends React.Component<IEditorProps> {
                 />
             </div>
         );
+    }
+
+    public handleKeyUp(event: any) {
+        logger.info("Hallo");
     }
 
     public async componentDidMount() {
@@ -150,16 +220,37 @@ class Editor extends React.Component<IEditorProps> {
         });
     }
 
+    public handleOpenAddNode() {
+        this.setState({
+            addNodeOpen: true,
+        });
+    }
+
+    public handleSpeedDialOpen() {
+        this.setState({
+            speedDialOpen: true,
+        });
+    }
+
     public savePlaylist() {
         this.setState({
             saveOpen: true,
+            speedDialOpen: false,
         });
     }
 
     public handleClose() {
         this.setState({
+            addNodeOpen: false,
             configOpen: false,
             saveOpen: false,
+            speedDialOpen: false,
+        });
+    }
+
+    public handleCloseDial() {
+        this.setState({
+            speedDialOpen: false,
         });
     }
 
@@ -198,6 +289,12 @@ class Editor extends React.Component<IEditorProps> {
     }
 
     private async saveToSpotify() {
+        this.handleClose();
+
+        if (!await User.connectedToSpotify()) {
+            this.connectSpotify();
+        }
+
         const data = JSON.stringify({
             description: this.state.description,
             graph: this.model.serializeDiagram(),
@@ -226,7 +323,12 @@ function styles(theme: Theme): StyleRules {
         fab: {
             bottom: theme.spacing.unit * 2,
             position: "absolute",
-            right: theme.spacing.unit * 2,
+            right: theme.spacing.unit * 5,
+        },
+        speedDial: {
+            bottom: theme.spacing.unit * 2,
+            position: "absolute",
+            right: theme.spacing.unit * 3,
         },
     };
 }

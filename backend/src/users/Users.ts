@@ -43,6 +43,16 @@ interface IPlaylist {
     uri: string;
 }
 
+router.get("/connected-to-spotify", async (req, res) => {
+    const id: string = (req as any).kauth.grant.access_token.content.sub;
+    const user = await getOrCreateUser(id);
+    if (user.authorization && Date.now() < user.authorization.expiresAt) {
+        res.sendStatus(200);
+    } else {
+        res.sendStatus(400);
+    }
+});
+
 router.get("/playlists", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
     const user = await getOrCreateUser(id);

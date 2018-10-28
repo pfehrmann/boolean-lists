@@ -33,3 +33,12 @@ export async function playlist(id: string) {
 export async function deletePlaylist(id: string) {
     return axios.delete(`${process.env.REACT_APP_API_BASE}/user/playlist/${id}`);
 }
+
+export async function connectedToSpotify(): Promise<boolean> {
+    try {
+        await axios.get(`${process.env.REACT_APP_API_BASE}/user/connected-to-spotify`);
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
