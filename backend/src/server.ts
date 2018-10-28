@@ -5,7 +5,6 @@ import * as  express from "express";
 import * as session from "express-session";
 import * as Keycloak from "keycloak-connect";
 import * as morgan from "morgan";
-import * as path from "path";
 import * as winston from "winston";
 import * as logger from "winston";
 import * as Api from "./spotify/Api";

@@ -10,6 +10,7 @@ const Playlist = new Schema({
     description: String,
     graph: String,
     name: String,
+    uri: String,
 });
 
 const UserSchema = new Schema({
@@ -39,6 +40,7 @@ interface IPlaylist {
     description: string;
     graph: string;
     name: string;
+    uri: string;
 }
 
 router.get("/playlists", async (req, res) => {
@@ -52,6 +54,7 @@ router.get("/playlists", async (req, res) => {
                 description: playlist.description,
                 graph: playlist.graph,
                 name: playlist.name,
+                uri: playlist.uri,
             });
         }
     }
@@ -69,6 +72,7 @@ router.get("/playlist/:id", async (req, res) => {
             description: playlist.description,
             graph: playlist.graph,
             name: playlist.name,
+            uri: playlist.uri,
         });
     } else {
         res.sendStatus(404);
@@ -89,11 +93,13 @@ router.post("/playlists", async (req, res) => {
         playlist.description = req.body.description;
         playlist.graph = req.body.graph;
         playlist.name = req.body.name;
+        playlist.uri = req.body.uri;
     } else {
         user.playlists.push({
             description: req.body.description,
             graph: req.body.graph,
             name: req.body.name,
+            uri: req.body.uri,
         });
     }
     await user.save();

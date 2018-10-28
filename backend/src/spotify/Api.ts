@@ -46,8 +46,8 @@ export function router(keycloak: any): express.Router {
                 tracksToAdd = shuffleArray(tracksToAdd);
             }
 
-            playlist.clear();
-            playlist.addTracks(tracksToAdd);
+            await playlist.clear();
+            await playlist.addTracks(tracksToAdd);
 
             res.json(JSON.stringify({message: "Successfully added songs.", playlistUri: playlist.id()}));
         } catch (error) {

@@ -134,6 +134,7 @@ class Editor extends React.Component<IEditorProps> {
             this.setState({
                 description: playlist.description,
                 name: playlist.name,
+                uri: playlist.uri,
             });
             this.model.deSerializeDiagram(JSON.parse(playlist.graph), this.engine);
             this.engine.repaintCanvas();
@@ -197,8 +198,10 @@ class Editor extends React.Component<IEditorProps> {
 
         const response = await axios.post(`${process.env.REACT_APP_API_BASE}/saveToSpotify`, data);
         try {
-            logger.info(response.data);
-            this.state.uri = response.data.playlistUri;
+            logger.info(JSON.parse(response.data));
+            this.setState({
+                uri: JSON.parse(response.data).playlistUri,
+            });
             alert("Success!");
         } catch (error) {
             logger.error(error);
