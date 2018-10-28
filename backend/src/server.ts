@@ -19,12 +19,16 @@ winston.add(new winston.transports.Console({
     ),
 }));
 
-const sessionStore = session({secret: "my secret of the day"});
+const sessionStore = session({
+    resave: false,
+    saveUninitialized: false,
+    secret: "my secret of the day",
+});
 const keycloak = new Keycloak({store: sessionStore}, kcConfig);
 
 const app = express();
 
-app.use(morgan("default"));
+app.use(morgan("dev"));
 app.use((err, req, res, next) => {
     logger.error(err.stack);
     res.sendStatus(500);
