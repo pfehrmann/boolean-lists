@@ -1,4 +1,3 @@
-import Card from "@material-ui/core/Card";
 import {withStyles} from "@material-ui/core/styles";
 import {Theme} from "@material-ui/core/styles/createMuiTheme";
 import {StyleRules} from "@material-ui/core/styles/withStyles";
@@ -93,7 +92,6 @@ class Editor extends React.Component<IEditorProps> {
 
         this.saveToSpotify = this.saveToSpotify.bind(this);
 
-        this.handleKeyUp = this.handleKeyUp.bind(this);
         this.connectSpotify = this.connectSpotify.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
         this.handleOpenAddNode = this.handleOpenAddNode.bind(this);
@@ -127,9 +125,7 @@ class Editor extends React.Component<IEditorProps> {
     public render() {
         return (
             <div className="editor">
-                <Card className="editor graph">
-                     <Graph engine={this.engine}/>
-                </Card>
+                <Graph engine={this.engine}/>
                 <AddNodesElement
                     engine={this.engine}
                     model={this.model}
@@ -186,10 +182,6 @@ class Editor extends React.Component<IEditorProps> {
                 />
             </div>
         );
-    }
-
-    public handleKeyUp(event: any) {
-        logger.info("Hallo");
     }
 
     public async componentDidMount() {
