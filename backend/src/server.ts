@@ -43,15 +43,6 @@ app.use((req: express.Request, res: any, next: express.NextFunction) => {
 });
 
 app.use(sessionStore);
-
-app.use(express.static(
-  process.env.FRONTEND_BUILD_DIR ||
-  path.join(__dirname, "..", "..", "frontend", "build")),
-);
-app.get("/", express.static(
-  process.env.FRONTEND_BUILD_INDEX ||
-  path.join(__dirname, "..", "..", "frontend", "build", "index.html")),
-);
 app.use(Api.router(keycloak));
 
 app.listen(process.env.PORT, () => {
