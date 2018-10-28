@@ -1,44 +1,44 @@
 version: '3'
 
 volumes:
-  mysql_data:
+  postgres_data:
+      driver: local
+  mongodb_data:
       driver: local
 
 services:
   # stores data for keycloak
-  #mysql:
-  #    image: mysql:5.5
-  #    volumes:
-  #      - mysql_data:/var/lib/mysql
-  #    environment:
-  ##      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-  ##      MYSQL_DATABASE: keycloak
-  #      MYSQL_USER: keycloak
-  ##      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-  #    ports:
-  #      - 3306:3306
+  postgres:
+      image: postgres
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      environment:
+        POSTGRES_DB: keycloak
+        POSTGRES_USER: keycloak
+        POSTGRES_PASSWORD: ${MYSQL_PASSWORD}
   keycloak:
-      build: 
+      build:
         dockerfile: keycloak.dockerfile
         context: .
       environment:
-        DB_VENDOR: h2
-        # DB_VENDOR: MYSQL
-        # DB_ADDR: mysql
-        # DB_DATABASE: keycloak
-        # DB_USER: keycloak
-        # DB_PASSWORD: ${MYSQL_PASSWORD}
+        DB_VENDOR: POSTGRES
+        DB_ADDR: postgres
+        DB_DATABASE: keycloak
+        DB_USER: keycloak
+        DB_PASSWORD: ${MYSQL_PASSWORD}
         KEYCLOAK_USER: admin
         KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD}
         PROXY_ADDRESS_FORWARDING: 'true'
       ports:
         - 8080:8080
-  #    depends_on:
-  #      - mysql
+      depends_on:
+        - postgres
     # stores information for the backend
   mongodb:
     image: mongo:latest
     restart: always
+    volumes:
+      - mongodb_data:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
@@ -46,7 +46,7 @@ services:
     ports:
       - 27017:27017
   frontend:
-    build: 
+    build:
       dockerfile: frontend.Dockerfile
       context: .
     restart: always
@@ -62,7 +62,7 @@ services:
       - keycloak
       - api
   api:
-    build: 
+    build:
       dockerfile: api.Dockerfile
       context: .
     restart: always
