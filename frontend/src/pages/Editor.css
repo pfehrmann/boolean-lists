@@ -8,6 +8,11 @@
     flex: 1 1 auto;
 }
 
+.graph * {
+    touch-action: none;
+    -ms-touch-action: none;
+}
+
 .srd-node {
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }

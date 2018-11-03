@@ -19,6 +19,27 @@ const theme = createMuiTheme({
     },
 });
 
+function touchHandler(event: any) {
+    const touches = event.changedTouches;
+    const first = touches[0];
+    let type = "";
+    switch (event.type) {
+        case "touchstart": type = "mousedown"; break;
+        case "touchmove":  type = "mousemove"; break;
+        case "touchend":   type = "mouseup";   break;
+        default:           return;
+    }
+
+    const simulatedEvent = document.createEvent("MouseEvent");
+    simulatedEvent.initMouseEvent(type, true, true, window, 1,
+        first.screenX, first.screenY,
+        first.clientX, first.clientY, false,
+        false, false, false, 0/*left*/, null);
+
+    first.target.dispatchEvent(simulatedEvent);
+    // event.preventDefault();
+}
+
 async function initialize() {
     const keycloak = Keycloak("/keycloak.json");
     (window as any).keycloak = keycloak;
@@ -37,6 +58,11 @@ async function initialize() {
             };
         }, 10000);
     }
+
+    document.addEventListener("touchstart", touchHandler, true);
+    document.addEventListener("touchmove", touchHandler, true);
+    document.addEventListener("touchend", touchHandler, true);
+    document.addEventListener("touchcancel", touchHandler, true);
 
     ReactDOM.render(
             <MuiThemeProvider theme={theme}>
