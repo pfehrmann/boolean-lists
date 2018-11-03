@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 import * as SRD from "storm-react-diagrams";
+import {AbstractNodeModel} from "./AbstractNodeModel";
 
 export class AbstractPortModel extends SRD.PortModel {
     public in: boolean;
@@ -34,6 +35,16 @@ export class AbstractPortModel extends SRD.PortModel {
 
     public canLinkToPort(port: SRD.PortModel): boolean {
         if (port instanceof AbstractPortModel) {
+            if (_.includes(port.getReachablePorts(), this)) {
+                alert("You are creating a loop, these nodes cannot be connected.");
+                return false;
+            }
+        } else {
+            alert("One of the nodes is an old node, can not connect.");
+            return false;
+        }
+
+        if (port instanceof SRD.DefaultPortModel || port instanceof AbstractPortModel) {
             return this.in !== port.in;
         }
         return true;
@@ -42,5 +53,59 @@ export class AbstractPortModel extends SRD.PortModel {
     public createLinkModel(): SRD.LinkModel {
         const link = super.createLinkModel();
         return link || new SRD.DefaultLinkModel();
+    }
+
+    private getReachablePorts(reachablePorts: AbstractPortModel[] = []) {
+        reachablePorts.push(this);
+
+        let ports = this.getChildren();
+        ports = ports.concat(this.getParents());
+
+        for (const port of ports) {
+            if (!_.includes(reachablePorts, port)) {
+                reachablePorts = port.getReachablePorts(reachablePorts);
+            }
+        }
+        return reachablePorts;
+    }
+
+    private getChildren(): AbstractPortModel[] {
+        let ports = (this.getNode() as AbstractNodeModel).getInPorts();
+        ports = ports.filter((port) => port !== this);
+        let links: SRD.LinkModel[] = [];
+        for (const port of ports) {
+            links = links.concat(_.filter(port.getLinks(), () => true));
+        }
+
+        let children: AbstractPortModel[] = [];
+        for (const link of links) {
+            let otherPort = link.getSourcePort() as AbstractPortModel;
+            if (otherPort.serialize() === this.serialize()) {
+                otherPort = link.getTargetPort() as AbstractPortModel;
+            }
+            const otherNode = otherPort.getNode() as AbstractNodeModel;
+            children = children.concat(otherNode.getInPorts());
+        }
+        return children;
+    }
+
+    private getParents(): AbstractPortModel[] {
+        let ports = (this.getNode() as AbstractNodeModel).getOutPorts();
+        ports = ports.filter((port) => port !== this);
+        let links: SRD.LinkModel[] = [];
+        for (const port of ports) {
+            links = links.concat(_.filter(port.getLinks(), () => true));
+        }
+
+        let parents: AbstractPortModel[] = [];
+        for (const link of links) {
+            let otherPort = link.getSourcePort() as AbstractPortModel;
+            if (otherPort.serialize() === this.serialize()) {
+                otherPort = link.getTargetPort() as AbstractPortModel;
+            }
+            const otherNode = otherPort.getNode() as AbstractNodeModel;
+            parents = parents.concat(otherNode.getOutPorts());
+        }
+        return parents;
     }
 }
