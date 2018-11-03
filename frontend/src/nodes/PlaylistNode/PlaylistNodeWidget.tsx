@@ -9,7 +9,6 @@ import TextField from "@material-ui/core/TextField";
 import * as _ from "lodash";
 import * as React from "react";
 import * as SRD from "storm-react-diagrams";
-import * as logger from "winston";
 import * as api from "../../api";
 
 import {PlaylistItem} from "../../components/PlaylistItem";
@@ -99,7 +98,6 @@ export default class PlaylistNodeWidget extends AbstractNodeWidget<IPlaylistNode
     }
 
     public onDoubleClick() {
-        logger.info("Clicked.");
         this.setState({
             configOpen: true,
         });

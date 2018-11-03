@@ -114,6 +114,7 @@ export default class LimitNodeWidget extends AbstractNodeWidget<ILimitNodeProps>
 
     private handleCancel() {
         this.setState({
+            configOpen: false,
             limit: this.state.limit,
         });
     }

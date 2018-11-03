@@ -45,6 +45,9 @@ export default class MyTopTracksNodeWidget extends AbstractNodeWidget<IMyTopTrac
         this.handleSave = this.handleSave.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.setRange = this.setRange.bind(this);
+
+        this.setRange("medium_term");
     }
 
     public render() {
@@ -98,6 +101,14 @@ export default class MyTopTracksNodeWidget extends AbstractNodeWidget<IMyTopTrac
         });
     }
 
+    public setRange(timeRange: string) {
+        this.setState({
+            timeRange,
+        });
+        this.props.node.configuration.timeRange = this.state.timeRange;
+        this.props.node.name = `Top Tracks (${this.state.timeRange.replace("_", " ")})`;
+    }
+
     private handleChange(event: any) {
         this.setState({ [event.target.name]: event.target.value });
     }
@@ -107,7 +118,7 @@ export default class MyTopTracksNodeWidget extends AbstractNodeWidget<IMyTopTrac
             configOpen: false,
             oldTimeRange: this.state.timeRange,
         });
-        this.props.node.configuration.timeRange = this.state.timeRange;
+        this.setRange(this.state.timeRange);
     }
 
     private handleCancel() {

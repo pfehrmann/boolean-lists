@@ -15,6 +15,6 @@ export default class AddNodeWidget extends AbstractNodeWidget<IAddNodeProps> {
     }
 
     public onDoubleClick() {
-        alert("Double Clicked");
+        // no config
     }
 }
