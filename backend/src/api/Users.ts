@@ -1,6 +1,11 @@
 import * as express from "express";
 import * as mongoose from "mongoose";
 import * as logger from "winston";
+import * as SerializationConverter from "../convertSrdToBooleanLists/SerializationConverter";
+import {fromJSON} from "../nodes/JsonParser";
+import {addApiToRequest} from "../spotify/Authorization";
+import {Playlist as SpotifyPlaylist} from "../spotify/Playlist";
+import {InitializedSpotifyApi} from "../spotify/SpotifyApi";
 
 mongoose.connect(process.env.MONGOOSE_CONNECTION_STRING);
 
@@ -43,17 +48,18 @@ interface IPlaylist {
     uri: string;
 }
 
-router.get("/connected-to-spotify", async (req, res) => {
+router.get("/", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
     const user = await getOrCreateUser(id);
-    if (user.authorization && Date.now() < user.authorization.expiresAt) {
-        res.sendStatus(200);
-    } else {
-        res.sendStatus(400);
-    }
+
+    const connectedToSpotify: boolean = user.authorization && Date.now() < user.authorization.expiresAt;
+
+    res.json({
+        connectedToSpotify,
+    });
 });
 
-router.get("/playlists", async (req, res) => {
+router.get("/playlist", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
     const user = await getOrCreateUser(id);
 
@@ -69,7 +75,12 @@ router.get("/playlists", async (req, res) => {
         }
     }
 
-    res.json(playlists);
+    res.json({
+        elements: playlists.length,
+        elementsPerPage: playlists.length,
+        page: 0,
+        playlists,
+    });
 });
 
 router.get("/playlist/:id", async (req, res) => {
@@ -80,7 +91,7 @@ router.get("/playlist/:id", async (req, res) => {
     if (playlist) {
         res.json({
             description: playlist.description,
-            graph: playlist.graph,
+            graph: JSON.parse(playlist.graph),
             name: playlist.name,
             uri: playlist.uri,
         });
@@ -118,12 +129,54 @@ export async function savePlaylist(userId: string, playlist: IPlaylist, uri?: st
     await user.save();
 }
 
-router.post("/playlists", async (req, res) => {
+async function savePlaylistToSpotify(req: any, res: any) {
+    try {
+        await addApiToRequest(req);
+        const api: InitializedSpotifyApi = new InitializedSpotifyApi((req as any).api);
+        const serialized = SerializationConverter.convertSrdToBooleanList(req.body.graph);
+        logger.info("Using parsed node", serialized);
+        const node = await fromJSON(api, serialized);
+
+        const tracksToAdd = await node.getTracks();
+        logger.info(`Adding ${tracksToAdd.length} tracks.`);
+
+        const me = await api.me();
+
+        let playlist: SpotifyPlaylist;
+        if (req.body.uri) {
+            playlist = await SpotifyPlaylist.fromSpotifyUri(api, await me.id(), req.body.uri);
+            if (playlist.name() !== req.body.name) {
+                playlist = await me.createPlaylist(req.body.name);
+            }
+        } else if (req.body.name) {
+            playlist = await me.createPlaylist(req.body.name);
+        } else {
+            throw new Error("Enter a name of a playlist");
+        }
+
+        await playlist.clear();
+        await playlist.addTracks(tracksToAdd);
+
+        res.json({message: "Successfully added songs.", playlistUri: playlist.id()});
+    } catch (error) {
+        logger.error(error.stack);
+        res.sendStatus(500);
+    }
+}
+
+router.post("/playlist", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
-
-    savePlaylist(id, req.body);
-
-    res.sendStatus(200);
+    try {
+        await savePlaylist(id, req.body);
+        if (req.body.saveToSpotify) {
+            await savePlaylistToSpotify(req, res);
+        } else {
+            res.json({});
+        }
+    } catch (error) {
+        logger.error(error);
+        res.sendStatus(500);
+    }
 });
 
 router.delete("/playlist/:id", async (req, res) => {

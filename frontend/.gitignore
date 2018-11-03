@@ -6,6 +6,9 @@
 # testing
 /coverage
 
+# swagger
+/src/api
+
 # production
 /build
 

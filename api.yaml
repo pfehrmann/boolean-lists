@@ -1,0 +1,318 @@
+---
+swagger: "2.0"
+info:
+  description: "API for boolean-lists"
+  version: "1.0.0"
+  title: "Boolean Lists"
+host: "api-boolean-lists.dillipp.de"
+basePath: "/v1"
+schemes:
+- "https"
+
+securityDefinitions:
+  apiKey:
+    type: "apiKey"
+    in: "header"
+    name: "Authorization"
+
+security:
+  - apiKey: []
+
+paths:
+  /playlist:
+    get:
+      tags:
+      - "playlist"
+      summary: "Get information about a playlist by it's uri"
+      operationId: "getPlaylistByUri"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "uri"
+        in: "query"
+        description: "Spotify URI of the playlist"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Playlist"
+      x-swagger-router-controller: "Playlist"
+  /search/playlist:
+    get:
+      tags:
+      - "search"
+      - "playlist"
+      summary: "Search for a playlist"
+      operationId: "searchPlaylist"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "q"
+        in: "query"
+        description: "The search query"
+        required: true
+        type: "string"
+      - name: "page"
+        in: "query"
+        description: "Page for pagination"
+        default: 0
+        required: false
+        type: "integer"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/PageablePlaylists"
+      x-swagger-router-controller: "Search"
+  /search/album:
+    get:
+      tags:
+      - "search"
+      - "album"
+      summary: "Search for an album"
+      operationId: "searchAlbum"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "q"
+        in: "query"
+        description: "The search query"
+        required: true
+        type: "string"
+      - name: "page"
+        in: "query"
+        description: "Page for pagination"
+        default: 0
+        required: false
+        type: "integer"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/PageableAlbums"
+      x-swagger-router-controller: "Search"
+  /me:
+    get:
+      tags:
+      - "user"
+      - "me"
+      summary: "Get information about the logged in used"
+      operationId: "getMyInfo"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/UserInfo"
+      x-swagger-router-controller: "Me"
+  /me/playlist:
+    get:
+      tags:
+      - "user"
+      - "playlist"
+      - "me"
+      summary: "Get all playlists of the logged in user"
+      operationId: "getMyPlaylists"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/PageablePlaylists"
+      x-swagger-router-controller: "Me"
+    post:
+      tags:
+      - "user"
+      - "playlist"
+      - "me"
+      summary: "Create or update a playlist"
+      operationId: "addPlaylist"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "playlist"
+        description: "Details of the playlist to be stored"
+        schema:
+          $ref: "#/definitions/PlaylistStorageDetails"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+              playlistUri:
+                type: "string"
+      x-swagger-router-controller: "Me"
+  /me/playlist/{id}:
+    parameters:
+      - in: "path"
+        required: true
+        name: "id"
+        type: "string"
+        description: "the id of th playlist"
+    get:
+      tags:
+      - "user"
+      - "playlist"
+      - "me"
+      summary: "Get a playlist by it's id"
+      operationId: "getMyPlaylistById"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/PlaylistGraph"
+      x-swagger-router-controller: "Me"
+    delete:
+      tags:
+      - "user"
+      - "playlist"
+      - "me"
+      summary: "Delete a playlist by it's id"
+      operationId: "deleteMyPlaylistById"
+      responses:
+        200:
+          description: "successful operation"
+      x-swagger-router-controller: "Me"
+definitions:
+  PageablePlaylists:
+    type: "object"
+    properties:
+      page:
+        type: "integer"
+      elements:
+        type: "integer"
+      elementsPerPage:
+        type: "integer"
+      playlists:
+        type: "array"
+        items:
+          $ref: "#/definitions/Playlist"
+    required:
+    - page
+    - elements
+    - elementsPerPage
+    - playlists
+  Playlist:
+    type: "object"
+    properties:
+      image:
+        $ref: "#/definitions/Image"
+      id:
+        type: "string"
+      name:
+        type: "string"
+      userId:
+        type: "string"
+      uri:
+        type: "string"
+    required:
+    - id
+    - name
+    - userId
+  Image:
+    type: "object"
+    properties:
+      height:
+        type: "integer"
+      url:
+        type: "string"
+      width:
+        type: "integer"
+    required:
+    - url
+  PageableAlbums:
+    type: "object"
+    properties:
+      page:
+        type: "integer"
+      elements:
+        type: "integer"
+      elementsPerPage:
+        type: "integer"
+      albums:
+        type: "array"
+        items:
+          $ref: "#/definitions/Album"
+    required:
+    - page
+    - elements
+    - elementsPerPage
+    - albums
+  Album:
+    type: "object"
+    properties:
+      artists:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            id:
+              type: "string"
+            name:
+              type: "string"
+          required:
+          - id
+          - name
+      id:
+        type: "string"
+      images:
+        type: "array"
+        items:
+          $ref: "#/definitions/Image"
+      name:
+        type: "string"
+    required:
+    - artists
+    - id
+    - images
+    - name
+  UserInfo:
+    type: "object"
+    properties:
+      connectedToSpotify:
+        type: "boolean"
+    required:
+    - connectedToSpotify
+  PlaylistStorageDetails:
+    type: "object"
+    properties:
+      description:
+        type: "string"
+      graph:
+        type: "object"
+      name:
+        type: "string"
+      saveToSpotify:
+        type: "boolean"
+        default: false
+      uri:
+        type: "string"
+    required:
+    - description
+    - graph
+    - name
+  PlaylistGraph:
+    type: "object"
+    properties:
+      description:
+        type: "string"
+      graph:
+        type: "object"
+      name:
+        type: "string"
+      uri:
+        type: "string"
+    required:
+    - description
+    - graph
+    - name

@@ -8,7 +8,6 @@ import TextFields from "@material-ui/icons/TextFields";
 import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
-import axios from "axios";
 import * as Keycloak from "keycloak-js";
 import * as React from "react";
 import * as SRD from "storm-react-diagrams";
@@ -30,7 +29,7 @@ import {AddNodesElement} from "../components/AddNodesElement";
 import AddNodeModel from "../nodes/AddNode/AddNodeModel";
 import PlaylistNodeModel from "../nodes/PlaylistNode/PlaylistNodeModel";
 
-import * as User from "../api/User";
+import * as api from "../api";
 
 interface IEditorState {
     configOpen: boolean;
@@ -193,13 +192,13 @@ class Editor extends React.Component<IEditorProps> {
 
         const id = this.props.match.params.id;
         if (id) {
-            const playlist = await User.playlist(id);
+            const playlist = await api.MeApiFp((window as any).config).getMyPlaylistById(id)();
             this.setState({
                 description: playlist.description,
                 name: playlist.name,
                 uri: playlist.uri,
             });
-            this.model.deSerializeDiagram(JSON.parse(playlist.graph), this.engine);
+            this.model.deSerializeDiagram(playlist.graph, this.engine);
             this.engine.repaintCanvas();
         } else {
             this.addDefaultNodes();
@@ -283,24 +282,24 @@ class Editor extends React.Component<IEditorProps> {
     private async saveToSpotify() {
         this.handleClose();
 
-        if (!await User.connectedToSpotify()) {
+        const info = await api.MeApiFp((window as any).config).getMyInfo()();
+        if (!info.connectedToSpotify) {
             this.connectSpotify();
         }
 
-        const data = JSON.stringify({
+        const response = await api.MeApiFp((window as any).config).addPlaylist({
             description: this.state.description,
             graph: this.model.serializeDiagram(),
             name: this.state.name,
-            saveToDatabase: true,
+            saveToSpotify: true,
             uri: this.state.uri,
-        });
-        logger.info(data);
-
-        const response = await axios.post(`${process.env.REACT_APP_API_BASE}/saveToSpotify`, data);
+        })();
         try {
-            logger.info(JSON.parse(response.data));
+            logger.info(response);
+            // tslint:disable
+            debugger
             this.setState({
-                uri: JSON.parse(response.data).playlistUri,
+                uri: response.playlistUri,
             });
             alert("Success!");
         } catch (error) {

@@ -5,6 +5,9 @@ import {TooManyRootsError} from "./TooManyRootsError";
 import {UnknownNodeTypeError} from "./UnknownNodeTypeError";
 
 export function convertSrdToBooleanList(srdSerialized: any): any {
+    if (typeof srdSerialized === "string") {
+        srdSerialized = JSON.parse(srdSerialized);
+    }
     const roots = findRoots(srdSerialized);
 
     if (roots.length === 0) {

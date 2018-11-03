@@ -12,7 +12,12 @@ router.use(bodyParser.json());
 router.get("/playlist", async (req, res) => {
     try {
         const api = new InitializedSpotifyApi((req as any).api);
-        const internalPlaylists = await api.searchForPlaylists(req.query.q);
+        const page = req.query.page ? req.query.page : 0;
+        const elementsPerPage = 20;
+        const internalPlaylists = await api.searchForPlaylists(req.query.q, {
+            limit: elementsPerPage,
+            offset: page * elementsPerPage,
+        });
         logger.info(internalPlaylists);
         const playlists = internalPlaylists.map((playlist: Playlist) => {
             return {
@@ -23,7 +28,13 @@ router.get("/playlist", async (req, res) => {
             };
         });
 
-        res.json(playlists);
+        res.json({
+            // TODO: get actual elements count
+            elements: 0,
+            elementsPerPage,
+            page,
+            playlists,
+        });
     } catch (error) {
         logger.error(error.trace);
         res.sendStatus(500);
@@ -32,8 +43,12 @@ router.get("/playlist", async (req, res) => {
 
 router.get("/album", async (req, res) => {
     const api = new InitializedSpotifyApi((req as any).api);
-    logger.info(req);
-    const internalAlbums = await api.searchForAlbums(req.query.q);
+    const page = req.query.page ? req.query.page : 0;
+    const elementsPerPage = 20;
+    const internalAlbums = await api.searchForAlbums(req.query.q, {
+        limit: elementsPerPage,
+        offset: page * elementsPerPage,
+    });
     const albums = internalAlbums.map((album: Album) => {
         const artists: Array<{id: string, name: string}> = album.artists().map((artist) => {
             return {
@@ -49,7 +64,13 @@ router.get("/album", async (req, res) => {
         };
     });
 
-    res.json(albums);
+    res.json({
+        albums,
+        // TODO: get actual elements count
+        elements: 0,
+        elementsPerPage,
+        page,
+    });
 });
 
 export default router;

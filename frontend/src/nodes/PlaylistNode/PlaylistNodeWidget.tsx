@@ -10,7 +10,7 @@ import * as _ from "lodash";
 import * as React from "react";
 import * as SRD from "storm-react-diagrams";
 import * as logger from "winston";
-import * as Search from "../../api/Search";
+import * as api from "../../api";
 
 import {PlaylistItem} from "../../components/PlaylistItem";
 import {AbstractNodeWidget, IAbstractNodeProps} from "../AbstractNodeWidget";
@@ -112,8 +112,9 @@ export default class PlaylistNodeWidget extends AbstractNodeWidget<IPlaylistNode
     }
 
     private async handleKeypress() {
-        const playlists = await Search.searchPlaylist(this.state.searchQuery);
-        const playlistItems = playlists.map((playlist: any) => (
+        const pageablePlaylists = await api.SearchApiFp((window as any).config)
+            .searchPlaylist(this.state.searchQuery)();
+        const playlistItems = pageablePlaylists.playlists.map((playlist: any) => (
             <PlaylistItem
                 key={playlist.id}
                 handleClose={this.handleSelect}
@@ -123,7 +124,7 @@ export default class PlaylistNodeWidget extends AbstractNodeWidget<IPlaylistNode
 
         this.setState({
             playlistItems,
-            playlistResults: playlists,
+            playlistResults: pageablePlaylists.playlists,
         });
     }
 

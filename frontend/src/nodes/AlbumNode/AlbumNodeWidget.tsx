@@ -9,7 +9,7 @@ import * as _ from "lodash";
 import * as React from "react";
 import * as SRD from "storm-react-diagrams";
 import * as logger from "winston";
-import * as Search from "../../api/Search";
+import * as api from "../../api";
 
 import List from "@material-ui/core/List/List";
 import {AlbumItem} from "../../components/AlbumItem";
@@ -112,8 +112,8 @@ export default class AlbumNodeWidget extends AbstractNodeWidget<IAlbumNodeProps>
     }
 
     private async handleKeypress() {
-        const albums = await Search.searchAlbum(this.state.searchQuery);
-        const albumItems = albums.map((album: any) => (
+        const pageableAlbums = await api.SearchApiFp((window as any).config).searchAlbum(this.state.searchQuery)();
+        const albumItems = pageableAlbums.albums.map((album: any) => (
             <AlbumItem
                 key={album.id}
                 handleClose={this.handleSelect}
@@ -123,7 +123,7 @@ export default class AlbumNodeWidget extends AbstractNodeWidget<IAlbumNodeProps>
 
         this.setState({
             albumItems,
-            albumResults: albums,
+            albumResults: pageableAlbums.albums,
         });
     }
 

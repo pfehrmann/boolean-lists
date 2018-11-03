@@ -7,7 +7,7 @@ import * as Keycloak from "keycloak-connect";
 import * as morgan from "morgan";
 import * as winston from "winston";
 import * as logger from "winston";
-import * as Api from "./spotify/Api";
+import api from "./api";
 
 const kcConfig = require("../keycloak.json");
 
@@ -42,7 +42,7 @@ app.use((req: express.Request, res: any, next: express.NextFunction) => {
 });
 
 app.use(sessionStore);
-app.use(Api.router(keycloak));
+app.use("/v1", api(keycloak));
 
 app.listen(process.env.PORT, () => {
     logger.info(`Listening on port ${process.env.PORT}`);

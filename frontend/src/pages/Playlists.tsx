@@ -13,7 +13,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import * as React from "react";
 import {Link} from "react-router-dom";
 import * as logger from "winston";
-import * as User from "../api/User";
+import * as api from "../api";
 
 import Avatar from "@material-ui/core/Avatar/Avatar";
 import Button from "@material-ui/core/Button";
@@ -22,11 +22,10 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import {getPlaylist} from "../api/Playlist";
 
 class Landing extends React.Component {
     public state: {
-        playlists: Array<{ name: string, description: string, graph: string, image?: string }>,
+        playlists: Array<{ name: string, description: string, graph: string, image?: {url: string} }>,
         open: boolean,
         deletePlaylist: string,
     };
@@ -62,7 +61,7 @@ class Landing extends React.Component {
                                         return (
                                             <div key={index}>
                                                 <ListItem>
-                                                    <Avatar src={playlist.image}/>
+                                                    <Avatar src={playlist.image ? playlist.image.url : ''}/>
                                                     <Link to={`/editor/${playlist.name}`}
                                                           style={{textDecoration: "none"}}>
                                                         <IconButton>
@@ -122,17 +121,13 @@ class Landing extends React.Component {
     }
 
     private async updatePlaylists() {
-        let playlists: Array<{
-            name: string,
-            description: string,
-            graph: string,
-            uri?: string,
-            image?: string,
-        }> = await User.playlists();
-        playlists = await Promise.all(playlists.map(async (playlist) => {
+        const pageablePlaylists = await api.MeApiFp((window as any).config).getMyPlaylists()();
+        const playlists = await Promise.all(pageablePlaylists.playlists.map(async (playlist) => {
             if (playlist.uri) {
-                const data = (await getPlaylist(playlist.uri)).data;
-                playlist.image = data.image.url;
+                const apiPlaylist = await api.PlaylistApiFp((window as any).config).getPlaylistByUri(playlist.uri)();
+                if (apiPlaylist.image) {
+                    playlist.image = apiPlaylist.image;
+                }
             }
             return playlist;
         }));
@@ -158,7 +153,7 @@ class Landing extends React.Component {
 
     private async handleDelete() {
         try {
-            await User.deletePlaylist(this.state.deletePlaylist);
+            await api.MeApiFp((window as any).config).deleteMyPlaylistById(this.state.deletePlaylist)();
             this.updatePlaylists();
         } catch (error) {
             logger.error(error.stack);

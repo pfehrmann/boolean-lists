@@ -2,7 +2,7 @@ import * as express from "express";
 import * as SpotifyWebApi from "spotify-web-api-node";
 import * as uuid from "uuid/v1";
 import * as logger from "winston";
-import {User} from "../users/Users";
+import {User} from "../api/Users";
 
 const authRequests: Map<string, (spotifyWebApi: any, res: express.Response) => any> =
     new Map<string, (spotifyWebApi: any, res: express.Response) => any>();
@@ -20,7 +20,7 @@ export function authorized(): express.Handler {
     };
 }
 
-async function addApiToRequest(req: express.Request) {
+export async function addApiToRequest(req: express.Request) {
     const userId: string = (req as any).kauth.grant.access_token.content.sub;
     const user = await User.findOne({id: userId});
 

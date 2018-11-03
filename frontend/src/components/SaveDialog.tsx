@@ -7,7 +7,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 import * as React from "react";
 import * as SRD from "storm-react-diagrams";
-import * as User from "../api/User";
+
+import * as api from "../api";
 
 interface ISerializationDialog {
     model: SRD.DiagramModel;
@@ -104,11 +105,11 @@ export class SaveDialog extends React.Component<ISerializationDialog> {
     }
 
     private handleSave() {
-        User.addPlaylist({
+        api.MeApiFp((window as any).config).addPlaylist({
             description: this.state.description,
-            graph: JSON.stringify(this.props.model.serializeDiagram()),
+            graph: this.props.model.serializeDiagram(),
             name: this.state.name,
-        });
+        })();
         this.handleClose();
     }
 }
