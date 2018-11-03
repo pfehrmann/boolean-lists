@@ -1,10 +1,11 @@
 import * as _ from "lodash";
 import * as SRD from "storm-react-diagrams";
+import {AbstractPortModel} from "./AbstractPortModel";
 
 export class AbstractNodeModel extends SRD.NodeModel {
     public name: string;
     public color: string;
-    public ports: { [s: string]: SRD.DefaultPortModel };
+    public ports: { [s: string]: AbstractPortModel };
     public configuration: any;
 
     constructor(className: string, name: string, color: string = "rgb(0,192,255)") {
@@ -13,12 +14,12 @@ export class AbstractNodeModel extends SRD.NodeModel {
         this.color = color;
     }
 
-    public addInPort(label: string): SRD.DefaultPortModel {
-        return this.addPort(new SRD.DefaultPortModel(true, SRD.Toolkit.UID(), label));
+    public addInPort(label: string): AbstractPortModel {
+        return this.addPort(new AbstractPortModel(true, SRD.Toolkit.UID(), label));
     }
 
-    public addOutPort(label: string): SRD.DefaultPortModel {
-        return this.addPort(new SRD.DefaultPortModel(false, SRD.Toolkit.UID(), label));
+    public addOutPort(label: string): AbstractPortModel {
+        return this.addPort(new AbstractPortModel(false, SRD.Toolkit.UID(), label));
     }
 
     public deSerialize(object: any, engine: SRD.DiagramEngine) {
@@ -36,13 +37,13 @@ export class AbstractNodeModel extends SRD.NodeModel {
         });
     }
 
-    public getInPorts(): SRD.DefaultPortModel[] {
+    public getInPorts(): AbstractPortModel[] {
         return _.filter(this.ports, (portModel) => {
             return portModel.in;
         });
     }
 
-    public getOutPorts(): SRD.DefaultPortModel[] {
+    public getOutPorts(): AbstractPortModel[] {
         return _.filter(this.ports, (portModel) => {
             return !portModel.in;
         });
