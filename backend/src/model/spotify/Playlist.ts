@@ -1,6 +1,6 @@
 import * as logger from "winston";
-import {sleep} from "../util";
-import {getAll} from "../util";
+import {sleep} from "../../util";
+import {getAll} from "../../util";
 import {InitializedSpotifyApi} from "./SpotifyApi";
 import {Track} from "./Track";
 const Cache = require("async-disk-cache");

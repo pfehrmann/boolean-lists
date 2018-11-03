@@ -1,5 +1,5 @@
+import {shuffleArray} from "../../util";
 import {InitializedSpotifyApi} from "../spotify/SpotifyApi";
-import {shuffleArray} from "../util";
 import {IntermediatePlaylist} from "./IntermediatePlaylist";
 import {fromJSON} from "./JsonParser";
 import {PlaylistNode} from "./Nodes";

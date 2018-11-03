@@ -2,7 +2,7 @@ import * as express from "express";
 import * as SpotifyWebApi from "spotify-web-api-node";
 import * as uuid from "uuid/v1";
 import * as logger from "winston";
-import {User} from "../api/Users";
+import {User} from "../database/User";
 
 const authRequests: Map<string, (spotifyWebApi: any, res: express.Response) => any> =
     new Map<string, (spotifyWebApi: any, res: express.Response) => any>();

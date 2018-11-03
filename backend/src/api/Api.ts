@@ -1,5 +1,5 @@
 import * as express from "express";
-import * as SpotifyAuthorization from "../spotify/Authorization";
+import * as SpotifyAuthorization from "../model/spotify/Authorization";
 
 import Playlists from "./Playlists";
 import search from "./Search";

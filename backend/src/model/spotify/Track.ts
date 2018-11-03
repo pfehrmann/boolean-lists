@@ -10,7 +10,7 @@ export class Track {
         }
 
         if (times >= 5) {
-            throw new Error("Could not instanciate Track, uri was not found.");
+            throw new Error("Could not instantiate Track, uri was not found.");
         }
     }
 

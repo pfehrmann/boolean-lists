@@ -1,6 +1,6 @@
 import * as Express from "express";
-import {Playlist} from "../spotify/Playlist";
-import {InitializedSpotifyApi} from "../spotify/SpotifyApi";
+import {Playlist} from "../model/spotify/Playlist";
+import {InitializedSpotifyApi} from "../model/spotify/SpotifyApi";
 
 const router: Express.Router = Express.Router();
 

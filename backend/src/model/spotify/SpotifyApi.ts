@@ -1,4 +1,4 @@
-import {getAll} from "../util";
+import {getAll} from "../../util";
 import {Album} from "./Album";
 import {Playlist} from "./Playlist";
 import {Track} from "./Track";

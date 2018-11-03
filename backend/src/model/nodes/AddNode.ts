@@ -1,7 +1,7 @@
 import * as logger from "winston";
+import {getNelementsFromArray} from "../../util";
 import {InitializedSpotifyApi} from "../spotify/SpotifyApi";
 import {Track} from "../spotify/Track";
-import {getNelementsFromArray} from "../util";
 import {IntermediatePlaylist} from "./IntermediatePlaylist";
 import {fromJSON} from "./JsonParser";
 import {PlaylistNode} from "./Nodes";

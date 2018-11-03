@@ -1,5 +1,5 @@
+import {IChangeListener, IObservable} from "../../util";
 import {Track} from "../spotify/Track";
-import {IChangeListener, IObservable} from "../util";
 
 export abstract class PlaylistNode implements IObservable {
     private changeListeners: IChangeListener[] = [];

@@ -1,9 +1,9 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import * as logger from "winston";
-import {Album} from "../spotify/Album";
-import {Playlist} from "../spotify/Playlist";
-import {InitializedSpotifyApi} from "../spotify/SpotifyApi";
+import {Album} from "../model/spotify/Album";
+import {Playlist} from "../model/spotify/Playlist";
+import {InitializedSpotifyApi} from "../model/spotify/SpotifyApi";
 
 const router: express.Router = express.Router();
 

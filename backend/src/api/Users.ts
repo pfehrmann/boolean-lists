@@ -1,56 +1,18 @@
 import * as express from "express";
-import * as mongoose from "mongoose";
 import * as logger from "winston";
-import * as SerializationConverter from "../convertSrdToBooleanLists/SerializationConverter";
-import {fromJSON} from "../nodes/JsonParser";
-import {addApiToRequest} from "../spotify/Authorization";
-import {Playlist as SpotifyPlaylist} from "../spotify/Playlist";
-import {InitializedSpotifyApi} from "../spotify/SpotifyApi";
-
-mongoose.connect(process.env.MONGOOSE_CONNECTION_STRING);
-
-const Schema = mongoose.Schema;
-
-const Playlist = new Schema({
-    description: String,
-    graph: String,
-    name: String,
-    uri: String,
-});
-
-const UserSchema = new Schema({
-    authorization: {
-        accessToken: String,
-        expiresAt: Number,
-        refreshToken: String,
-    },
-    id: String,
-    playlists: [Playlist],
-}, {strict: true});
-
-export const User = mongoose.model("User", UserSchema);
-
-export async function getOrCreateUser(id: string) {
-    let user = await User.findOne({id});
-    if (!user) {
-        user = User.create({id});
-    }
-
-    return user;
-}
+import { IPlaylist, savePlaylist } from "../model/database/Playlist";
+import * as User from "../model/database/User";
+import {fromJSON} from "../model/nodes/JsonParser";
+import {addApiToRequest} from "../model/spotify/Authorization";
+import {Playlist as SpotifyPlaylist} from "../model/spotify/Playlist";
+import {InitializedSpotifyApi} from "../model/spotify/SpotifyApi";
+import { convert } from "../service/serilizationConverter";
 
 const router: express.Router = express.Router();
 
-interface IPlaylist {
-    description: string;
-    graph: string;
-    name: string;
-    uri: string;
-}
-
 router.get("/", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
-    const user = await getOrCreateUser(id);
+    const user = await User.getOrCreateUser(id);
 
     const connectedToSpotify: boolean = user.authorization && Date.now() < user.authorization.expiresAt;
 
@@ -61,7 +23,7 @@ router.get("/", async (req, res) => {
 
 router.get("/playlist", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
-    const user = await getOrCreateUser(id);
+    const user = await User.getOrCreateUser(id);
 
     const playlists: IPlaylist[] = [];
     for (const playlist of user.playlists) {
@@ -85,9 +47,9 @@ router.get("/playlist", async (req, res) => {
 
 router.get("/playlist/:id", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
-    const user = await getOrCreateUser(id);
+    const user = await User.getOrCreateUser(id);
 
-    const playlist = findPlaylist(user, req.params.id);
+    const playlist = User.findPlaylist(user, req.params.id);
     if (playlist) {
         res.json({
             description: playlist.description,
@@ -100,40 +62,27 @@ router.get("/playlist/:id", async (req, res) => {
     }
 });
 
-function findPlaylist(user: any, name: string) {
-    return user.playlists.find((playlistItem: any) => playlistItem.name === name);
-}
-
-export async function savePlaylist(userId: string, playlist: IPlaylist, uri?: string) {
-    logger.info(`Searching user with id ${userId}`);
-    const user = await getOrCreateUser(userId);
-    const graph = typeof playlist.graph !== "string" ? JSON.stringify(playlist.graph) : playlist.graph;
-    if (uri) {
-        playlist.uri = uri;
+router.post("/playlist", async (req, res) => {
+    const id: string = (req as any).kauth.grant.access_token.content.sub;
+    try {
+        await savePlaylist(id, req.body);
+        if (req.body.saveToSpotify) {
+            await savePlaylistToSpotify(req, res);
+        } else {
+            res.json({});
+        }
+    } catch (error) {
+        logger.error(error);
+        res.sendStatus(500);
     }
-
-    const playlistEntity = findPlaylist(user, playlist.name);
-    if (playlistEntity) {
-        playlistEntity.description = playlist.description;
-        playlistEntity.graph = graph;
-        playlistEntity.name = playlist.name;
-        playlistEntity.uri = playlist.uri;
-    } else {
-        user.playlists.push({
-            description: playlist.description,
-            graph,
-            name: playlist.name,
-            uri: playlist.uri,
-        });
-    }
-    await user.save();
-}
+});
 
 async function savePlaylistToSpotify(req: any, res: any) {
     try {
         await addApiToRequest(req);
         const api: InitializedSpotifyApi = new InitializedSpotifyApi((req as any).api);
-        const serialized = SerializationConverter.convertSrdToBooleanList(req.body.graph);
+        const serialized = convert(req.body.graph);
+
         logger.info("Using parsed node", serialized);
         const node = await fromJSON(api, serialized);
 
@@ -164,27 +113,12 @@ async function savePlaylistToSpotify(req: any, res: any) {
     }
 }
 
-router.post("/playlist", async (req, res) => {
-    const id: string = (req as any).kauth.grant.access_token.content.sub;
-    try {
-        await savePlaylist(id, req.body);
-        if (req.body.saveToSpotify) {
-            await savePlaylistToSpotify(req, res);
-        } else {
-            res.json({});
-        }
-    } catch (error) {
-        logger.error(error);
-        res.sendStatus(500);
-    }
-});
-
 router.delete("/playlist/:id", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
     logger.info(`Searching user with id ${id}`);
-    const user = await getOrCreateUser(id);
+    const user = await User.getOrCreateUser(id);
 
-    const playlist = findPlaylist(user, req.params.id);
+    const playlist = User.findPlaylist(user, req.params.id);
     if (playlist) {
         logger.info(`Found playlist ${req.params.id}, deleting it`);
         await playlist.remove();
