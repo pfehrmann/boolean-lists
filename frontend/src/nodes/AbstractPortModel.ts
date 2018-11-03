@@ -34,6 +34,10 @@ export class AbstractPortModel extends SRD.PortModel {
     }
 
     public canLinkToPort(port: SRD.PortModel): boolean {
+        if (port === this) {
+            return false;
+        }
+
         if (port instanceof AbstractPortModel) {
             if (_.includes(port.getReachablePorts(), this)) {
                 alert("You are creating a loop, these nodes cannot be connected.");
