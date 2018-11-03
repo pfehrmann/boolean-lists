@@ -29,6 +29,7 @@ import {AddNodesElement} from "../components/AddNodesElement";
 import AddNodeModel from "../nodes/AddNode/AddNodeModel";
 import PlaylistNodeModel from "../nodes/PlaylistNode/PlaylistNodeModel";
 
+import * as _ from "lodash";
 import * as api from "../api";
 
 interface IEditorState {
@@ -42,6 +43,8 @@ interface IEditorState {
     uri?: string;
     speedDialOpen: boolean;
     keyupListener: any;
+    keydownListener: any;
+    mouseDown: boolean;
 }
 
 interface IEditorProps {
@@ -63,8 +66,10 @@ class Editor extends React.Component<IEditorProps> {
             configOpen: false,
             description: "",
             keycloak: (window as any).keycloak,
+            keydownListener: undefined,
             keyupListener: undefined,
             loginSpotifyOpen: false,
+            mouseDown: false,
             name: "",
             saveOpen: false,
             speedDialOpen: false,
@@ -100,23 +105,73 @@ class Editor extends React.Component<IEditorProps> {
         this.handleSaveClose = this.handleSaveClose.bind(this);
         this.handleSave = this.handleSave.bind(this);
         this.savePlaylist = this.savePlaylist.bind(this);
+        this.cloneSelected = this.cloneSelected.bind(this);
+        this.updateLinks = this.updateLinks.bind(this);
     }
 
     public componentWillMount() {
+        window.addEventListener("mousedown", (event) => {
+            this.setState({
+                mouseDown: true,
+            });
+        });
+
+        window.addEventListener("mouseup", (event) => {
+            this.setState({
+                mouseDown: false,
+            });
+        });
+
+        window.addEventListener("mousemove", (event) => {
+            if (this.state.mouseDown) {
+                this.updateLinks();
+            }
+        });
+
         const keyupListener = window.addEventListener("keyup", (event) => {
-            if (event.altKey === true && event.key === "N") {
+            event.preventDefault();
+            if (event.altKey === true && event.key === "A") {
                 this.handleOpenAddNode();
+            }
+
+            if (event.altKey === true && event.key === "S") {
+                this.savePlaylist();
+            }
+
+            if (event.altKey === true && event.key === "D") {
+                this.cloneSelected();
+            }
+
+            if (!event.ctrlKey && event.key === "Control") {
+                this.model.setGridSize();
+            }
+
+            if (event.ctrlKey && event.key === "Shift") {
+                this.model.setGridSize(30);
+            }
+        });
+
+        const keydownListener = window.addEventListener("keydown", (event) => {
+            if (event.ctrlKey) {
+                this.model.setGridSize(30);
+            }
+
+            if (event.ctrlKey && event.shiftKey) {
+                this.model.setGridSize(10);
             }
         });
 
         this.setState({
+            keydownListener,
             keyupListener,
         });
     }
 
     public componentWillUnmount() {
         window.removeEventListener("keyup", this.state.keyupListener);
+        window.removeEventListener("keydown", this.state.keydownListener);
         this.setState({
+            keydownListener: undefined,
             keyupListener: undefined,
         });
     }
@@ -147,7 +202,7 @@ class Editor extends React.Component<IEditorProps> {
                 >
                     <SpeedDialAction
                         icon={<SaveIcon/>}
-                        tooltipTitle={"Save graph"}
+                        tooltipTitle={"Save graph ([Alt]+[Shift]+S)"}
                         onClick={this.savePlaylist}
                     />
                     <SpeedDialAction
@@ -162,7 +217,7 @@ class Editor extends React.Component<IEditorProps> {
                     />
                     <SpeedDialAction
                         icon={<Add/>}
-                        tooltipTitle={"Add Node ([Alt]+[Shift]+N)"}
+                        tooltipTitle={"Add Node ([Alt]+[Shift]+A)"}
                         onClick={this.handleOpenAddNode}
                     />
                 </SpeedDial>
@@ -260,6 +315,47 @@ class Editor extends React.Component<IEditorProps> {
         });
     }
 
+    private updateLinks() {
+        _.forEach(this.model.links, (link) => {
+            if (link.getSourcePort()) {
+                link.getFirstPoint().updateLocation(this.engine.getPortCenter(link.getSourcePort()));
+            }
+
+            if (link.getTargetPort()) {
+                link.getLastPoint().updateLocation(this.engine.getPortCenter(link.getTargetPort()));
+            }
+        });
+    }
+
+    private cloneSelected() {
+        const offset = { x: 100, y: 100 };
+
+        const itemMap = {};
+        const items: any[] = [];
+        _.forEach(this.model.getSelectedItems(), (item: SRD.BaseModel<any>) => {
+            const newItem = item.clone(itemMap);
+
+            // offset the nodes slightly
+            if (newItem instanceof SRD.NodeModel) {
+                newItem.setPosition(newItem.x + offset.x, newItem.y + offset.y);
+                this.model.addNode(newItem);
+            } else if (newItem instanceof SRD.LinkModel) {
+                // offset the link points
+                newItem.getPoints().forEach((p) => {
+                    p.updateLocation({ x: p.getX() + offset.x, y: p.getY() + offset.y });
+                });
+                this.model.addLink(newItem);
+            }
+            newItem.selected = false;
+            items.push(newItem);
+        });
+
+        this.model.clearSelection();
+        _.forEach(items, (item: SRD.BaseModel<any>) => item.selected = true);
+
+        this.forceUpdate();
+    }
+
     private addDefaultNodes() {
 
         const playlistNode = PlaylistNodeModel.getInstance();
@@ -297,7 +393,7 @@ class Editor extends React.Component<IEditorProps> {
         try {
             logger.info(response);
             // tslint:disable
-            debugger
+            debugger;
             this.setState({
                 uri: response.playlistUri,
             });

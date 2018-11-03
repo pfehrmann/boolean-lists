@@ -24,12 +24,29 @@ interface IAddNodesElementProps {
     onClose: () => any;
 }
 
+interface IAddNodesElementState {
+    lastMouseEvent: any;
+}
+
 export class AddNodesElement extends React.Component<IAddNodesElementProps> {
+    public state: IAddNodesElementState;
 
     constructor(props: IAddNodesElementProps) {
         super(props);
 
+        this.state = {
+            lastMouseEvent: undefined,
+        };
+
         this.addNode = this.addNode.bind(this);
+    }
+
+    public componentDidMount() {
+        window.addEventListener("mousemove", (event) => {
+            this.setState({
+                lastMouseEvent: event,
+            });
+        });
     }
 
     public render() {
@@ -76,7 +93,8 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
         return () => {
             this.props.onClose();
             const node = nodeFunction();
-            node.setPosition(50, 10);
+            const position = this.props.engine.getRelativeMousePoint(this.state.lastMouseEvent);
+            node.setPosition(position.x, position.y);
 
             this.props.model.addNode(node);
             this.props.model.clearSelection();
