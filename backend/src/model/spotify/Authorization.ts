@@ -41,6 +41,7 @@ export async function getApiFromUser(user: User): Promise<SpotifyWebApi> {
 
         if (Date.now() > user.authorization.expiresAt) {
             api = await refreshCredentials(user);
+            logger.info("Token refreshed.");
         } else {
             logger.debug(`Not refreshing token, valid util ${user.authorization.expiresAt}`);
         }
@@ -80,6 +81,8 @@ async function refreshCredentials(user: any) {
 
     logger.info("Save to database...");
     user.save();
+
+    logger.info("Return api...");
     return userToSpotifyApi(user);
 }
 
