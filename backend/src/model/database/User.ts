@@ -1,41 +1,33 @@
 import * as mongoose from "mongoose";
-import {IPlaylist, PlaylistSchema} from "./Playlist";
+import {arrayProp, instanceMethod, InstanceType, prop, Typegoose} from "typegoose";
+import {Playlist} from "./Playlist";
 
 mongoose.connect(process.env.MONGOOSE_CONNECTION_STRING);
-const Schema = mongoose.Schema;
 
-interface IUser {
-    authorization?: {
+export class User extends Typegoose {
+    @prop()
+    public authorization: {
         accessToken: string,
         expiresAt: number,
         refreshToken: string,
     };
-    playlists: IPlaylist[];
+
+    @arrayProp({ items: Playlist })
+    public playlists: Playlist[];
+
+    @instanceMethod
+    public findPlaylist(this: InstanceType<User>, name: string): Playlist {
+        return this.playlists.find((playlist) => playlist.name === name);
+    }
 }
 
-interface IUserModel extends IUser, mongoose.Document {}
-
-const UserSchema = new Schema({
-    authorization: {
-        accessToken: String,
-        expiresAt: Number,
-        refreshToken: String,
-    },
-    id: String,
-    playlists: [PlaylistSchema],
-}, {strict: true});
-
-export const User: mongoose.Model<IUserModel> = mongoose.model<IUserModel>("User", UserSchema);
+export const UserModel = new User().getModelForClass(User);
 
 export async function getOrCreateUser(id: string) {
-    let user = await User.findOne({id});
+    let user = await UserModel.findOne({id});
     if (!user) {
-        user = await User.create({id});
+        user = await UserModel.create({id});
     }
 
     return user;
-}
-
-export function findPlaylist(user: any, name: string) {
-    return user.playlists.find((playlistItem: any) => playlistItem.name === name);
 }

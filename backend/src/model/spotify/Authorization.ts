@@ -2,7 +2,7 @@ import * as express from "express";
 import * as SpotifyWebApi from "spotify-web-api-node";
 import * as uuid from "uuid/v1";
 import * as logger from "winston";
-import {User} from "../database/User";
+import {User, UserModel} from "../database/User";
 
 const authRequests: Map<string, (spotifyWebApi: any, res: express.Response) => any> =
     new Map<string, (spotifyWebApi: any, res: express.Response) => any>();
@@ -22,7 +22,7 @@ export function authorized(): express.Handler {
 
 export async function addApiToRequest(req: express.Request) {
     const userId: string = (req as any).kauth.grant.access_token.content.sub;
-    const user = await User.findOne({id: userId});
+    const user = await UserModel.findOne({id: userId});
 
     if (user) {
         if (user.authorization && user.authorization.accessToken && user.authorization.refreshToken) {
@@ -37,7 +37,7 @@ export async function addApiToRequest(req: express.Request) {
             (req as any).api = api;
         }
     } else {
-        await User.create({id: userId});
+        await UserModel.create({id: userId});
     }
 }
 
@@ -99,7 +99,7 @@ export function getRouter(keycloak: any): express.Router {
 
             // save tokens to db
             const userId: string = (req as any).kauth.grant.access_token.content.sub;
-            const user = await User.findOne({id: userId});
+            const user = await UserModel.findOne({id: userId});
 
             user.authorization = {
                 accessToken: spotifyApi.getAccessToken(),

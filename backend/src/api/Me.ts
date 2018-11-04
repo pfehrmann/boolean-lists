@@ -1,6 +1,6 @@
 import * as express from "express";
 import * as logger from "winston";
-import { IPlaylist, savePlaylist } from "../model/database/Playlist";
+import { savePlaylist } from "../model/database/Playlist";
 import * as User from "../model/database/User";
 import {fromJSON} from "../model/nodes/JsonParser";
 import {addApiToRequest} from "../model/spotify/Authorization";
@@ -25,7 +25,7 @@ router.get("/playlist", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
     const user = await User.getOrCreateUser(id);
 
-    const playlists: IPlaylist[] = [];
+    const playlists = [];
     for (const playlist of user.playlists) {
         if (playlist.name && playlist.graph) {
             playlists.push({
@@ -49,7 +49,7 @@ router.get("/playlist/:id", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
     const user = await User.getOrCreateUser(id);
 
-    const playlist = User.findPlaylist(user, req.params.id);
+    const playlist = user.findPlaylist(req.params.id);
     if (playlist) {
         res.json({
             description: playlist.description,
@@ -118,10 +118,10 @@ router.delete("/playlist/:id", async (req, res) => {
     logger.info(`Searching user with id ${id}`);
     const user = await User.getOrCreateUser(id);
 
-    const playlist = User.findPlaylist(user, req.params.id);
+    const playlist = user.findPlaylist(req.params.id);
     if (playlist) {
         logger.info(`Found playlist ${req.params.id}, deleting it`);
-        await playlist.remove();
+        user.playlists.splice(user.playlists.indexOf(playlist), 1);
         await user.save();
     }
 

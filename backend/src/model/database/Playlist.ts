@@ -1,25 +1,25 @@
 import * as mongoose from "mongoose";
+import {prop, Typegoose} from "typegoose";
 import * as logger from "winston";
 import * as User from "./User";
 
 mongoose.connect(process.env.MONGOOSE_CONNECTION_STRING);
-const Schema = mongoose.Schema;
 
-export const PlaylistSchema = new Schema({
-    description: String,
-    graph: String,
-    name: String,
-    uri: String,
-});
+export class Playlist extends Typegoose {
+    @prop()
+    public description: string;
 
-export interface IPlaylist {
-    description: string;
-    graph: string;
-    name: string;
-    uri: string;
+    @prop()
+    public graph: string;
+
+    @prop()
+    public name: string;
+
+    @prop()
+    public uri: string;
 }
 
-export async function savePlaylist(userId: string, playlist: IPlaylist, uri?: string) {
+export async function savePlaylist(userId: string, playlist: Playlist, uri?: string) {
     logger.info(`Searching user with id ${userId}`);
     const user = await User.getOrCreateUser(userId);
     const graph = typeof playlist.graph !== "string" ? JSON.stringify(playlist.graph) : playlist.graph;
@@ -27,19 +27,21 @@ export async function savePlaylist(userId: string, playlist: IPlaylist, uri?: st
         playlist.uri = uri;
     }
 
-    const playlistEntity = User.findPlaylist(user, playlist.name);
+    let playlistEntity: Playlist = user.findPlaylist(playlist.name);
     if (playlistEntity) {
         playlistEntity.description = playlist.description;
         playlistEntity.graph = graph;
         playlistEntity.name = playlist.name;
         playlistEntity.uri = playlist.uri;
     } else {
-        user.playlists.push({
-            description: playlist.description,
-            graph,
-            name: playlist.name,
-            uri: playlist.uri,
-        });
+        playlistEntity = new Playlist();
+
+        playlistEntity.description = playlist.description;
+        playlistEntity.graph = graph;
+        playlistEntity.name = playlist.name;
+        playlistEntity.uri = playlist.uri;
+
+        user.playlists.push(playlistEntity);
     }
     await user.save();
 }
