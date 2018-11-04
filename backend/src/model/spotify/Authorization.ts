@@ -60,9 +60,15 @@ function userToSpotifyApi(user: User) {
 async function refreshCredentials(user: any) {
     logger.info("Refreshing credentials...");
     const api = userToSpotifyApi(user);
-    const response = await api.refreshAccessToken();
+    let response;
+    try {
+        response = await api.refreshAccessToken();
+    } catch (error) {
+        logger.warn(error);
+        throw new Error("Could not get refreshed token from spotify");
+    }
     user.authorization.accessToken = response.body.access_token;
-    if (response.body.refreshToken) {
+    if (response.body.refresh_token) {
         user.authorization.refreshToken = response.body.refresh_token;
     }
     user.authorization.expiresAt = response.body.expires_in * 1000 + Date.now();
