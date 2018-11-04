@@ -35,6 +35,7 @@ const app = express();
 app.use(morgan("dev"));
 app.use((err, req, res, next) => {
     logger.error(err.stack);
+    logger.error(err);
     res.sendStatus(500);
 });
 
