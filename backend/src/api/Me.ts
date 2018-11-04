@@ -1,5 +1,4 @@
 import * as express from "express";
-import * as logger from "winston";
 import {UserModel} from "../model/database/User";
 import savePlaylistToSpotify from "../service/SavePlaylistToSpotify";
 
@@ -72,16 +71,8 @@ router.post("/playlist", async (req, res) => {
 
 router.delete("/playlist/:id", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
-    logger.info(`Searching user with id ${id}`);
     const user = (await UserModel.findOrCreate({id})).doc;
-
-    const playlist = user.findPlaylist(req.params.id);
-    if (playlist) {
-        logger.info(`Found playlist ${req.params.id}, deleting it`);
-        user.playlists.splice(user.playlists.indexOf(playlist), 1);
-        await user.save();
-    }
-
+    await user.deletePlaylist(req.params.id);
     res.sendStatus(200);
 });
 

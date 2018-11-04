@@ -1,5 +1,6 @@
 import * as findOrCreate from "mongoose-findorcreate";
 import {arrayProp, instanceMethod, InstanceType, plugin, prop, Typegoose} from "typegoose";
+import * as logger from "winston";
 import {Playlist} from "./Playlist";
 
 export interface IFindOrCreateResult<T> {
@@ -43,6 +44,16 @@ export class User extends Typegoose {
 
         await this.save();
         return playlistEntity;
+    }
+
+    @instanceMethod
+    public async deletePlaylist(this: InstanceType<User>, name: string) {
+        const playlist = this.findPlaylist(name);
+        if (playlist) {
+            logger.info(`Found playlist ${name}, deleting it`);
+            this.playlists.splice(this.playlists.indexOf(playlist), 1);
+            await this.save();
+        }
     }
 }
 
