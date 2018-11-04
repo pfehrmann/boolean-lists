@@ -36,7 +36,7 @@ export async function addApiToRequest(req: express.Request) {
     }
 }
 
-export async function getApiFromUser(user: User): Promise<InitializedSpotifyApi> {
+export async function getApiFromUser(user: User): Promise<SpotifyWebApi> {
     if (user && user.authorization && user.authorization.accessToken && user.authorization.refreshToken) {
         let api = userToSpotifyApi(user);
 

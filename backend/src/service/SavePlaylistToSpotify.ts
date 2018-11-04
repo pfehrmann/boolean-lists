@@ -17,7 +17,7 @@ export default async function savePlaylistToSpotify(userId: string, playlistName
     }
 
     const user = userResult.doc;
-    const api: InitializedSpotifyApi = await getApiFromUser(user);
+    const api: InitializedSpotifyApi = new InitializedSpotifyApi(await getApiFromUser(user));
     const playlistEntity = user.findPlaylist(playlistName);
     const serialized = convert(playlistEntity.graph);
 
