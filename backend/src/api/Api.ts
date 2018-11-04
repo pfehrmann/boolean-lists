@@ -8,7 +8,6 @@ import search from "./Search";
 export default function router(keycloak: any): express.Router {
     const myRouter = express.Router();
 
-    myRouter.use("/auth/spotify", SpotifyAuthorization.getRouter(keycloak));
     myRouter.use(keycloak.middleware());
     myRouter.use(express.json());
     myRouter.use("/me", keycloak.protect(), me);
