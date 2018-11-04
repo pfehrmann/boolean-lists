@@ -59,19 +59,26 @@ function userToSpotifyApi(user: User) {
 
 async function refreshCredentials(user: any) {
     logger.info("Refreshing credentials...");
+    logger.info("Get user from database...");
     const api = userToSpotifyApi(user);
+
     let response;
     try {
+        logger.info("Ask Spotify for token...");
         response = await api.refreshAccessToken();
     } catch (error) {
         logger.warn(error);
         throw new Error("Could not get refreshed token from spotify");
     }
+
+    logger.info("Updating database entity...");
     user.authorization.accessToken = response.body.access_token;
     if (response.body.refresh_token) {
         user.authorization.refreshToken = response.body.refresh_token;
     }
     user.authorization.expiresAt = response.body.expires_in * 1000 + Date.now();
+
+    logger.info("Save to database...");
     user.save();
     return userToSpotifyApi(user);
 }
