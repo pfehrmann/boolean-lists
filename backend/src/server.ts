@@ -4,9 +4,12 @@ import * as cors from "cors";
 import * as  express from "express";
 import * as session from "express-session";
 import * as Keycloak from "keycloak-connect";
+import * as mongoose from "mongoose";
 import * as morgan from "morgan";
 import * as winston from "winston";
 import * as logger from "winston";
+
+mongoose.connect(process.env.MONGOOSE_CONNECTION_STRING);
 
 import api from "./api";
 import * as SpotifyAuthorization from "./model/spotify/Authorization";

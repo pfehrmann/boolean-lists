@@ -1,10 +1,16 @@
-import * as mongoose from "mongoose";
-import {arrayProp, instanceMethod, InstanceType, prop, Typegoose} from "typegoose";
+import * as findOrCreate from "mongoose-findorcreate";
+import {arrayProp, instanceMethod, InstanceType, plugin, prop, Typegoose} from "typegoose";
 import {Playlist} from "./Playlist";
 
-mongoose.connect(process.env.MONGOOSE_CONNECTION_STRING);
+export interface IFindOrCreateResult<T> {
+    created: boolean;
+    doc: InstanceType<T>;
+}
 
+@plugin(findOrCreate)
 export class User extends Typegoose {
+    public static findOrCreate: (condition: any) => Promise<IFindOrCreateResult<User>>;
+
     @prop()
     public authorization: {
         accessToken: string,
@@ -19,15 +25,24 @@ export class User extends Typegoose {
     public findPlaylist(this: InstanceType<User>, name: string): Playlist {
         return this.playlists.find((playlist) => playlist.name === name);
     }
+
+    @instanceMethod
+    public async saveOrUpdatePlaylist(this: InstanceType<User>, playlist: Playlist) {
+        const graph = typeof playlist.graph !== "string" ? JSON.stringify(playlist.graph) : playlist.graph;
+
+        let playlistEntity: Playlist = this.findPlaylist(playlist.name);
+        if (!playlistEntity) {
+            playlistEntity = new Playlist();
+            this.playlists.push(playlistEntity);
+        }
+
+        playlistEntity.description = playlist.description;
+        playlistEntity.graph = graph;
+        playlistEntity.name = playlist.name;
+        playlistEntity.uri = playlist.uri;
+
+        await this.save();
+    }
 }
 
 export const UserModel = new User().getModelForClass(User);
-
-export async function getOrCreateUser(id: string) {
-    let user = await UserModel.findOne({id});
-    if (!user) {
-        user = await UserModel.create({id});
-    }
-
-    return user;
-}

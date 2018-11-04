@@ -1,18 +1,17 @@
 import * as express from "express";
 import * as logger from "winston";
-import { savePlaylist } from "../model/database/Playlist";
-import * as User from "../model/database/User";
+import {UserModel} from "../model/database/User";
 import {fromJSON} from "../model/nodes/JsonParser";
 import {addApiToRequest} from "../model/spotify/Authorization";
 import {Playlist as SpotifyPlaylist} from "../model/spotify/Playlist";
 import {InitializedSpotifyApi} from "../model/spotify/SpotifyApi";
-import { convert } from "../service/serilizationConverter";
+import {convert} from "../service/serilizationConverter";
 
 const router: express.Router = express.Router();
 
 router.get("/", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
-    const user = await User.getOrCreateUser(id);
+    const user = (await UserModel.findOrCreate({id})).doc;
 
     const connectedToSpotify: boolean = user.authorization && Date.now() < user.authorization.expiresAt;
 
@@ -23,7 +22,7 @@ router.get("/", async (req, res) => {
 
 router.get("/playlist", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
-    const user = await User.getOrCreateUser(id);
+    const user = (await UserModel.findOrCreate({id})).doc;
 
     const playlists = [];
     for (const playlist of user.playlists) {
@@ -47,7 +46,7 @@ router.get("/playlist", async (req, res) => {
 
 router.get("/playlist/:id", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
-    const user = await User.getOrCreateUser(id);
+    const user = (await UserModel.findOrCreate({id})).doc;
 
     const playlist = user.findPlaylist(req.params.id);
     if (playlist) {
@@ -64,8 +63,10 @@ router.get("/playlist/:id", async (req, res) => {
 
 router.post("/playlist", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
+    const user = (await UserModel.findOrCreate({id})).doc;
+
     try {
-        await savePlaylist(id, req.body);
+        await user.saveOrUpdatePlaylist(req.body);
         if (req.body.saveToSpotify) {
             await savePlaylistToSpotify(req, res);
         } else {
@@ -116,7 +117,7 @@ async function savePlaylistToSpotify(req: any, res: any) {
 router.delete("/playlist/:id", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
     logger.info(`Searching user with id ${id}`);
-    const user = await User.getOrCreateUser(id);
+    const user = (await UserModel.findOrCreate({id})).doc;
 
     const playlist = user.findPlaylist(req.params.id);
     if (playlist) {
