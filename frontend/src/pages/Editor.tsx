@@ -404,8 +404,6 @@ class Editor extends React.Component<IEditorProps> {
         })();
         try {
             logger.info(response);
-            // tslint:disable
-            debugger;
             this.setState({
                 uri: response.playlistUri,
             });
