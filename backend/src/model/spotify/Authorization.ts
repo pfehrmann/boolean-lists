@@ -59,7 +59,7 @@ function userToSpotifyApi(user: User) {
 }
 
 async function refreshCredentials(user: any) {
-    logger.info("Refershing credentials...");
+    logger.info("Refreshing credentials...");
     const api = userToSpotifyApi(user);
     const response = await api.refreshAccessToken();
     user.authorization.accessToken = response.body.access_token;
