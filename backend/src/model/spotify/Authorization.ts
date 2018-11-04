@@ -26,7 +26,7 @@ export async function addApiToRequest(req: express.Request) {
 
     if (user) {
         try {
-            (req as any).api = getApiFromUser(user);
+            (req as any).api = await getApiFromUser(user);
         } catch (error) {
             logger.info(`Could not create api for user ${userId}`);
         }
