@@ -61,12 +61,16 @@ router.post("/playlist", async (req, res) => {
     const user = (await UserModel.findOrCreate({id})).doc;
 
     const playlistEntity = await user.saveOrUpdatePlaylist(req.body);
+    let response = {
+        message: "success",
+        playlistUri: playlistEntity.uri,
+    };
+
     if (req.body.saveToSpotify) {
-        const result = await savePlaylistToSpotify(id, playlistEntity.name);
-        res.json(result);
-    } else {
-        res.json({});
+        response = await savePlaylistToSpotify(id, playlistEntity.name);
     }
+
+    res.json(response);
 });
 
 router.delete("/playlist/:id", async (req, res) => {
