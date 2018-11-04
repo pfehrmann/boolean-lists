@@ -3,6 +3,7 @@ import * as SpotifyWebApi from "spotify-web-api-node";
 import * as uuid from "uuid/v1";
 import * as logger from "winston";
 import {User, UserModel} from "../database/User";
+import {InitializedSpotifyApi} from "./SpotifyApi";
 
 const authRequests: Map<string, (spotifyWebApi: any, res: express.Response) => any> =
     new Map<string, (spotifyWebApi: any, res: express.Response) => any>();
@@ -25,23 +26,32 @@ export async function addApiToRequest(req: express.Request) {
     const user = await UserModel.findOne({id: userId});
 
     if (user) {
-        if (user.authorization && user.authorization.accessToken && user.authorization.refreshToken) {
-            let api = userToSpotifyApi(user);
-
-            if (Date.now() > user.authorization.expiresAt) {
-                api = await refreshCredentials(user);
-            } else {
-                logger.debug(`Not refreshing token, valid util ${user.authorization.expiresAt}`);
-            }
-
-            (req as any).api = api;
+        try {
+            (req as any).api = getApiFromUser(user);
+        } catch (error) {
+            logger.info(`Could not create api for user ${userId}`);
         }
     } else {
         await UserModel.create({id: userId});
     }
 }
 
-function userToSpotifyApi(user: any) {
+export async function getApiFromUser(user: User): Promise<InitializedSpotifyApi> {
+    if (user && user.authorization && user.authorization.accessToken && user.authorization.refreshToken) {
+        let api = userToSpotifyApi(user);
+
+        if (Date.now() > user.authorization.expiresAt) {
+            api = await refreshCredentials(user);
+        } else {
+            logger.debug(`Not refreshing token, valid util ${user.authorization.expiresAt}`);
+        }
+        return api;
+    }
+
+    throw new Error("Cannot create api");
+}
+
+function userToSpotifyApi(user: User) {
     const api = createSpotifyApi();
     api.setAccessToken(user.authorization.accessToken);
     api.setRefreshToken(user.authorization.refreshToken);

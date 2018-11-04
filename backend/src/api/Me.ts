@@ -1,11 +1,7 @@
 import * as express from "express";
 import * as logger from "winston";
 import {UserModel} from "../model/database/User";
-import {fromJSON} from "../model/nodes/JsonParser";
-import {addApiToRequest} from "../model/spotify/Authorization";
-import {Playlist as SpotifyPlaylist} from "../model/spotify/Playlist";
-import {InitializedSpotifyApi} from "../model/spotify/SpotifyApi";
-import {convert} from "../service/serilizationConverter";
+import savePlaylistToSpotify from "../service/SavePlaylistToSpotify";
 
 const router: express.Router = express.Router();
 
@@ -66,9 +62,10 @@ router.post("/playlist", async (req, res) => {
     const user = (await UserModel.findOrCreate({id})).doc;
 
     try {
-        await user.saveOrUpdatePlaylist(req.body);
+        const playlistEntity = await user.saveOrUpdatePlaylist(req.body);
         if (req.body.saveToSpotify) {
-            await savePlaylistToSpotify(req, res);
+            const result = await savePlaylistToSpotify(id, playlistEntity.name);
+            res.json(result);
         } else {
             res.json({});
         }
@@ -77,42 +74,6 @@ router.post("/playlist", async (req, res) => {
         res.sendStatus(500);
     }
 });
-
-async function savePlaylistToSpotify(req: any, res: any) {
-    try {
-        await addApiToRequest(req);
-        const api: InitializedSpotifyApi = new InitializedSpotifyApi((req as any).api);
-        const serialized = convert(req.body.graph);
-
-        logger.info("Using parsed node", serialized);
-        const node = await fromJSON(api, serialized);
-
-        const tracksToAdd = await node.getTracks();
-        logger.info(`Adding ${tracksToAdd.length} tracks.`);
-
-        const me = await api.me();
-
-        let playlist: SpotifyPlaylist;
-        if (req.body.uri) {
-            playlist = await SpotifyPlaylist.fromSpotifyUri(api, await me.id(), req.body.uri);
-            if (playlist.name() !== req.body.name) {
-                playlist = await me.createPlaylist(req.body.name);
-            }
-        } else if (req.body.name) {
-            playlist = await me.createPlaylist(req.body.name);
-        } else {
-            throw new Error("Enter a name of a playlist");
-        }
-
-        await playlist.clear();
-        await playlist.addTracks(tracksToAdd);
-
-        res.json({message: "Successfully added songs.", playlistUri: playlist.id()});
-    } catch (error) {
-        logger.error(error.stack);
-        res.sendStatus(500);
-    }
-}
 
 router.delete("/playlist/:id", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;

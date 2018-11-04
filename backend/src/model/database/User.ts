@@ -27,7 +27,7 @@ export class User extends Typegoose {
     }
 
     @instanceMethod
-    public async saveOrUpdatePlaylist(this: InstanceType<User>, playlist: Playlist) {
+    public async saveOrUpdatePlaylist(this: InstanceType<User>, playlist: Playlist): Promise<Playlist> {
         const graph = typeof playlist.graph !== "string" ? JSON.stringify(playlist.graph) : playlist.graph;
 
         let playlistEntity: Playlist = this.findPlaylist(playlist.name);
@@ -42,6 +42,7 @@ export class User extends Typegoose {
         playlistEntity.uri = playlist.uri;
 
         await this.save();
+        return playlistEntity;
     }
 }
 
