@@ -7,8 +7,8 @@ export class AbstractPortModel extends SRD.PortModel {
     public label: string;
     public links: { [id: string]: SRD.DefaultLinkModel };
 
-    constructor(isInput: boolean, name: string, label?: string, id?: string) {
-        super(name, "default", id);
+    constructor(isInput: boolean, name: string, label?: string, type: string = "AbstractPort", id?: string) {
+        super(name, type, id);
         this.in = isInput;
         this.label = label || name;
     }
@@ -33,9 +33,15 @@ export class AbstractPortModel extends SRD.PortModel {
         return link;
     }
 
-    public canLinkToPort(port: SRD.PortModel): boolean {
+    public canLinkToPort(port: SRD.PortModel, propagate = true): boolean {
         if (port === this) {
             return false;
+        }
+
+        if (port instanceof SRD.DefaultPortModel || port instanceof AbstractPortModel) {
+            if (this.in === port.in) {
+                return false;
+            }
         }
 
         if (port instanceof AbstractPortModel) {
@@ -48,9 +54,10 @@ export class AbstractPortModel extends SRD.PortModel {
             return false;
         }
 
-        if (port instanceof SRD.DefaultPortModel || port instanceof AbstractPortModel) {
-            return this.in !== port.in;
+        if (propagate) {
+            return port.canLinkToPort(this, false);
         }
+
         return true;
     }
 

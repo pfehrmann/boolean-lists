@@ -25,12 +25,18 @@ import PlaylistNodeFactory from "../nodes/PlaylistNode/PlaylistNodeFactory";
 import RandomizeNodeFactory from "../nodes/RandomizeNode/RandomizeNodeFactory";
 import SubtractNodeFactory from "../nodes/SubtractNode/SubtractNodeFactory";
 
+import AbstractPortFactory from "../nodes/AbstractPortFactory";
+import DefaultPortFactory from "../nodes/DefaultPortFactory";
+import LimitPortFactory from "../nodes/LimitNode/LimitPortFactory";
+
 import {AddNodesElement} from "../components/AddNodesElement";
 import AddNodeModel from "../nodes/AddNode/AddNodeModel";
 import PlaylistNodeModel from "../nodes/PlaylistNode/PlaylistNodeModel";
 
 import * as _ from "lodash";
 import * as api from "../api";
+import RandomizePortFactory from "../nodes/RandomizeNode/RandomizePortFactory";
+import SubtractPortFactory from "../nodes/SubtractNode/SubtractPortFactory";
 
 interface IEditorState {
     configOpen: boolean;
@@ -87,6 +93,12 @@ class Editor extends React.Component<IEditorProps> {
         engine.registerNodeFactory(new SubtractNodeFactory());
         engine.registerNodeFactory(new MyTopTracksNodeFactory());
         engine.registerNodeFactory(new AlbumNodeFactory());
+
+        engine.registerPortFactory(new AbstractPortFactory());
+        engine.registerPortFactory(new DefaultPortFactory());
+        engine.registerPortFactory(new LimitPortFactory());
+        engine.registerPortFactory(new RandomizePortFactory());
+        engine.registerPortFactory(new SubtractPortFactory());
 
         const model = new SRD.DiagramModel();
         this.model = model;
