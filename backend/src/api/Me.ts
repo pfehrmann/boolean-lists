@@ -61,17 +61,12 @@ router.post("/playlist", async (req, res) => {
     const id: string = (req as any).kauth.grant.access_token.content.sub;
     const user = (await UserModel.findOrCreate({id})).doc;
 
-    try {
-        const playlistEntity = await user.saveOrUpdatePlaylist(req.body);
-        if (req.body.saveToSpotify) {
-            const result = await savePlaylistToSpotify(id, playlistEntity.name);
-            res.json(result);
-        } else {
-            res.json({});
-        }
-    } catch (error) {
-        logger.error(error);
-        res.sendStatus(500);
+    const playlistEntity = await user.saveOrUpdatePlaylist(req.body);
+    if (req.body.saveToSpotify) {
+        const result = await savePlaylistToSpotify(id, playlistEntity.name);
+        res.json(result);
+    } else {
+        res.json({});
     }
 });
 
