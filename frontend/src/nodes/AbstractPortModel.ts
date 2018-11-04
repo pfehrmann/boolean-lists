@@ -45,7 +45,7 @@ export class AbstractPortModel extends SRD.PortModel {
         }
 
         if (port instanceof AbstractPortModel) {
-            if (_.includes(port.getReachablePorts(), this)) {
+            if (_.includes(port.getReachableParents(), this) || _.includes(port.getReachableChildren(), this)) {
                 alert("You are creating a loop, these nodes cannot be connected.");
                 return false;
             }
@@ -66,15 +66,27 @@ export class AbstractPortModel extends SRD.PortModel {
         return link || new SRD.DefaultLinkModel();
     }
 
-    private getReachablePorts(reachablePorts: AbstractPortModel[] = []) {
+    private getReachableParents(reachablePorts: AbstractPortModel[] = []) {
         reachablePorts.push(this);
 
-        let ports = this.getChildren();
-        ports = ports.concat(this.getParents());
+        const ports = this.getParents();
 
         for (const port of ports) {
             if (!_.includes(reachablePorts, port)) {
-                reachablePorts = port.getReachablePorts(reachablePorts);
+                reachablePorts = port.getReachableParents(reachablePorts);
+            }
+        }
+        return reachablePorts;
+    }
+
+    private getReachableChildren(reachablePorts: AbstractPortModel[] = []) {
+        reachablePorts.push(this);
+
+        const ports = this.getChildren();
+
+        for (const port of ports) {
+            if (!_.includes(reachablePorts, port)) {
+                reachablePorts = port.getReachableChildren(reachablePorts);
             }
         }
         return reachablePorts;
