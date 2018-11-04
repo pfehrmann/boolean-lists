@@ -1,8 +1,19 @@
 import * as mongoose from "mongoose";
-import {PlaylistSchema} from "./Playlist";
+import {IPlaylist, PlaylistSchema} from "./Playlist";
 
 mongoose.connect(process.env.MONGOOSE_CONNECTION_STRING);
 const Schema = mongoose.Schema;
+
+interface IUser {
+    authorization?: {
+        accessToken: string,
+        expiresAt: number,
+        refreshToken: string,
+    };
+    playlists: IPlaylist[];
+}
+
+interface IUserModel extends IUser, mongoose.Document {}
 
 const UserSchema = new Schema({
     authorization: {
@@ -14,12 +25,12 @@ const UserSchema = new Schema({
     playlists: [PlaylistSchema],
 }, {strict: true});
 
-export const User = mongoose.model("User", UserSchema);
+export const User: mongoose.Model<IUserModel> = mongoose.model<IUserModel>("User", UserSchema);
 
 export async function getOrCreateUser(id: string) {
     let user = await User.findOne({id});
     if (!user) {
-        user = User.create({id});
+        user = await User.create({id});
     }
 
     return user;
