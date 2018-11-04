@@ -1,10 +1,13 @@
 import * as logger from "winston";
+
 import {Playlist as PlaylistEntity} from "../model/database/Playlist";
 import {UserModel} from "../model/database/User";
+
 import {fromJSON} from "../model/nodes/JsonParser";
 import {getApiFromUser} from "../model/spotify/Authorization";
 import {Playlist as SpotifyPlaylist} from "../model/spotify/Playlist";
 import {InitializedSpotifyApi} from "../model/spotify/SpotifyApi";
+
 import {convert} from "./serilizationConverter";
 
 export default async function savePlaylistToSpotify(userId: string, playlistName: string) {
@@ -27,6 +30,9 @@ export default async function savePlaylistToSpotify(userId: string, playlistName
     const playlist = await getOrCreateSpotifyPlaylist(playlistEntity, api);
     await playlist.clear();
     await playlist.addTracks(tracksToAdd);
+
+    playlistEntity.uri = playlist.id();
+    await user.save();
 
     return {
         message: "success",
