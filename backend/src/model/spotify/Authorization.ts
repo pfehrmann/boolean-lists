@@ -100,12 +100,13 @@ export function getRouter(keycloak: any): express.Router {
             // save tokens to db
             const userId: string = (req as any).kauth.grant.access_token.content.sub;
             const user = await User.findOne({id: userId});
-            if (!user.authorization) {
-                user.authorization = {};
-            }
-            user.authorization.accessToken = spotifyApi.getAccessToken();
-            user.authorization.refreshToken = spotifyApi.getRefreshToken();
-            user.authorization.expiresAt = spotifyApi.expiresAt;
+
+            user.authorization = {
+                accessToken: spotifyApi.getAccessToken(),
+                expiresAt: spotifyApi.expiresAt,
+                refreshToken: spotifyApi.getRefreshToken(),
+            };
+
             user.save();
 
             authorizedRes.redirect(req.query.url);
