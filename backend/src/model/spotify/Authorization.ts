@@ -131,13 +131,13 @@ export function getRouter(): express.Router {
         }), (req, res) => {
             logger.info("in callback");
             res.cookie("logged_in", true);
-            res.redirect("http://localhost:3080/loginSuccess");
+            res.redirect(`${process.env.REACT_APP_BASE}/loginSuccess`);
         });
 
     router.get("/logout", (req, res) => {
         req.logout();
         res.cookie("logged_in", false);
-        res.redirect("http://localhost:3080/");
+        res.redirect(process.env.REACT_APP_BASE);
     });
 
     return router;
