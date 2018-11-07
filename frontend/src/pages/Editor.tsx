@@ -261,7 +261,7 @@ class Editor extends React.Component<IEditorProps> {
             const id = this.props.match.params.id;
             if (id) {
                 const playlist = await api
-                    .MeApiFp((window as any).config)
+                    .MeApiFp()
                     .getMyPlaylistById(id, {credentials: "include"})();
                 this.setState({
                     description: playlist.description,
@@ -395,7 +395,7 @@ class Editor extends React.Component<IEditorProps> {
         this.handleClose();
 
         try {
-            const response = await api.MeApiFp((window as any).config).addPlaylist({
+            const response = await api.MeApiFp().addPlaylist({
                 description: this.state.description,
                 graph: this.model.serializeDiagram(),
                 name: this.state.name,

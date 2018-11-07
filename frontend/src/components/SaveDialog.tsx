@@ -112,7 +112,7 @@ export class SaveDialog extends React.Component<ISerializationDialog> {
 
     private async handleSave() {
         try {
-            await api.MeApiFp((window as any).config).addPlaylist({
+            await api.MeApiFp().addPlaylist({
                 description: this.state.description,
                 graph: this.props.model.serializeDiagram(),
                 name: this.state.name,

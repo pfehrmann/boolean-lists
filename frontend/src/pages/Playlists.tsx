@@ -126,14 +126,14 @@ class Landing extends React.Component {
     private async updatePlaylists() {
         try {
             const pageablePlaylists = await api
-                .MeApiFp((window as any).config)
+                .MeApiFp()
                 .getMyPlaylists({credentials: "include"})();
 
             const playlists = await Promise.all(pageablePlaylists.playlists.map(async (playlist) => {
                 if (playlist.uri) {
                     try {
                         const apiPlaylist = await api
-                            .PlaylistApiFp((window as any).config)
+                            .PlaylistApiFp()
                             .getPlaylistByUri(playlist.uri, {credentials: "include"})();
                         if (apiPlaylist.image) {
                             playlist.image = apiPlaylist.image;
@@ -178,7 +178,7 @@ class Landing extends React.Component {
     private async handleDelete() {
         try {
             await api
-                .MeApiFp((window as any).config)
+                .MeApiFp()
                 .deleteMyPlaylistById(this.state.deletePlaylist, {credentials: "include"})();
             this.updatePlaylists();
         } catch (error) {

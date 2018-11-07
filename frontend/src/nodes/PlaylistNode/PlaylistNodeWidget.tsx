@@ -117,7 +117,7 @@ export default class PlaylistNodeWidget extends AbstractNodeWidget<IPlaylistNode
 
     private async handleKeypress() {
         try {
-            const pageablePlaylists = await api.SearchApiFp((window as any).config)
+            const pageablePlaylists = await api.SearchApiFp()
                 .searchPlaylist(this.state.searchQuery, undefined, {credentials: "include"})();
             const playlistItems = pageablePlaylists.playlists.map((playlist: any) => (
                 <PlaylistItem

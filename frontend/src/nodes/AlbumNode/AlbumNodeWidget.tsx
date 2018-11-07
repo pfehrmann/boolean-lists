@@ -120,7 +120,7 @@ export default class AlbumNodeWidget extends AbstractNodeWidget<IAlbumNodeProps>
     private async handleKeypress() {
         try {
             const pageableAlbums = await api
-                .SearchApiFp((window as any).config)
+                .SearchApiFp()
                 .searchAlbum(
                     this.state.searchQuery,
                     undefined,
