@@ -22,7 +22,6 @@ import EditIcon from "@material-ui/icons/Edit";
 import HomeIcon from "@material-ui/icons/Home";
 import MenuIcon from "@material-ui/icons/Menu";
 import SendIcon from "@material-ui/icons/Send";
-
 // @ts-ignore
 import * as Cookie from "js-cookie";
 import {BrowserRouter, Link, Route} from "react-router-dom";
@@ -57,6 +56,12 @@ class App extends React.Component<{ classes: any }> {
         this.toggleDrawer = this.toggleDrawer.bind(this);
         this.loginOut = this.loginOut.bind(this);
         this.menuButton = this.menuButton.bind(this);
+    }
+
+    public componentDidMount() {
+        this.setState({
+            loggedIn: Cookie.get("logged_in") === "true",
+        });
     }
 
     public render() {
