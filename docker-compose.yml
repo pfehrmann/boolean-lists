@@ -30,7 +30,6 @@ services:
       - REACT_APP_BASE
       - NODE_ENV=production
     depends_on:
-      - keycloak
       - api
   api:
     build:
@@ -49,5 +48,4 @@ services:
       - MONGOOSE_CONNECTION_STRING
       - NODE_ENV=production
     depends_on:
-      - keycloak
       - mongodb
