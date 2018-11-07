@@ -60,7 +60,7 @@ class App extends React.Component<{ classes: any }> {
 
     public componentDidMount() {
         this.setState({
-            loggedIn: Cookie.get("logged_in") === "true",
+            loggedIn: Cookie.get("logged_in") === "true" || (window as any).loggedIn,
         });
     }
 
