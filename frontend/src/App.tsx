@@ -1,8 +1,9 @@
 import * as React from "react";
 import "./App.css";
-import Editor from "./pages/Editor";
 
+import Editor from "./pages/Editor";
 import Landing from "./pages/Landing";
+import LoginSuccess from "./pages/LoginSuccess";
 import Playlists from "./pages/Playlists";
 
 import AppBar from "@material-ui/core/AppBar";
@@ -22,6 +23,8 @@ import HomeIcon from "@material-ui/icons/Home";
 import MenuIcon from "@material-ui/icons/Menu";
 import SendIcon from "@material-ui/icons/Send";
 
+// @ts-ignore
+import * as Cookie from "js-cookie";
 import {BrowserRouter, Link, Route} from "react-router-dom";
 
 const styles = {
@@ -47,7 +50,7 @@ class App extends React.Component<{ classes: any }> {
         super(props);
 
         this.state = {
-            loggedIn: (window as any).keycloak.authenticated,
+            loggedIn: Cookie.get("logged_in"),
             menuVisible: false,
         };
 
@@ -117,6 +120,7 @@ class App extends React.Component<{ classes: any }> {
                         <Route exact={true} path="/" component={Landing}/>
                         <Route path="/editor/:id?" component={Editor}/>
                         <Route path="/playlists" component={Playlists}/>
+                        <Route path="/loginSuccess" component={LoginSuccess}/>
                     </div>
                 </div>
             </BrowserRouter>
@@ -132,11 +136,10 @@ class App extends React.Component<{ classes: any }> {
     }
 
     private async loginOut() {
-        const keycloak = (window as any).keycloak;
-        if (keycloak.authenticated) {
-            await keycloak.logout();
+        if ((window as any).loggedIn) {
+            window.location.assign(`${process.env.REACT_APP_API_BASE}/auth/spotify/logout`);
         } else {
-            await keycloak.login();
+            window.location.assign(`${process.env.REACT_APP_API_BASE}/auth/spotify`);
         }
     }
 

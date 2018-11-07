@@ -1,14 +1,17 @@
 import * as Express from "express";
+import {InstanceType} from "typegoose";
 import * as logger from "winston";
+import {User} from "../model/database/User";
+import {getApiFromUser} from "../model/spotify/Authorization";
 import {Playlist} from "../model/spotify/Playlist";
-import {InitializedSpotifyApi} from "../model/spotify/SpotifyApi";
 
 const router: Express.Router = Express.Router();
 
 router.get("/", async (req, res) => {
     try {
         logger.info("Get api from request...");
-        const api = new InitializedSpotifyApi((req as any).api);
+        const user: InstanceType<User> = (req as any).user;
+        const api = await getApiFromUser(user);
         if (req.query.uri) {
             const rawPlaylist = await Playlist.fromSpotifyUri(api, await (await api.me()).id(), req.query.uri);
             res.send({

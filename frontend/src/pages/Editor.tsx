@@ -8,8 +8,8 @@ import TextFields from "@material-ui/icons/TextFields";
 import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
-import * as Keycloak from "keycloak-js";
 import * as React from "react";
+import {Redirect} from "react-router";
 import * as SRD from "storm-react-diagrams";
 import * as logger from "winston";
 import Graph from "../components/Graph";
@@ -41,7 +41,6 @@ import SubtractPortFactory from "../nodes/SubtractNode/SubtractPortFactory";
 interface IEditorState {
     configOpen: boolean;
     loginSpotifyOpen: boolean;
-    keycloak: Keycloak.KeycloakInstance;
     saveOpen: boolean;
     addNodeOpen: boolean;
     name: string;
@@ -51,6 +50,7 @@ interface IEditorState {
     keyupListener: any;
     keydownListener: any;
     mouseDown: boolean;
+    redirect?: string;
 }
 
 interface IEditorProps {
@@ -71,7 +71,6 @@ class Editor extends React.Component<IEditorProps> {
             addNodeOpen: false,
             configOpen: false,
             description: "",
-            keycloak: (window as any).keycloak,
             keydownListener: undefined,
             keyupListener: undefined,
             loginSpotifyOpen: false,
@@ -108,7 +107,6 @@ class Editor extends React.Component<IEditorProps> {
 
         this.saveToSpotify = this.saveToSpotify.bind(this);
 
-        this.connectSpotify = this.connectSpotify.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
         this.handleOpenAddNode = this.handleOpenAddNode.bind(this);
         this.handleSpeedDialOpen = this.handleSpeedDialOpen.bind(this);
@@ -189,6 +187,10 @@ class Editor extends React.Component<IEditorProps> {
     }
 
     public render() {
+        if (this.state.redirect) {
+            return (<Redirect to={this.state.redirect}/>);
+        }
+
         return (
             <div className="editor">
                 <Graph engine={this.engine}/>
@@ -251,24 +253,32 @@ class Editor extends React.Component<IEditorProps> {
     }
 
     public async componentDidMount() {
-        if (!this.state.keycloak.authenticated) {
-            this.state.keycloak.login().error(() => {
-                alert("login failed.");
-            });
+        if (!(window as any).loggedIn) {
+            // todo: redirect to login page
         }
 
-        const id = this.props.match.params.id;
-        if (id) {
-            const playlist = await api.MeApiFp((window as any).config).getMyPlaylistById(id)();
-            this.setState({
-                description: playlist.description,
-                name: playlist.name,
-                uri: playlist.uri,
-            });
-            this.model.deSerializeDiagram(playlist.graph, this.engine);
-            this.engine.repaintCanvas();
-        } else {
-            this.addDefaultNodes();
+        try {
+            const id = this.props.match.params.id;
+            if (id) {
+                const playlist = await api
+                    .MeApiFp((window as any).config)
+                    .getMyPlaylistById(id, {credentials: "include"})();
+                this.setState({
+                    description: playlist.description,
+                    name: playlist.name,
+                    uri: playlist.uri,
+                });
+                this.model.deSerializeDiagram(playlist.graph, this.engine);
+                this.engine.repaintCanvas();
+            } else {
+                this.addDefaultNodes();
+            }
+        } catch (error) {
+            if (error.status === 401) {
+                this.setState({
+                    redirect: "/login",
+                });
+            }
         }
     }
 
@@ -381,36 +391,38 @@ class Editor extends React.Component<IEditorProps> {
         this.model.addAll(playlistNode, addNode, link);
     }
 
-    private connectSpotify() {
-        window.location.assign(`${process.env.REACT_APP_API_BASE}/auth/spotify/login` +
-            `?url=${window.location.href}` +
-            `&authorization=Bearer ${this.state.keycloak.token}`);
-    }
-
     private async saveToSpotify() {
         this.handleClose();
 
-        const info = await api.MeApiFp((window as any).config).getMyInfo()();
-        if (!info.connectedToSpotify) {
-            this.connectSpotify();
-        }
-
-        const response = await api.MeApiFp((window as any).config).addPlaylist({
-            description: this.state.description,
-            graph: this.model.serializeDiagram(),
-            name: this.state.name,
-            saveToSpotify: true,
-            uri: this.state.uri,
-        })();
         try {
-            logger.info(response);
-            this.setState({
-                uri: response.playlistUri,
-            });
-            alert("Success!");
+            const response = await api.MeApiFp((window as any).config).addPlaylist({
+                description: this.state.description,
+                graph: this.model.serializeDiagram(),
+                name: this.state.name,
+                saveToSpotify: true,
+                uri: this.state.uri,
+            }, {credentials: "include"})();
+            try {
+                logger.info(response);
+                this.setState({
+                    uri: response.playlistUri,
+                });
+                alert("Success!");
+            } catch (error) {
+                logger.error(error);
+                alert("Could not save.");
+                if (error.status === 401) {
+                    this.setState({
+                        redirect: "/login",
+                    });
+                }
+            }
         } catch (error) {
-            logger.error(error);
-            alert("Could not save.");
+            if (error.status === 401) {
+                this.setState({
+                    redirect: "/login",
+                });
+            }
         }
     }
 }

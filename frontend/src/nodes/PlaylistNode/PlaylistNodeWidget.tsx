@@ -8,6 +8,7 @@ import List from "@material-ui/core/List";
 import TextField from "@material-ui/core/TextField";
 import * as _ from "lodash";
 import * as React from "react";
+import {Redirect} from "react-router";
 import * as SRD from "storm-react-diagrams";
 import * as api from "../../api";
 
@@ -25,6 +26,7 @@ interface IPlaylistNodeState {
     playlistItems: React.Component[];
     playlistResults: any[];
     searchQuery: string;
+    redirect?: string;
 }
 
 export default class PlaylistNodeWidget extends AbstractNodeWidget<IPlaylistNodeProps> {
@@ -53,6 +55,10 @@ export default class PlaylistNodeWidget extends AbstractNodeWidget<IPlaylistNode
     }
 
     public render() {
+        if (this.state.redirect) {
+            return (<Redirect to={this.state.redirect}/>);
+        }
+
         return (
             <div>
                 {super.render()}
@@ -110,20 +116,28 @@ export default class PlaylistNodeWidget extends AbstractNodeWidget<IPlaylistNode
     }
 
     private async handleKeypress() {
-        const pageablePlaylists = await api.SearchApiFp((window as any).config)
-            .searchPlaylist(this.state.searchQuery)();
-        const playlistItems = pageablePlaylists.playlists.map((playlist: any) => (
-            <PlaylistItem
-                key={playlist.id}
-                handleClose={this.handleSelect}
-                playlist={...playlist}
-            />
-        ));
+        try {
+            const pageablePlaylists = await api.SearchApiFp((window as any).config)
+                .searchPlaylist(this.state.searchQuery, undefined, {credentials: "include"})();
+            const playlistItems = pageablePlaylists.playlists.map((playlist: any) => (
+                <PlaylistItem
+                    key={playlist.id}
+                    handleClose={this.handleSelect}
+                    playlist={...playlist}
+                />
+            ));
 
-        this.setState({
-            playlistItems,
-            playlistResults: pageablePlaylists.playlists,
-        });
+            this.setState({
+                playlistItems,
+                playlistResults: pageablePlaylists.playlists,
+            });
+        } catch (error) {
+            if (error.status === 401) {
+                this.setState({
+                    redirect: "/login",
+                });
+            }
+        }
     }
 
     private handleSelect(playlist: any) {

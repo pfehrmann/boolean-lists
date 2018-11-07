@@ -22,12 +22,14 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import {Redirect} from "react-router";
 
 class Landing extends React.Component {
     public state: {
         playlists: Array<{ name: string, description: string, graph: string, image?: {url: string} }>,
         open: boolean,
         deletePlaylist: string,
+        redirect?: string,
     };
 
     constructor(props: any) {
@@ -46,6 +48,10 @@ class Landing extends React.Component {
     }
 
     public render() {
+        if (this.state.redirect) {
+            return (<Redirect to={this.state.redirect}/>);
+        }
+
         /* tslint:disable */
         return (
             <Grid container={true} justify={"center"} style={{marginTop: "2em"}}>
@@ -114,26 +120,44 @@ class Landing extends React.Component {
     }
 
     public async componentDidMount() {
-        if (!(window as any).keycloak.authenticated) {
-            await (window as any).keycloak.login();
-        }
         this.updatePlaylists();
     }
 
     private async updatePlaylists() {
-        const pageablePlaylists = await api.MeApiFp((window as any).config).getMyPlaylists()();
-        const playlists = await Promise.all(pageablePlaylists.playlists.map(async (playlist) => {
-            if (playlist.uri) {
-                const apiPlaylist = await api.PlaylistApiFp((window as any).config).getPlaylistByUri(playlist.uri)();
-                if (apiPlaylist.image) {
-                    playlist.image = apiPlaylist.image;
+        try {
+            const pageablePlaylists = await api
+                .MeApiFp((window as any).config)
+                .getMyPlaylists({credentials: "include"})();
+
+            const playlists = await Promise.all(pageablePlaylists.playlists.map(async (playlist) => {
+                if (playlist.uri) {
+                    try {
+                        const apiPlaylist = await api
+                            .PlaylistApiFp((window as any).config)
+                            .getPlaylistByUri(playlist.uri, {credentials: "include"})();
+                        if (apiPlaylist.image) {
+                            playlist.image = apiPlaylist.image;
+                        }
+                    } catch (error) {
+                        if (error.status === 401) {
+                            this.setState({
+                                redirect: "/login",
+                            });
+                        }
+                    }
                 }
+                return playlist;
+            }));
+            this.setState({
+                playlists,
+            });
+        } catch (error) {
+            if (error.status === 401) {
+                this.setState({
+                    redirect: "/login",
+                });
             }
-            return playlist;
-        }));
-        this.setState({
-            playlists,
-        });
+        }
     }
 
     private deletePlaylist(playlistName: string): () => any {
@@ -153,10 +177,17 @@ class Landing extends React.Component {
 
     private async handleDelete() {
         try {
-            await api.MeApiFp((window as any).config).deleteMyPlaylistById(this.state.deletePlaylist)();
+            await api
+                .MeApiFp((window as any).config)
+                .deleteMyPlaylistById(this.state.deletePlaylist, {credentials: "include"})();
             this.updatePlaylists();
         } catch (error) {
             logger.error(error.stack);
+            if (error.status === 401) {
+                this.setState({
+                    redirect: "/login",
+                });
+            }
         }
         this.setState({
             open: false,

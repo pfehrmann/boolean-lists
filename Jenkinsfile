@@ -52,7 +52,7 @@ pipeline {
 					withCredentials([usernamePassword(credentialsId: 'boolean-lists-user', passwordVariable: 'password', usernameVariable: 'username')]) {
 						remote.user = username
 						remote.password = password
-						sshCommand remote: remote, command: 'git stash; git pull; git stash pop; docker-compose stop api frontend; docker-compose up --build -d api frontend'
+						sshCommand remote: remote, command: 'git stash; git pull; git stash pop; docker-compose stop; docker-compose up --build -d'
 					}
 				}
 			}

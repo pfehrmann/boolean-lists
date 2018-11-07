@@ -1,5 +1,5 @@
 import * as findOrCreate from "mongoose-findorcreate";
-import {arrayProp, instanceMethod, InstanceType, plugin, prop, Typegoose} from "typegoose";
+import {arrayProp, instanceMethod, InstanceType, plugin, prop, staticMethod, Typegoose} from "typegoose";
 import * as logger from "winston";
 import {Playlist} from "./Playlist";
 
@@ -11,6 +11,9 @@ export interface IFindOrCreateResult<T> {
 @plugin(findOrCreate)
 export class User extends Typegoose {
     public static findOrCreate: (condition: any) => Promise<IFindOrCreateResult<User>>;
+
+    @prop()
+    public spotifyId: string;
 
     @prop()
     public authorization: {
@@ -34,13 +37,17 @@ export class User extends Typegoose {
         let playlistEntity: Playlist = this.findPlaylist(playlist.name);
         if (!playlistEntity) {
             playlistEntity = new Playlist();
+            playlistEntity.description = playlist.description;
+            playlistEntity.graph = graph;
+            playlistEntity.name = playlist.name;
+            playlistEntity.uri = playlist.uri;
             this.playlists.push(playlistEntity);
+        } else {
+            playlistEntity.description = playlist.description;
+            playlistEntity.graph = graph;
+            playlistEntity.name = playlist.name;
+            playlistEntity.uri = playlist.uri;
         }
-
-        playlistEntity.description = playlist.description;
-        playlistEntity.graph = graph;
-        playlistEntity.name = playlist.name;
-        playlistEntity.uri = playlist.uri;
 
         await this.save();
         return playlistEntity;

@@ -1,9 +1,11 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
+import {InstanceType} from "typegoose";
 import * as logger from "winston";
+import {User} from "../model/database/User";
 import {Album} from "../model/spotify/Album";
+import {getApiFromUser} from "../model/spotify/Authorization";
 import {Playlist} from "../model/spotify/Playlist";
-import {InitializedSpotifyApi} from "../model/spotify/SpotifyApi";
 
 const router: express.Router = express.Router();
 
@@ -11,7 +13,8 @@ router.use(bodyParser.json());
 
 router.get("/playlist", async (req, res) => {
     try {
-        const api = new InitializedSpotifyApi((req as any).api);
+        const user: InstanceType<User> = (req as any).user;
+        const api = await getApiFromUser(user);
         const page = req.query.page ? req.query.page : 0;
         const elementsPerPage = 20;
         const internalPlaylists = await api.searchForPlaylists(req.query.q, {
@@ -42,7 +45,8 @@ router.get("/playlist", async (req, res) => {
 });
 
 router.get("/album", async (req, res) => {
-    const api = new InitializedSpotifyApi((req as any).api);
+    const user: InstanceType<User> = (req as any).user;
+    const api = await getApiFromUser(user);
     const page = req.query.page ? req.query.page : 0;
     const elementsPerPage = 20;
     const internalAlbums = await api.searchForAlbums(req.query.q, {

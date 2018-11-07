@@ -10,10 +10,10 @@ schemes:
 - "https"
 
 securityDefinitions:
-  apiKey:
+  cookie:
     type: "apiKey"
     in: "header"
-    name: "Authorization"
+    name: "Cookie"
 
 security:
   - apiKey: []

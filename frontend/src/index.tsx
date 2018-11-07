@@ -2,7 +2,6 @@ import blue from "@material-ui/core/colors/blue";
 import red from "@material-ui/core/colors/red";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import {createMuiTheme, MuiThemeProvider} from "@material-ui/core/styles";
-import * as Keycloak from "keycloak-js";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import * as winston from "winston";
@@ -41,24 +40,6 @@ function touchHandler(event: any) {
 }
 
 async function initialize() {
-    const keycloak = Keycloak("/keycloak.json");
-    (window as any).keycloak = keycloak;
-
-    await keycloak.init({onLoad: "check-sso"});
-
-    if (keycloak.authenticated) {
-        (window as any).config = {
-            apiKey: "Bearer " + keycloak.token,
-        };
-
-        setInterval(async () => {
-            await keycloak.updateToken(10);
-            (window as any).config = {
-                apiKey: "Bearer " + keycloak.token,
-            };
-        }, 10000);
-    }
-
     document.addEventListener("touchstart", touchHandler, true);
     document.addEventListener("touchmove", touchHandler, true);
     document.addEventListener("touchend", touchHandler, true);

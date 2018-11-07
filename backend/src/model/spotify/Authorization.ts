@@ -1,41 +1,58 @@
 import * as express from "express";
 import * as SpotifyWebApi from "spotify-web-api-node";
-import * as uuid from "uuid/v1";
 import * as logger from "winston";
 import {User, UserModel} from "../database/User";
 
-const authRequests: Map<string, (spotifyWebApi: any, res: express.Response) => any> =
-    new Map<string, (spotifyWebApi: any, res: express.Response) => any>();
+import * as passport from "passport";
+import * as PassportSpotify from "passport-spotify";
+import {InitializedSpotifyApi} from "./SpotifyApi";
+const SpotifyStrategy = PassportSpotify.Strategy;
 
-export function authorized(): express.Handler {
-    return async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        await addApiToRequest(req);
-        if ((req as any).api) {
-            next();
-            return;
-        }
+passport.serializeUser(async (user: any, done) => {
+    done(null, user.id);
+});
 
-        // Send unauthorized status
-        res.sendStatus(401);
-    };
-}
-
-export async function addApiToRequest(req: express.Request) {
-    const userId: string = (req as any).kauth.grant.access_token.content.sub;
-    const user = await UserModel.findOne({id: userId});
-
-    if (user) {
-        try {
-            (req as any).api = await getApiFromUser(user);
-        } catch (error) {
-            logger.info(`Could not create api for user ${userId}`);
-        }
-    } else {
-        await UserModel.create({id: userId});
+passport.deserializeUser(async (userId, done) => {
+    const userEntity = await UserModel.findById(userId);
+    if (!userEntity) {
+        return done(false);
     }
-}
+    done(null, userEntity);
+});
 
-export async function getApiFromUser(user: User): Promise<SpotifyWebApi> {
+passport.use(
+    new SpotifyStrategy( {
+        callbackURL: process.env.REDIRECT_URI,
+        clientID: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
+        scopes: ["user-read-private",
+            "playlist-read-private",
+            "playlist-modify-public",
+            "playlist-modify-private",
+            "user-top-read"],
+    }, async (accessToken, refreshToken, expiresIn: number, profile, done: (error: any, user?: any) => any) => {
+        try {
+            const userResponse = await UserModel.findOrCreate({spotifyId: profile.id});
+            if (userResponse.created) {
+                // handle creation of new users
+            }
+            const user = userResponse.doc;
+            user.authorization = {
+                accessToken,
+                expiresAt: expiresIn * 1000 + new Date().getMilliseconds(),
+                refreshToken,
+            };
+
+            await user.save();
+
+            done(undefined, user);
+        } catch (error) {
+            done(error);
+        }
+    }),
+);
+
+export async function getApiFromUser(user: User): Promise<InitializedSpotifyApi> {
     if (user && user.authorization && user.authorization.accessToken && user.authorization.refreshToken) {
         let api = userToSpotifyApi(user);
 
@@ -45,7 +62,7 @@ export async function getApiFromUser(user: User): Promise<SpotifyWebApi> {
         } else {
             logger.debug(`Not refreshing token, valid util ${user.authorization.expiresAt}`);
         }
-        return api;
+        return new InitializedSpotifyApi(api);
     }
 
     throw new Error("Cannot create api");
@@ -56,6 +73,14 @@ function userToSpotifyApi(user: User) {
     api.setAccessToken(user.authorization.accessToken);
     api.setRefreshToken(user.authorization.refreshToken);
     return api;
+}
+
+function createSpotifyApi() {
+    return new SpotifyWebApi({
+        clientId: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
+        redirectUri: process.env.REDIRECT_URI,
+    });
 }
 
 async function refreshCredentials(user: any) {
@@ -86,77 +111,41 @@ async function refreshCredentials(user: any) {
     return userToSpotifyApi(user);
 }
 
-export function getRouter(keycloak: any): express.Router {
+export function getRouter(): express.Router {
     const router = express.Router();
 
-    router.get("/callback", (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        const spotifyApi = createSpotifyApi();
-        spotifyApi.setAccessToken(req.query.code);
-        spotifyApi.authorizationCodeGrant(req.query.code).then(async (data: any) => {
-
-            // Set the access token on the API object to use it in later calls
-            spotifyApi.setAccessToken(data.body.access_token);
-            spotifyApi.setRefreshToken(data.body.refresh_token);
-            spotifyApi.expiresAt = Date.now() + data.body.expires_in * 1000;
-
-            // call the function to resume the flow
-            authRequests.get(req.query.state)(spotifyApi, res);
-        });
-    });
-
-    // log in to spotify
     router.get("/login",
-        keycloak.middleware(),
-        keycloak.protect(),
-        (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        // check if we already have the credentials
-        addApiToRequest(req);
-        if ((req as any).api) {
-            next();
-        }
+        passport.authenticate("spotify", {
+            showDialog: true,
+        } as any));
 
-        const tempSpotifyApi = createSpotifyApi();
-        const requestId = uuid();
-        const authorizeURL = getAuthorizeUrl(tempSpotifyApi, requestId);
+    router.get("/",
+        passport.authenticate("spotify", {
+            showDialog: false,
+        } as any));
 
-        authRequests.set(requestId, async (spotifyApi: any, authorizedRes: express.Response) => {
-            (req as any).api = spotifyApi;
-
-            // save tokens to db
-            const userId: string = (req as any).kauth.grant.access_token.content.sub;
-            const user = await UserModel.findOne({id: userId});
-
-            user.authorization = {
-                accessToken: spotifyApi.getAccessToken(),
-                expiresAt: spotifyApi.expiresAt,
-                refreshToken: spotifyApi.getRefreshToken(),
-            };
-
-            user.save();
-
-            authorizedRes.redirect(req.query.url);
+    router.get(
+        "/callback",
+        passport.authenticate("spotify", {
+            failureRedirect: "/error",
+        }), (req, res) => {
+            logger.info("in callback");
+            res.cookie("logged_in", true);
+            res.redirect("http://localhost:3080/loginSuccess");
         });
 
-        res.redirect(authorizeURL);
+    router.get("/logout", (req, res) => {
+        req.logout();
+        res.cookie("logged_in", false);
+        res.redirect("http://localhost:3080/");
     });
 
     return router;
 }
 
-function createSpotifyApi() {
-    return new SpotifyWebApi({
-        clientId: process.env.CLIENT_ID,
-        clientSecret: process.env.CLIENT_SECRET,
-        redirectUri: process.env.REDIRECT_URI,
-    });
-}
-
-function getAuthorizeUrl(spotifyApi: any, state: string) {
-    const scopes = ["user-read-private",
-        "playlist-read-private",
-        "playlist-modify-public",
-        "playlist-modify-private",
-        "user-top-read"];
-
-    return spotifyApi.createAuthorizeURL(scopes, state);
+export function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.sendStatus(401);
 }

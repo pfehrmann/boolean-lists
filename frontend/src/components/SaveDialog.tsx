@@ -6,6 +6,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 import * as React from "react";
+import {Redirect} from "react-router";
 import * as SRD from "storm-react-diagrams";
 
 import * as api from "../api";
@@ -22,6 +23,7 @@ export class SaveDialog extends React.Component<ISerializationDialog> {
     public state: {
         description: string,
         name: string,
+        redirect?: string,
     };
 
     constructor(props: ISerializationDialog) {
@@ -38,6 +40,10 @@ export class SaveDialog extends React.Component<ISerializationDialog> {
     }
 
     public render() {
+        if (this.state.redirect) {
+            return (<Redirect to={this.state.redirect}/>);
+        }
+
         return (
             <Dialog
                 onClose={this.handleClose}
@@ -104,12 +110,20 @@ export class SaveDialog extends React.Component<ISerializationDialog> {
         }
     }
 
-    private handleSave() {
-        api.MeApiFp((window as any).config).addPlaylist({
-            description: this.state.description,
-            graph: this.props.model.serializeDiagram(),
-            name: this.state.name,
-        })();
-        this.handleClose();
+    private async handleSave() {
+        try {
+            await api.MeApiFp((window as any).config).addPlaylist({
+                description: this.state.description,
+                graph: this.props.model.serializeDiagram(),
+                name: this.state.name,
+            }, {credentials: "include"})();
+            this.handleClose();
+        } catch (error) {
+            if (error.status === 401) {
+                this.setState({
+                    redirect: "/login",
+                });
+            }
+        }
     }
 }

@@ -1,9 +1,8 @@
 require("dotenv").config();
 
+const session = require("cookie-session");
 import * as cors from "cors";
 import * as  express from "express";
-import * as session from "express-session";
-import * as Keycloak from "keycloak-connect";
 import * as mongoose from "mongoose";
 import * as morgan from "morgan";
 import * as winston from "winston";
@@ -14,7 +13,7 @@ mongoose.connect(process.env.MONGOOSE_CONNECTION_STRING);
 import api from "./api";
 import * as SpotifyAuthorization from "./model/spotify/Authorization";
 
-const kcConfig = require("../keycloak.json");
+import * as passport from "passport";
 
 winston.add(new winston.transports.Console({
     format: winston.format.combine(
@@ -23,12 +22,10 @@ winston.add(new winston.transports.Console({
     ),
 }));
 
-const sessionStore = session({
-    resave: false,
-    saveUninitialized: false,
-    secret: "my secret of the day",
-});
-const keycloak = new Keycloak({store: sessionStore}, kcConfig);
+const corsOptions = {
+    credentials: true,
+    origin: true,
+};
 
 const app = express();
 
@@ -39,17 +36,22 @@ app.use((err, req, res, next) => {
     res.sendStatus(500);
 });
 
-app.use(cors());
-app.use((req: express.Request, res: any, next: express.NextFunction) => {
-    if (req.query.authorization) {
-        req.headers.authorization = req.query.authorization;
-    }
-    next();
-});
-
-app.use(sessionStore);
-app.use("/auth/spotify", SpotifyAuthorization.getRouter(keycloak));
-app.use("/v1", api(keycloak));
+app.use(cors(corsOptions));
+app.use(session({
+    cookie: {
+        httpOnly: true,
+        maxAge: null,
+        path: "/",
+        secure: false,
+    },
+    resave: true,
+    saveUninitialized: true,
+    secret: "my secret of the day",
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use("/auth/spotify", SpotifyAuthorization.getRouter());
+app.use("/v1", api());
 
 app.listen(process.env.PORT, () => {
     logger.info(`Listening on port ${process.env.PORT}`);

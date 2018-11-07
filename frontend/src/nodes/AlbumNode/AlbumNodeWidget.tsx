@@ -7,6 +7,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 import * as _ from "lodash";
 import * as React from "react";
+import {Redirect} from "react-router";
 import * as SRD from "storm-react-diagrams";
 import * as logger from "winston";
 import * as api from "../../api";
@@ -26,6 +27,7 @@ interface IAlbumNodeState {
     albumItems: React.Component[];
     albumResults: any[];
     searchQuery: string;
+    redirect?: string;
 }
 
 export default class AlbumNodeWidget extends AbstractNodeWidget<IAlbumNodeProps> {
@@ -54,6 +56,10 @@ export default class AlbumNodeWidget extends AbstractNodeWidget<IAlbumNodeProps>
     }
 
     public render() {
+        if (this.state.redirect) {
+            return (<Redirect to={this.state.redirect}/>);
+        }
+
         return (
             <div>
                 {super.render()}
@@ -112,19 +118,32 @@ export default class AlbumNodeWidget extends AbstractNodeWidget<IAlbumNodeProps>
     }
 
     private async handleKeypress() {
-        const pageableAlbums = await api.SearchApiFp((window as any).config).searchAlbum(this.state.searchQuery)();
-        const albumItems = pageableAlbums.albums.map((album: any) => (
-            <AlbumItem
-                key={album.id}
-                handleClose={this.handleSelect}
-                album={...album}
-            />
-        ));
+        try {
+            const pageableAlbums = await api
+                .SearchApiFp((window as any).config)
+                .searchAlbum(
+                    this.state.searchQuery,
+                    undefined,
+                    {credentials: "include"})();
+            const albumItems = pageableAlbums.albums.map((album: any) => (
+                <AlbumItem
+                    key={album.id}
+                    handleClose={this.handleSelect}
+                    album={...album}
+                />
+            ));
 
-        this.setState({
-            albumItems,
-            albumResults: pageableAlbums.albums,
-        });
+            this.setState({
+                albumItems,
+                albumResults: pageableAlbums.albums,
+            });
+        } catch (error) {
+            if (error.status === 401) {
+                this.setState({
+                    redirect: "/login",
+                });
+            }
+        }
     }
 
     private handleSelect(album: any) {

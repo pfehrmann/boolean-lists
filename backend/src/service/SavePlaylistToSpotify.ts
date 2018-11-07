@@ -10,14 +10,13 @@ import {InitializedSpotifyApi} from "../model/spotify/SpotifyApi";
 
 import {convert} from "./serilizationConverter";
 
-export default async function savePlaylistToSpotify(userId: string, playlistName: string) {
-    const userResult = await UserModel.findOrCreate({id: userId});
-    if (userResult.created) {
+export default async function savePlaylistToSpotify(spotifyId: string, playlistName: string) {
+    const user = await UserModel.findOne({spotifyId});
+    if (!user) {
         throw new Error("User was not in the database");
     }
 
-    const user = userResult.doc;
-    const api: InitializedSpotifyApi = new InitializedSpotifyApi(await getApiFromUser(user));
+    const api: InitializedSpotifyApi = await getApiFromUser(user);
     const playlistEntity = user.findPlaylist(playlistName);
     const serialized = convert(playlistEntity.graph);
 
