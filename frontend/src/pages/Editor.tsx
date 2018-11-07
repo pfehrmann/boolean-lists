@@ -253,8 +253,10 @@ class Editor extends React.Component<IEditorProps> {
     }
 
     public async componentDidMount() {
-        if (!(window as any).loggedIn) {
-            // todo: redirect to login page
+        if (sessionStorage.getItem("loggedIn") !== "true") {
+            this.setState({
+                redirect: "/login",
+            });
         }
 
         try {

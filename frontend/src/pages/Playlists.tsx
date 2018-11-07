@@ -120,6 +120,12 @@ class Landing extends React.Component {
     }
 
     public async componentDidMount() {
+        if (sessionStorage.getItem("loggedIn") !== "true") {
+            this.setState({
+                redirect: "/login",
+            });
+        }
+
         this.updatePlaylists();
     }
 

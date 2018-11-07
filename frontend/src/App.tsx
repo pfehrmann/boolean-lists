@@ -60,7 +60,7 @@ class App extends React.Component<{ classes: any }> {
 
     public componentDidMount() {
         this.setState({
-            loggedIn: Cookie.get("logged_in") === "true" || (window as any).loggedIn,
+            loggedIn: Cookie.get("logged_in") === "true" || sessionStorage.getItem("loggedIn") === "true",
         });
     }
 
@@ -141,7 +141,8 @@ class App extends React.Component<{ classes: any }> {
     }
 
     private async loginOut() {
-        if ((window as any).loggedIn) {
+        if (sessionStorage.getItem("loggedIn") === "true") {
+            sessionStorage.removeItem("loggedIn");
             window.location.assign(`${process.env.REACT_APP_API_BASE}/auth/spotify/logout`);
         } else {
             window.location.assign(`${process.env.REACT_APP_API_BASE}/auth/spotify`);

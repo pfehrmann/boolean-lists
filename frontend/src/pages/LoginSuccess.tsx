@@ -26,7 +26,7 @@ class Landing extends React.Component<{ classes: any }> {
     }
 
     public async componentWillMount() {
-        (window as any).loggedIn = true;
+        sessionStorage.setItem("loggedIn", "true");
     }
 }
 
