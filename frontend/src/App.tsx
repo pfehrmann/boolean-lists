@@ -126,6 +126,7 @@ class App extends React.Component<{ classes: any }> {
                         <Route path="/editor/:id?" component={Editor}/>
                         <Route path="/playlists" component={Playlists}/>
                         <Route path="/loginSuccess" component={LoginSuccess}/>
+                        <Route path="/login" component={Landing}/>
                     </div>
                 </div>
             </BrowserRouter>

@@ -2,20 +2,12 @@ import {Grid} from "@material-ui/core";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Divider from "@material-ui/core/Divider";
-import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List/List";
-import ListItem from "@material-ui/core/ListItem/ListItem";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemText from "@material-ui/core/ListItemText";
 import Typography from "@material-ui/core/Typography";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
 import * as React from "react";
-import {Link} from "react-router-dom";
 import * as logger from "winston";
 import * as api from "../api";
 
-import Avatar from "@material-ui/core/Avatar/Avatar";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -23,6 +15,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import {Redirect} from "react-router";
+import {PlaylistItem} from "../components/PlaylistItem";
 
 class Landing extends React.Component {
     public state: {
@@ -30,6 +23,7 @@ class Landing extends React.Component {
         open: boolean,
         deletePlaylist: string,
         redirect?: string,
+        playlistItems: PlaylistItem[];
     };
 
     constructor(props: any) {
@@ -38,6 +32,7 @@ class Landing extends React.Component {
         this.state = {
             deletePlaylist: "",
             open: false,
+            playlistItems: [],
             playlists: [],
         };
 
@@ -52,7 +47,6 @@ class Landing extends React.Component {
             return (<Redirect to={this.state.redirect}/>);
         }
 
-        /* tslint:disable */
         return (
             <Grid container={true} justify={"center"} style={{marginTop: "2em"}}>
                 <Grid item={true} md={6} sm={8} xs={12}>
@@ -62,32 +56,7 @@ class Landing extends React.Component {
                                 Your playlists
                             </Typography>
                             <List style={{maxWidth: "500px"}}>
-                                {
-                                    this.state.playlists.map((playlist, index) => {
-                                        return (
-                                            <div key={index}>
-                                                <ListItem>
-                                                    <Avatar src={playlist.image ? playlist.image.url : ''}/>
-                                                    <Link to={`/editor/${playlist.name}`}
-                                                          style={{textDecoration: "none"}}>
-                                                        <IconButton>
-                                                            <EditIcon color={"action"}/>
-                                                        </IconButton>
-                                                    </Link>
-
-                                                    <ListItemText primary={playlist.name}
-                                                                  secondary={playlist.description}/>
-                                                    <ListItemSecondaryAction>
-                                                        <IconButton onClick={this.deletePlaylist(playlist.name)}>
-                                                            <DeleteIcon color={"error"}/>
-                                                        </IconButton>
-                                                    </ListItemSecondaryAction>
-                                                </ListItem>
-                                                <Divider inset={true}/>
-                                            </div>
-                                        );
-                                    })
-                                }
+                                {this.state.playlistItems}
                             </List>
                         </CardContent>
                     </Card>
@@ -116,7 +85,6 @@ class Landing extends React.Component {
                 </Dialog>
             </Grid>
         );
-        /* tslint:enable */
     }
 
     public async componentDidMount() {
@@ -154,7 +122,21 @@ class Landing extends React.Component {
                 }
                 return playlist;
             }));
+
+            const playlistItems = playlists.map((playlist, index) => {
+                return (
+                    <div key={index}>
+                        <PlaylistItem
+                            playlist={playlist}
+                            handleDelete={this.deletePlaylist(playlist.name)}
+                        />
+                        <Divider inset={true}/>
+                    </div>
+                );
+            });
+
             this.setState({
+                playlistItems,
                 playlists,
             });
         } catch (error) {
