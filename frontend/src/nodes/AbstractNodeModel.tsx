@@ -48,4 +48,10 @@ export class AbstractNodeModel extends SRD.NodeModel {
             return !portModel.in;
         });
     }
+
+    public clone(lookupTable: any) {
+        const clone: AbstractNodeModel = super.clone(lookupTable);
+        clone.configuration = _.cloneDeepWith(this.configuration);
+        return clone;
+    }
 }
