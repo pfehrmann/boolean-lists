@@ -1,8 +1,5 @@
 import {Grid} from "@material-ui/core";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 import Divider from "@material-ui/core/Divider";
-import List from "@material-ui/core/List/List";
 import Typography from "@material-ui/core/Typography";
 import * as React from "react";
 import * as logger from "winston";
@@ -15,7 +12,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import {Redirect} from "react-router";
-import {PlaylistItem} from "../components/PlaylistItem";
+import PlaylistItem from "../components/PlaylistItem";
 
 class Landing extends React.Component {
     public state: {
@@ -23,7 +20,7 @@ class Landing extends React.Component {
         open: boolean,
         deletePlaylist: string,
         redirect?: string,
-        playlistItems: PlaylistItem[];
+        playlistItems: any[];
     };
 
     constructor(props: any) {
@@ -48,19 +45,19 @@ class Landing extends React.Component {
         }
 
         return (
-            <Grid container={true} justify={"center"} style={{marginTop: "2em"}}>
-                <Grid item={true} md={6} sm={8} xs={12}>
-                    <Card>
-                        <CardContent>
-                            <Typography color="textSecondary">
-                                Your playlists
-                            </Typography>
-                            <List style={{maxWidth: "500px"}}>
-                                {this.state.playlistItems}
-                            </List>
-                        </CardContent>
-                    </Card>
+            <div style={{padding: 8}}>
+            <Grid
+                container={true}
+                justify={"center"}
+                style={{marginTop: "2em"}}
+                spacing={16}
+            >
+                <Grid item={true} xs={12}>
+                    <Typography color="textSecondary" component="h2" variant="h2">
+                        Your playlists
+                    </Typography>
                 </Grid>
+                {this.state.playlistItems}
                 <Dialog
                     open={this.state.open}
                     onClose={this.handleClose}
@@ -84,6 +81,7 @@ class Landing extends React.Component {
                     </DialogActions>
                 </Dialog>
             </Grid>
+            </div>
         );
     }
 
@@ -125,13 +123,15 @@ class Landing extends React.Component {
 
             const playlistItems = playlists.map((playlist, index) => {
                 return (
-                    <div key={index}>
-                        <PlaylistItem
-                            playlist={playlist}
-                            handleDelete={this.deletePlaylist(playlist.name)}
-                        />
-                        <Divider inset={true}/>
-                    </div>
+                    <Grid item={true} md={6} sm={10} xs={12} key={index}>
+                        <div key={index}>
+                            <PlaylistItem
+                                playlist={playlist}
+                                handleDelete={this.deletePlaylist(playlist.name)}
+                            />
+                            <Divider inset={true}/>
+                        </div>
+                    </Grid>
                 );
             });
 
