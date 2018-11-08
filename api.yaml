@@ -215,6 +215,8 @@ definitions:
         type: "string"
       uri:
         type: "string"
+      description:
+        type: "string"
     required:
     - id
     - name
