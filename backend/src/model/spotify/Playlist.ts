@@ -49,6 +49,8 @@ export class Playlist {
     }
 
     public async addTracks(tracks: Track[]) {
+        // filter out local tracks
+        tracks = tracks.filter((track) => !track.isLocal());
         while (tracks.length > 0) {
             logger.info(`${tracks.length} tracks left...`);
             const toAdd = tracks.slice(0, 100);

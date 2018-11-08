@@ -18,6 +18,10 @@ export class Track {
         return this.track.uri;
     }
 
+    public isLocal(): boolean {
+        return this.track.is_local;
+    }
+
     public equals(object: Track): boolean {
         return this.uri() === object.uri();
     }
