@@ -39,7 +39,7 @@ passport.use(
             const user = userResponse.doc;
             user.authorization = {
                 accessToken,
-                expiresAt: expiresIn * 1000 + new Date().getMilliseconds(),
+                expiresAt: expiresIn * 1000 + Date.now(),
                 refreshToken,
             };
 
