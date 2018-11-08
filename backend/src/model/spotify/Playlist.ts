@@ -41,6 +41,9 @@ export class Playlist {
     }
 
     public image() {
+        if (!this.playlist.images[0]) {
+            return undefined;
+        }
         return {
             height: this.playlist.images[0].height,
             url: this.playlist.images[0].url,
