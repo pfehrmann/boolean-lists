@@ -15,7 +15,7 @@ interface IPlaylistProps {
     handleClose: (selection: any) => any;
 }
 
-export class PlaylistItem extends React.Component<IPlaylistProps> {
+export class SearchPlaylistItem extends React.Component<IPlaylistProps> {
     constructor(props: IPlaylistProps) {
         super(props);
         this.state = {};

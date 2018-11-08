@@ -12,7 +12,7 @@ import {Redirect} from "react-router";
 import * as SRD from "storm-react-diagrams";
 import * as api from "../../api";
 
-import {PlaylistItem} from "../../components/PlaylistItem";
+import {SearchPlaylistItem} from "../../components/SearchPlaylistItem";
 import {AbstractNodeWidget, IAbstractNodeProps} from "../AbstractNodeWidget";
 import PlaylistNodeModel from "./PlaylistNodeModel";
 
@@ -120,7 +120,7 @@ export default class PlaylistNodeWidget extends AbstractNodeWidget<IPlaylistNode
             const pageablePlaylists = await api.SearchApiFp()
                 .searchPlaylist(this.state.searchQuery, undefined, {credentials: "include"})();
             const playlistItems = pageablePlaylists.playlists.map((playlist: any) => (
-                <PlaylistItem
+                <SearchPlaylistItem
                     key={playlist.id}
                     handleClose={this.handleSelect}
                     playlist={...playlist}
