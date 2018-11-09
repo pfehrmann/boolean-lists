@@ -6,7 +6,7 @@ import * as React from "react";
 interface IPlaylistProps {
     playlist: {
         name: string;
-        image: {
+        image?: {
             url: string;
         }
         userId: string;
@@ -26,7 +26,10 @@ export class SearchPlaylistItem extends React.Component<IPlaylistProps> {
     public render() {
         return (
             <ListItem button={true} onClick={this.close}>
-                <Avatar alt={this.props.playlist.name} src={this.props.playlist.image.url}/>
+                <Avatar
+                    alt={this.props.playlist.name}
+                    src={this.props.playlist.image ? this.props.playlist.image.url : ""}
+                />
                 <ListItemText primary={this.props.playlist.name}/>
             </ListItem>
         );
