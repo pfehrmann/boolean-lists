@@ -46,41 +46,43 @@ class Landing extends React.Component {
 
         return (
             <div style={{padding: 8}}>
-            <Grid
-                container={true}
-                justify={"center"}
-                style={{marginTop: "2em"}}
-                spacing={16}
-            >
-                <Grid item={true} xs={12}>
-                    <Typography color="textSecondary" component="h2" variant="h2">
-                        Your playlists
-                    </Typography>
-                </Grid>
-                {this.state.playlistItems}
-                <Dialog
-                    open={this.state.open}
-                    onClose={this.handleClose}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
+                <Grid
+                    container={true}
+                    justify={"center"}
+                    style={{marginTop: "2em"}}
+                    spacing={16}
                 >
-                    <DialogTitle id="alert-dialog-title">Delete playlist?</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            Delete the playlist "{this.state.deletePlaylist}". This action cannot be undone, there will
-                            be no way to recover your playlist.
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.handleDelete} color="secondary">
-                            Delete
-                        </Button>
-                        <Button onClick={this.handleClose} color="primary" autoFocus={true}>
-                            Cancel
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            </Grid>
+                    <Grid item={true} xs={12} sm={10}>
+                        <Typography color="textSecondary" component="h2" variant="h2">
+                            Your playlists
+                        </Typography>
+                    </Grid>
+                    <Grid item={true} container={true} spacing={16} xs={10}>
+                        {this.state.playlistItems}
+                    </Grid>
+                    <Dialog
+                        open={this.state.open}
+                        onClose={this.handleClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">Delete playlist?</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                                Delete the playlist "{this.state.deletePlaylist}". This action cannot be undone, there
+                                will be no way to recover your playlist.
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={this.handleDelete} color="secondary">
+                                Delete
+                            </Button>
+                            <Button onClick={this.handleClose} color="primary" autoFocus={true}>
+                                Cancel
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                </Grid>
             </div>
         );
     }
