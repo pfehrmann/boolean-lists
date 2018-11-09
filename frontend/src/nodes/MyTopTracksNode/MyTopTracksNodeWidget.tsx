@@ -35,7 +35,7 @@ export default class MyTopTracksNodeWidget extends AbstractNodeWidget<IMyTopTrac
         super("my-top-tracks-node", props);
 
         this.state = {
-            configOpen: false,
+            configOpen: props.configOpen,
             oldTimeRange: "medium_term",
             timeRange: "medium_term",
         };

@@ -16,6 +16,8 @@ import PlaylistNodeModel from "../nodes/PlaylistNode/PlaylistNodeModel";
 import RandomizeNodeModel from "../nodes/RandomizeNode/RandomizeNodeModel";
 import SubtractNodeModel from "../nodes/SubtractNode/SubtractNodeModel";
 
+import * as _ from "lodash";
+
 interface IAddNodesElementProps {
     engine: SRD.DiagramEngine;
     model: SRD.DiagramModel;
@@ -93,6 +95,7 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
         return () => {
             this.props.onClose();
             const node = nodeFunction();
+            (this.props.engine.getNodeFactory(node.getType()) as any).setConfigOpen(true);
             const position = this.props.engine.getRelativeMousePoint(this.state.lastMouseEvent);
             node.setPosition(position.x, position.y);
 
@@ -100,6 +103,10 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
             this.props.model.clearSelection();
             node.setSelected(true);
             this.props.engine.repaintCanvas();
+
+            _.delay(() => {
+                (this.props.engine.getNodeFactory(node.getType()) as any).setConfigOpen(false);
+            }, 100);
         };
     }
 }

@@ -33,7 +33,7 @@ export default class LimitNodeWidget extends AbstractNodeWidget<ILimitNodeProps>
         super("limit-node", props);
 
         this.state = {
-            configOpen: false,
+            configOpen: props.configOpen,
             limit: 20,
             oldLimit: 20,
         };

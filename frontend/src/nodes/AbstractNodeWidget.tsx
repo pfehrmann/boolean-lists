@@ -6,6 +6,7 @@ import {AbstractNodeModel} from "./AbstractNodeModel";
 export interface IAbstractNodeProps<T extends AbstractNodeModel = AbstractNodeModel> extends SRD.BaseWidgetProps {
     node: T;
     diagramEngine: SRD.DiagramEngine;
+    configOpen: boolean;
 }
 
 export abstract class AbstractNodeWidget<

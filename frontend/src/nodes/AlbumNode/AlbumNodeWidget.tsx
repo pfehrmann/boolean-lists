@@ -43,7 +43,7 @@ export default class AlbumNodeWidget extends AbstractNodeWidget<IAlbumNodeProps>
         this.state = {
             albumItems: [],
             albumResults: [],
-            configOpen: false,
+            configOpen: props.configOpen,
             searchQuery: "",
         };
 

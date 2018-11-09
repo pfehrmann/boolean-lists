@@ -40,7 +40,7 @@ export default class PlaylistNodeWidget extends AbstractNodeWidget<IPlaylistNode
         super("playlist-node", props);
 
         this.state = {
-            configOpen: false,
+            configOpen: props.configOpen,
             playlistItems: [],
             playlistResults: [],
             searchQuery: "",
