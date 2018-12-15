@@ -305,6 +305,7 @@ class Editor extends React.Component<IEditorProps> {
     }
 
     public savePlaylist() {
+        this.model.clearSelection();
         this.setState({
             saveOpen: true,
             speedDialOpen: false,
