@@ -8,6 +8,14 @@ import * as PassportSpotify from "passport-spotify";
 import {InitializedSpotifyApi} from "./SpotifyApi";
 const SpotifyStrategy = PassportSpotify.Strategy;
 
+const scope = ["user-read-private",
+    "user-library-read",
+    "playlist-read-private",
+    "playlist-read-collaborative",
+    "playlist-modify-public",
+    "playlist-modify-private",
+    "user-top-read"];
+
 passport.serializeUser(async (user: any, done) => {
     done(null, user.id);
 });
@@ -25,11 +33,7 @@ passport.use(
         callbackURL: process.env.REDIRECT_URI,
         clientID: process.env.CLIENT_ID,
         clientSecret: process.env.CLIENT_SECRET,
-        scopes: ["user-read-private",
-            "playlist-read-private",
-            "playlist-modify-public",
-            "playlist-modify-private",
-            "user-top-read"],
+        scopes: scope,
     }, async (accessToken, refreshToken, expiresIn: number, profile, done: (error: any, user?: any) => any) => {
         try {
             const userResponse = await UserModel.findOrCreate({spotifyId: profile.id});
@@ -116,11 +120,13 @@ export function getRouter(): express.Router {
 
     router.get("/login",
         passport.authenticate("spotify", {
+            scope,
             showDialog: true,
         } as any));
 
     router.get("/",
         passport.authenticate("spotify", {
+            scope,
             showDialog: false,
         } as any));
 
