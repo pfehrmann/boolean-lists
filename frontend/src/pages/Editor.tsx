@@ -10,6 +10,7 @@ import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
 import * as React from "react";
 import {Redirect} from "react-router";
+import * as spotifyUri from "spotify-uri";
 import * as SRD from "storm-react-diagrams";
 import * as logger from "winston";
 import Graph from "../components/Graph";
@@ -32,6 +33,7 @@ import LimitPortFactory from "../nodes/LimitNode/LimitPortFactory";
 
 import {AddNodesElement} from "../components/AddNodesElement";
 import AddNodeModel from "../nodes/AddNode/AddNodeModel";
+import AlbumNodeModel from "../nodes/AlbumNode/AlbumNodeModel";
 import PlaylistNodeModel from "../nodes/PlaylistNode/PlaylistNodeModel";
 
 import * as _ from "lodash";
@@ -119,6 +121,8 @@ class Editor extends React.Component<IEditorProps> {
         this.savePlaylist = this.savePlaylist.bind(this);
         this.cloneSelected = this.cloneSelected.bind(this);
         this.updateLinks = this.updateLinks.bind(this);
+        this.handleDrop = this.handleDrop.bind(this);
+        this.handleDragOver = this.handleDragOver.bind(this);
     }
 
     public componentWillMount() {
@@ -194,7 +198,7 @@ class Editor extends React.Component<IEditorProps> {
         }
 
         return (
-            <div className="editor">
+            <div className="editor" onDrop={this.handleDrop} onDragOver={this.handleDragOver}>
                 <Graph engine={this.engine}/>
                 <AddNodesElement
                     engine={this.engine}
@@ -340,6 +344,49 @@ class Editor extends React.Component<IEditorProps> {
         this.setState({
             configOpen: false,
         });
+    }
+
+    private handleDrop(event: any) {
+        //tslint:disable
+        event.preventDefault();
+        if(event.dataTransfer.types.includes("text/x-spotify-data-log-context")) {
+            const links = event.dataTransfer.getData("text/plain").split("\n");
+            const spotifyObjects = links.map((link: any) => spotifyUri.parse(link));
+            spotifyObjects.forEach((track: spotifyUri.IParsedSpotifyUri) => {
+                if(track.type === "playlist") {
+
+                    const node = PlaylistNodeModel.getInstance();
+
+                    this.model.addNode(node);
+                    this.engine.repaintCanvas();
+
+                    node.configuration.id = track.id;
+                    node.configuration.userId = track.user;
+                    const firstChild: any = new DOMParser().parseFromString(event.dataTransfer.getData('text/html'), 'text/xml').firstChild;
+                    if(firstChild) {
+                        node.name = `Playlist '${firstChild.innerHTML}'`;
+                    }
+                }
+
+                if(track.type === "album") {
+
+                    const node = AlbumNodeModel.getInstance();
+
+                    this.model.addNode(node);
+                    this.engine.repaintCanvas();
+
+                    node.configuration.id = track.id;
+                    const firstChild: any = new DOMParser().parseFromString(event.dataTransfer.getData('text/html'), 'text/xml').firstChild;
+                    if(firstChild) {
+                        node.name = `Album '${firstChild.innerHTML}'`;
+                    }
+                }
+            });
+        }
+    }
+
+    private handleDragOver(event: any) {
+        event.preventDefault();
     }
 
     private updateLinks() {
