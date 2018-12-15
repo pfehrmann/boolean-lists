@@ -101,12 +101,23 @@ export class Playlist {
                     await this.setTracks(tracks);
                     break;
                 } catch (err) {
-                    logger.error(`Failed to add tracks to playlist. Remaining tracks: ${tracks.length}`);
+                    logger.error(`Failed to delete tracks from playlist. Remaining tracks: ${tracks.length}`);
                     logger.error(err);
                     logger.error(response);
                 }
             }
         }
+        try {
+            if ((await this.tracks()).length !== 0) {
+                logger.error("Failed to delete all tracks.");
+            } else {
+                logger.info("Deleted all tracks from playlist.");
+            }
+        } catch (err) {
+            logger.error("Error while finding size of tracks.");
+            logger.error(err);
+        }
+
         await playlistCache.remove(this.playlist.id);
     }
 
