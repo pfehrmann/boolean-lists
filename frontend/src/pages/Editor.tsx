@@ -20,6 +20,7 @@ import "./Editor.css";
 import AddNodeFactory from "../nodes/AddNode/AddNodeFactory";
 import AlbumNodeFactory from "../nodes/AlbumNode/AlbumNodeFactory";
 import LimitNodeFactory from "../nodes/LimitNode/LimitNodeFactory";
+import MyLibraryNodeFactory from "../nodes/MyLibraryNode/MyLibraryNodeFactory";
 import MyTopTracksNodeFactory from "../nodes/MyTopTracksNode/MyTopTracksNodeFactory";
 import PlaylistNodeFactory from "../nodes/PlaylistNode/PlaylistNodeFactory";
 import RandomizeNodeFactory from "../nodes/RandomizeNode/RandomizeNodeFactory";
@@ -92,6 +93,7 @@ class Editor extends React.Component<IEditorProps> {
         engine.registerNodeFactory(new SubtractNodeFactory());
         engine.registerNodeFactory(new MyTopTracksNodeFactory());
         engine.registerNodeFactory(new AlbumNodeFactory());
+        engine.registerNodeFactory(new MyLibraryNodeFactory());
 
         engine.registerPortFactory(new AbstractPortFactory());
         engine.registerPortFactory(new DefaultPortFactory());

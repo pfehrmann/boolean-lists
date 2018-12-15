@@ -1,3 +1,6 @@
+import * as _ from "lodash";
+import * as logger from "winston";
+
 export function getNelementsFromArray<T>(n: number, array: T[], random: boolean = true): T[] {
   let localArray = [...array];
   if (random) {
@@ -41,11 +44,12 @@ export async function getAll<T>(spotifyApi: any,
     const result = await spotifyFunction.apply(spotifyApi, completeArgs);
     const items: T[] = result.body.items.map((item: any) => constructor(item));
 
+    logger.info(`Got ${options.offset} of ${result.body.total} items`);
     if (result.body.next) {
-        await sleep();
-        return items.concat(await getAll(spotifyApi, spotifyFunction, constructor, args, {
+        await sleep(20);
+        return items.concat(await getAll(spotifyApi, spotifyFunction, constructor, args, _.assign(options, {
             offset: result.body.items.length + options.offset,
-        }));
+        })));
     }
     return items;
 }

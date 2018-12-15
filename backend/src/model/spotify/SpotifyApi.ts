@@ -1,3 +1,4 @@
+import * as SpotifyWebApi from "spotify-web-api-node";
 import {getAll} from "../../util";
 import {Album} from "./Album";
 import {Playlist} from "./Playlist";
@@ -13,7 +14,7 @@ export enum TimeRanges {
 }
 
 export class InitializedSpotifyApi {
-    public spotifyApi: any;
+    public spotifyApi: SpotifyWebApi;
 
     constructor(spotifyApi: any) {
         this.spotifyApi = spotifyApi;
@@ -36,6 +37,14 @@ export class InitializedSpotifyApi {
         return tracks;
     }
 
+    public async getMyLibrary(): Promise<Track[]> {
+        return await getAll<Track>(this.spotifyApi,
+            this.spotifyApi.getMySavedTracks,
+            (i) => new Track(i),
+            [],
+            {offset: 0, limit: 50});
+    }
+
     public async searchForPlaylists(query: string, options: { market?: string, limit?: number, offset?: number } = {
         limit: 20,
         offset: 0,
@@ -54,6 +63,10 @@ export class InitializedSpotifyApi {
         return rawAlbums.body.albums.items.map((item: any) => new Album(this, item));
     }
 
+    /**
+     * Get all playlists for a specific user
+     * @param id The id of the user
+     */
     public async getAllUserPlaylists(id: any) {
         return await getAll<Playlist>(this.spotifyApi,
             this.spotifyApi.getUserPlaylists,

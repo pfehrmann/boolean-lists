@@ -17,6 +17,7 @@ import RandomizeNodeModel from "../nodes/RandomizeNode/RandomizeNodeModel";
 import SubtractNodeModel from "../nodes/SubtractNode/SubtractNodeModel";
 
 import * as _ from "lodash";
+import MyLibraryNodeModel from "../nodes/MyLibraryNode/MyLibraryNodeModel";
 
 interface IAddNodesElementProps {
     engine: SRD.DiagramEngine;
@@ -84,6 +85,9 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
                         </ListItem>
                         <ListItem button={true} onClick={this.addNode(AlbumNodeModel.getInstance)}>
                             <ListItemText>Add a AlbumNode</ListItemText>
+                        </ListItem>
+                        <ListItem button={true} onClick={this.addNode(MyLibraryNodeModel.getInstance)}>
+                            <ListItemText>Add a MyLibraryNode</ListItemText>
                         </ListItem>
                     </List>
                 </DialogContent>

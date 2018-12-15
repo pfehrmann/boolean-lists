@@ -83,6 +83,9 @@ export function convertSrdNodeToBooleanList(srdNode: any, serialized: any): any 
         case "album-node": {
             return convert.convertAlbumNode(srdNode, serialized);
         }
+        case "my-library-node": {
+            return convert.convertLibraryNode(srdNode, serialized);
+        }
     }
     throw new UnknownNodeTypeError("Node type '" + srdNode.type + "' is unknown.");
 }

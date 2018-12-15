@@ -90,3 +90,9 @@ export function convertAlbumNode(srdNode: any, serialized: any): any {
         type: "AlbumNode",
     };
 }
+
+export function convertLibraryNode(srdNode: any, serialized: any): any {
+    return {
+        type: "LibraryNode",
+    };
+}
