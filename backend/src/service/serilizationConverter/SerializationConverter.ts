@@ -86,6 +86,9 @@ export function convertSrdNodeToBooleanList(srdNode: any, serialized: any): any 
         case "my-library-node": {
             return convert.convertLibraryNode(srdNode, serialized);
         }
+        case "filter-by-audio-features-node": {
+            return convert.convertFilterByAudioFeaturesNode(srdNode, serialized);
+        }
     }
     throw new UnknownNodeTypeError("Node type '" + srdNode.type + "' is unknown.");
 }

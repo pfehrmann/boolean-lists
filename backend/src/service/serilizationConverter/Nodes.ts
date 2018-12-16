@@ -96,3 +96,18 @@ export function convertLibraryNode(srdNode: any, serialized: any): any {
         type: "LibraryNode",
     };
 }
+
+export function convertFilterByAudioFeaturesNode(srdNode: any, serialized: any): any {
+    const children = SerializationConverter.getChildNodes(srdNode, serialized);
+    if (children.length > 1) {
+        throw new TooManyChildrenError(`Found more than one child while processing node '${srdNode}'.`);
+    }
+
+    return {
+        feature: srdNode.configuration.feature,
+        from: srdNode.configuration.from,
+        inPlaylist: SerializationConverter.convertSrdNodeToBooleanList(children[0], serialized),
+        to: srdNode.configuration.to,
+        type: "FilterAudioFeaturesNode",
+    };
+}

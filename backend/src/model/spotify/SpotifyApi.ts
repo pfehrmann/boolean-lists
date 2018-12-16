@@ -4,10 +4,12 @@ wrapper.test();
 import * as SpotifyWebApi from "spotify-web-api-node";
 import {getAll} from "../../util";
 import {Album} from "./Album";
+import {AudioFeatures} from "./AudioFeatures";
 import {Playlist} from "./Playlist";
 import {Track} from "./Track";
 import {User} from "./User";
 
+import * as _ from "lodash";
 import * as logger from "winston";
 
 export enum TimeRanges {
@@ -75,5 +77,30 @@ export class InitializedSpotifyApi {
             this.spotifyApi.getUserPlaylists,
             (i) => new Playlist(this, i),
             [id]);
+    }
+
+    public async getAudioFeatures(ids: string[]) {
+        const trimmedIds = ids.map((id) => {
+            const tokens = id.split(":");
+            return tokens[tokens.length - 1];
+        });
+        const idLists: string[][] = [];
+        for (let i = 0; i < trimmedIds.length; i += 50) {
+            idLists.push(trimmedIds.slice(i, i + 50));
+        }
+
+        const rawAudioFeaturesPromises = await idLists.map(async (idList) => {
+            return this.spotifyApi.getAudioFeaturesForTracks(idList);
+        });
+
+        const rawAudioFeatures = await Promise.all(rawAudioFeaturesPromises);
+
+        const flatRawAudioFeatures = _.flatten(rawAudioFeatures.map((rawFeatures: any) => {
+            return rawFeatures.body.audio_features;
+        }));
+
+        return await flatRawAudioFeatures.map((rawFeatures: any) => {
+            return new AudioFeatures(rawFeatures);
+        });
     }
 }

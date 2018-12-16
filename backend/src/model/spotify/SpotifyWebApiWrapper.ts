@@ -42,14 +42,16 @@ const requestHandler =
                 }
 
                 reqEnd.bind(req)((err: any, res: request.Response) => {
-                    if (res.status === 304) {
-                        res.status = cachedResponse.status;
-                        res.header = cachedResponse.header;
-                        (res as any).headers = (cachedResponse as any).headers;
-                        res.body = cachedResponse.body;
-                        err = null;
-                    } else {
-                        handleResponse(res);
+                    if (res) {
+                        if (res.status === 304) {
+                            res.status = cachedResponse.status;
+                            res.header = cachedResponse.header;
+                            (res as any).headers = (cachedResponse as any).headers;
+                            res.body = cachedResponse.body;
+                            err = null;
+                        } else {
+                            handleResponse(res);
+                        }
                     }
 
                     handler(err, res);

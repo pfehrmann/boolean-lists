@@ -10,14 +10,15 @@ import ListItem from "@material-ui/core/ListItem/ListItem";
 import ListItemText from "@material-ui/core/ListItemText/ListItemText";
 import AddNodeModel from "../nodes/AddNode/AddNodeModel";
 import AlbumNodeModel from "../nodes/AlbumNode/AlbumNodeModel";
+import FilterByAudioFeatureNodeModel from "../nodes/FilterByAudioFeaturesNode/FilterByAudioFeatureNodeModel";
 import LimitNodeModel from "../nodes/LimitNode/LimitNodeModel";
+import MyLibraryNodeModel from "../nodes/MyLibraryNode/MyLibraryNodeModel";
 import MyTopTracksNodeModel from "../nodes/MyTopTracksNode/MyTopTracksNodeModel";
 import PlaylistNodeModel from "../nodes/PlaylistNode/PlaylistNodeModel";
 import RandomizeNodeModel from "../nodes/RandomizeNode/RandomizeNodeModel";
 import SubtractNodeModel from "../nodes/SubtractNode/SubtractNodeModel";
 
 import * as _ from "lodash";
-import MyLibraryNodeModel from "../nodes/MyLibraryNode/MyLibraryNodeModel";
 
 interface IAddNodesElementProps {
     engine: SRD.DiagramEngine;
@@ -88,6 +89,9 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
                         </ListItem>
                         <ListItem button={true} onClick={this.addNode(MyLibraryNodeModel.getInstance)}>
                             <ListItemText>Add a MyLibraryNode</ListItemText>
+                        </ListItem>
+                        <ListItem button={true} onClick={this.addNode(FilterByAudioFeatureNodeModel.getInstance)}>
+                            <ListItemText>Add a FilterByAudioFeatureNode</ListItemText>
                         </ListItem>
                     </List>
                 </DialogContent>
