@@ -4,6 +4,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import FormControl from "@material-ui/core/FormControl/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
@@ -93,21 +94,25 @@ export default class FilterByAudioFeatureNodeWidget extends AbstractNodeWidget<I
                             value={this.state.to}
                             onChange={this.handleChange}
                         />
-                        <InputLabel htmlFor="feature">Time Range</InputLabel>
-                        <Select
-                            autoFocus={true}
-                            margin="dense"
-                            type="text"
-                            inputProps={{ id: "feature", name: "feature" }}
-                            fullWidth={true}
-                            value={this.state.feature}
-                            onChange={this.handleChange}
-                        >
-                            <MenuItem value={"danceability"}>Danceability</MenuItem>
-                            <MenuItem value={"energy"}>Energy</MenuItem>
-                            <MenuItem value={"tempo"}>Tempo</MenuItem>
-                            <MenuItem value={"valence"}>Valence</MenuItem>
-                        </Select>
+                        <FormControl>
+                            <InputLabel htmlFor="feature">Time Range</InputLabel>
+                            <Select
+                                autoFocus={true}
+                                margin="dense"
+                                type="text"
+                                inputProps={{ id: "feature", name: "feature" }}
+                                fullWidth={true}
+                                value={this.state.feature}
+                                onChange={this.handleChange}
+                            >
+                                <MenuItem value={"danceability"}>Danceability</MenuItem>
+                                <MenuItem value={"energy"}>Energy</MenuItem>
+                                <MenuItem value={"tempo"}>Tempo</MenuItem>
+                                <MenuItem value={"valence"}>Valence</MenuItem>
+                                <MenuItem value={"speechiness"}>Speechiness</MenuItem>
+                                <MenuItem value={"instrumentalness"}>Instrumentalness</MenuItem>
+                            </Select>
+                        </FormControl>
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={this.handleCancel} color="primary">
