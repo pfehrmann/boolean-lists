@@ -102,14 +102,15 @@ async function refreshCredentials(user: any) {
     }
 
     logger.info("Updating database entity...");
-    user.authorization.accessToken = response.body.access_token;
-    if (response.body.refresh_token) {
-        user.authorization.refreshToken = response.body.refresh_token;
-    }
-    user.authorization.expiresAt = response.body.expires_in * 1000 + Date.now();
+    const refreshToken = response.body.refresh_token || user.authorization.refreshToken;
+    user.authorization = {
+        accessToken: response.body.access_token,
+        expiresAt: response.body.expires_in * 1000 + Date.now(),
+        refreshToken,
+    };
 
     logger.info("Save to database...");
-    user.save();
+    await user.save();
 
     logger.info("Return api...");
     return userToSpotifyApi(user);
