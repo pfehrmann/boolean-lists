@@ -37,7 +37,7 @@ export function sleep(ms = 50) {
 export async function getAll<T>(spotifyApi: any,
                                 spotifyFunction: (...args: any[]) => Promise<any>,
                                 constructor: (item: any) => T, args: any[],
-                                options: any = {offset: 0}) {
+                                options: any = {offset: 0}): Promise<T[]> {
     const completeArgs = [...args];
     completeArgs.push(options);
 
@@ -46,7 +46,6 @@ export async function getAll<T>(spotifyApi: any,
 
     logger.info(`Got ${options.offset} of ${result.body.total} items`);
     if (result.body.next) {
-        await sleep(20);
         return items.concat(await getAll(spotifyApi, spotifyFunction, constructor, args, _.assign(options, {
             offset: result.body.items.length + options.offset,
         })));

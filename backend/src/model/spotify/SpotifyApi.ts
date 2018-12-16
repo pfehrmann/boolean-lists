@@ -1,3 +1,6 @@
+import * as wrapper from "./SpotifyWebApiWrapper";
+wrapper.test();
+
 import * as SpotifyWebApi from "spotify-web-api-node";
 import {getAll} from "../../util";
 import {Album} from "./Album";
