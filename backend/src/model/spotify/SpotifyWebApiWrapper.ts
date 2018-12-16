@@ -38,6 +38,10 @@ const requestHandler =
                 if (cachedResponse) {
                     if (cachedResponse.header.etag) {
                         (req as any).header["If-None-Match"] = cachedResponse.header.etag;
+
+                        if ((cachedResponse as any).expiresAt && (cachedResponse as any).expiresAt > Date.now()) {
+                            return handler(null, cachedResponse);
+                        }
                     }
                 }
 
@@ -70,7 +74,9 @@ const superagentPost = request.post;
 (request as any).post = requestHandler(superagentPost);
 
 function handleResponse(res: request.Response) {
-    pastResponses.set(hashRequest((res as any).request), _.cloneDeep(res));
+    const store = _.cloneDeep(res);
+    store.expiresAt = Date.now() + 3 * 60000;
+    pastResponses.set(hashRequest((res as any).request), store);
 }
 
 export function test() {
