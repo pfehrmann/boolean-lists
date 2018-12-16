@@ -1,6 +1,7 @@
 import * as wrapper from "./SpotifyWebApiWrapper";
 wrapper.test();
 
+import * as DataLoader from "dataloader";
 import * as SpotifyWebApi from "spotify-web-api-node";
 import {getAll} from "../../util";
 import {Album} from "./Album";
@@ -21,6 +22,10 @@ export enum TimeRanges {
 export class InitializedSpotifyApi {
     public spotifyApi: SpotifyWebApi;
 
+    private audioFeaturesLoader = new DataLoader((uris: string[]) => this.getAudioFeatures(uris), {
+        maxBatchSize: 100,
+    });
+
     constructor(spotifyApi: any) {
         this.spotifyApi = spotifyApi;
     }
@@ -37,7 +42,7 @@ export class InitializedSpotifyApi {
         const tracks: Track[] = [];
         const rawTracks = await this.spotifyApi.getMyTopTracks({time_range: timeRange, limit: 50});
         for (const rawTrack of rawTracks.body.items) {
-            tracks.push(new Track(rawTrack));
+            tracks.push(new Track(rawTrack, this));
         }
         return tracks;
     }
@@ -45,7 +50,7 @@ export class InitializedSpotifyApi {
     public async getMyLibrary(): Promise<Track[]> {
         return await getAll<Track>(this.spotifyApi,
             this.spotifyApi.getMySavedTracks,
-            (i) => new Track(i),
+            (i) => new Track(i, this),
             [],
             {offset: 0, limit: 50});
     }
@@ -79,14 +84,19 @@ export class InitializedSpotifyApi {
             [id]);
     }
 
-    public async getAudioFeatures(ids: string[]) {
+    public async getAudioFeature(id: string): Promise<AudioFeatures> {
+        return await this.audioFeaturesLoader.load(id);
+    }
+
+    private async getAudioFeatures(ids: string[]): Promise<AudioFeatures[]> {
+        logger.info(`Getting ${ids.length} tracks audio features`);
         const trimmedIds = ids.map((id) => {
             const tokens = id.split(":");
             return tokens[tokens.length - 1];
         });
         const idLists: string[][] = [];
-        for (let i = 0; i < trimmedIds.length; i += 50) {
-            idLists.push(trimmedIds.slice(i, i + 50));
+        for (let i = 0; i < trimmedIds.length; i += 100) {
+            idLists.push(trimmedIds.slice(i, i + 100));
         }
 
         const rawAudioFeaturesPromises = await idLists.map(async (idList) => {

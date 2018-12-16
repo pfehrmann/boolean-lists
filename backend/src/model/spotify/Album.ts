@@ -52,7 +52,7 @@ export class Album {
             logger.debug(`Fetching songs for album ${this.album.id}`);
             const tracks = await getAll<Track>(this.api.spotifyApi,
                 this.api.spotifyApi.getAlbumTracks,
-                (e) => new Track(e),
+                (e) => new Track(e, this.api),
                 [this.album.id]);
             await this.setTracks(tracks);
             return tracks;
@@ -62,7 +62,7 @@ export class Album {
         const cacheResponse = await albumCache.get(this.album.id);
         try {
             const values = JSON.parse(cacheResponse.value);
-            return values.map((value: any) => new Track(value.track));
+            return values.map((value: any) => new Track(value.track, this.api));
         } catch (e) {
             logger.info(`Failed to load playlist with id ${this.album.id}`);
             logger.error(e);

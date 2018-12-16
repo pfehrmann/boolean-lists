@@ -125,14 +125,14 @@ export class Playlist {
         if (!await playlistCache.has(this.playlist.id)) {
             const tracks = await getAll<Track>(this.api.spotifyApi,
                 this.api.spotifyApi.getPlaylistTracks,
-                (e) => new Track(e),
+                (e) => new Track(e, this.api),
                 [this.playlist.owner.id, this.playlist.id]);
             await this.setTracks(tracks);
         }
         const cacheResponse = await playlistCache.get(this.playlist.id);
         try {
             const values = JSON.parse(cacheResponse.value);
-            return values.map((value: any) => new Track(value.track));
+            return values.map((value: any) => new Track(value.track, this.api));
         } catch (e) {
             logger.info(`Failed to load playlist with id ${this.playlist.id}`);
             logger.error(e);

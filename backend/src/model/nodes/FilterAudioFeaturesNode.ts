@@ -3,6 +3,8 @@ import {IntermediatePlaylist} from "./IntermediatePlaylist";
 import {fromJSON} from "./JsonParser";
 import {PlaylistNode} from "./Nodes";
 
+import * as logger from "winston";
+
 export class FilterAudioFeaturesNode extends IntermediatePlaylist {
     static get type(): string {
         return "FilterAudioFeaturesNode";
@@ -44,14 +46,17 @@ export class FilterAudioFeaturesNode extends IntermediatePlaylist {
 
     private async initialize() {
         const tracks = this.inPlaylist.getTracks();
-        const audioFeatures = await this.api.getAudioFeatures(tracks.map((track) => track.uri()));
 
-        const filteredTracks = tracks.filter((track) => {
-            const featureIndex = audioFeatures.findIndex((feature) => feature.uri === track.uri());
-            const audioFeature = audioFeatures.splice(featureIndex, 1)[0];
+        const filteredTracks = [];
+        await Promise.all(tracks.map(async (track) => {
+            const audioFeature = await track.audioFeatures();
             const value = audioFeature[this.feature];
-            return value <= this.to && value >= this.from;
-        });
+            const push = value <= this.to && value >= this.from;
+            if (push) {
+                filteredTracks.push(track);
+            }
+            return push;
+        }));
 
         this.addTracks(filteredTracks);
     }

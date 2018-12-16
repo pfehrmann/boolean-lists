@@ -1,8 +1,13 @@
-export class Track {
-    private track: any;
+import {AudioFeatures} from "./AudioFeatures";
+import {InitializedSpotifyApi} from "./SpotifyApi";
 
-    constructor(track: any) {
-        this.track = track;
+import * as logger from "winston";
+
+export class Track {
+    constructor(private track: any, private api: InitializedSpotifyApi) {
+        if (!api) {
+            throw new Error("No API given for instantiation");
+        }
 
         let times = 0;
         while (!this.track.uri && times++ < 5) {
@@ -24,5 +29,13 @@ export class Track {
 
     public equals(object: Track): boolean {
         return this.uri() === object.uri();
+    }
+
+    public async audioFeatures(): Promise<AudioFeatures> {
+        try {
+            return (await this.api.getAudioFeature(this.uri()));
+        } catch (err) {
+            logger.error(err);
+        }
     }
 }
