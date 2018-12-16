@@ -349,7 +349,11 @@ class Editor extends React.Component<IEditorProps> {
     private handleDrop(event: any) {
         //tslint:disable
         event.preventDefault();
-        if(event.dataTransfer.types.includes("text/x-spotify-data-log-context")) {
+        console.log(event);
+
+        const position = this.engine.getRelativeMousePoint(event);
+
+        if(event.dataTransfer.types.filter((type: any) => /text\/x-spotify.*/.test(type)).length > 0) {
             const links = event.dataTransfer.getData("text/plain").split("\n");
             const spotifyObjects = links.map((link: any) => spotifyUri.parse(link));
             spotifyObjects.forEach((track: spotifyUri.IParsedSpotifyUri) => {
@@ -358,6 +362,8 @@ class Editor extends React.Component<IEditorProps> {
                     const node = PlaylistNodeModel.getInstance();
 
                     this.model.addNode(node);
+                    node.setPosition(position.x, position.y);
+
                     this.engine.repaintCanvas();
 
                     node.configuration.id = track.id;
@@ -373,6 +379,8 @@ class Editor extends React.Component<IEditorProps> {
                     const node = AlbumNodeModel.getInstance();
 
                     this.model.addNode(node);
+                    node.setPosition(position.x, position.y);
+
                     this.engine.repaintCanvas();
 
                     node.configuration.id = track.id;
