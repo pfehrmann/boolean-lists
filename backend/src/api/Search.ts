@@ -39,7 +39,12 @@ router.get("/playlist", async (req, res) => {
             playlists,
         });
     } catch (error) {
-        logger.error(error.trace);
+        if (error.trace) {
+            logger.error(error.trace);
+        } else {
+            logger.error(error.stack);
+            logger.error(new Error().stack);
+        }
         res.sendStatus(500);
     }
 });

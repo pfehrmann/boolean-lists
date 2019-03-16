@@ -30,12 +30,6 @@ const corsOptions = {
 const app = express();
 
 app.use(morgan("dev"));
-app.use((err, req, res, next) => {
-    logger.error(err.stack);
-    logger.error(err);
-    res.sendStatus(500);
-});
-
 app.use(cors(corsOptions));
 app.use(session({
     cookie: {
@@ -52,6 +46,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use("/auth/spotify", SpotifyAuthorization.getRouter());
 app.use("/v1", api());
+
+app.use((err, req, res, next) => {
+    logger.error(err.stack);
+    logger.error(err);
+    res.sendStatus(500);
+});
 
 app.listen(process.env.PORT, () => {
     logger.info(`Listening on port ${process.env.PORT}`);
