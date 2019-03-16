@@ -7,20 +7,6 @@ const sourcemaps = require("gulp-sourcemaps");
 
 const tsProject = ts.createProject("tsconfig.json");
 
-if(argv.production) {
-    gulp.task("default", ["build", "production", "tslint", "watch"]);
-} else {
-    if (argv.debug) {
-        gulp.task("default", ["build", "debug", "tslint", "watch"]);
-    } else {
-        gulp.task("default", ["build", "start", "tslint", "watch"]);
-    }
-}
-
-gulp.task("watch", () => {
-    gulp.watch("src/**/*.ts", ["tslint", "build"]);
-});
-
 gulp.task("tslint", () => {
     gulp.src("src/**/*.ts")
         .pipe(tslint({
@@ -63,3 +49,17 @@ gulp.task("debug", function () {
         env: {"NODE_ENV": "development"}
     });
 });
+
+gulp.task("watch", () => {
+    gulp.watch("src/**/*.ts", gulp.series(["tslint", "build"]));
+});
+
+if(argv.production) {
+    gulp.task("default", gulp.series(["build", "production", "tslint", "watch"]));
+} else {
+    if (argv.debug) {
+        gulp.task("default", gulp.series(["build", "debug", "tslint", "watch"]));
+    } else {
+        gulp.task("default", gulp.series(["build", "start", "tslint", "watch"]));
+    }
+}
