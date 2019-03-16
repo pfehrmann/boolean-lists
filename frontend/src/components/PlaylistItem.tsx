@@ -44,13 +44,16 @@ function styles(theme: any) {
 
 interface IPlaylistProps {
     playlist: Playlist;
-    handleDelete: () => any;
+    handleDelete?: () => any;
     classes: any;
+    link?: string;
 }
 
 export class PlaylistItem extends React.Component<IPlaylistProps> {
     constructor(props: IPlaylistProps) {
         super(props);
+
+        this.getDeleteButton = this.getDeleteButton.bind(this);
     }
 
     public render() {
@@ -72,11 +75,9 @@ export class PlaylistItem extends React.Component<IPlaylistProps> {
                         </Typography>
                     </CardContent>
                     <div className={this.props.classes.controls}>
-                        <IconButton aria-label="Delete" onClick={this.props.handleDelete}>
-                            <DeleteIcon color={"error"}/>
-                        </IconButton>
+                        {this.getDeleteButton()}
                         <Link
-                            to={`/editor/${this.props.playlist.name}`}
+                            to={this.props.link || `/editor/${this.props.playlist.name}`}
                             style={{textDecoration: "none"}}
                         >
                             <IconButton>
@@ -86,6 +87,17 @@ export class PlaylistItem extends React.Component<IPlaylistProps> {
                     </div>
                 </div>
             </Card>
+        );
+    }
+
+    private getDeleteButton() {
+        if (!this.props.handleDelete) {
+            return null;
+        }
+        return (
+            <IconButton aria-label="Delete" onClick={this.props.handleDelete}>
+                <DeleteIcon color={"error"}/>
+            </IconButton>
         );
     }
 }

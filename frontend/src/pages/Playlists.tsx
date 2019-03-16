@@ -59,6 +59,14 @@ class Landing extends React.Component {
                     </Grid>
                     <Grid item={true} container={true} spacing={16} xs={10}>
                         {this.state.playlistItems}
+                        <Grid item={true} md={6} sm={10} xs={12}>
+                            <div>
+                                <PlaylistItem
+                                    playlist={{name: "New Playlist", id: "new-playlist", userId: ""}}
+                                />
+                                <Divider inset={true}/>
+                            </div>
+                        </Grid>
                     </Grid>
                     <Dialog
                         open={this.state.open}
