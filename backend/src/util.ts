@@ -1,6 +1,12 @@
 import * as _ from "lodash";
 import * as logger from "winston";
 
+export function printStackTrace() {
+    const stack = new Error().stack;
+    logger.info("PRINTING CALL STACK");
+    logger.info( stack );
+}
+
 export function getNelementsFromArray<T>(n: number, array: T[], random: boolean = true): T[] {
   let localArray = [...array];
   if (random) {
