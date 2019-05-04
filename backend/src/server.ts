@@ -1,4 +1,6 @@
 require("dotenv").config();
+require("source-map-support").install();
+process.on("unhandledRejection", console.log);
 
 const session = require("cookie-session");
 import * as cors from "cors";
