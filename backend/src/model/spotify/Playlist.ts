@@ -11,7 +11,7 @@ export class Playlist {
     public static async fromSpotifyUri(api: InitializedSpotifyApi, username: string, id: string): Promise<Playlist> {
         const key = JSON.stringify({username, id});
         if (! await playlistCache.has(key)) {
-            const response = await api.spotifyApi.getPlaylist(username, id);
+            const response = await api.spotifyApi.getPlaylist(id);
             const playlist = new Playlist(api, response.body);
             playlistCache.set(key, JSON.stringify(response.body));
             return playlist;
@@ -66,7 +66,7 @@ export class Playlist {
                 let response;
                 try {
                     response = await this.api.spotifyApi
-                        .addTracksToPlaylist(this.playlist.owner.id, this.playlist.id, uris);
+                        .addTracksToPlaylist(this.playlist.id, uris);
                     const allTracks = (await this.tracks()).concat(toAdd);
                     await this.setTracks(allTracks);
                     break;
@@ -97,7 +97,7 @@ export class Playlist {
                 let response;
                 try {
                     response = await this.api.spotifyApi
-                        .removeTracksFromPlaylist(this.playlist.owner.id, this.playlist.id, uris);
+                        .removeTracksFromPlaylist(this.playlist.id, uris);
                     await this.setTracks(tracks);
                     break;
                 } catch (err) {
@@ -126,7 +126,7 @@ export class Playlist {
             const tracks = await getAll<Track>(this.api.spotifyApi,
                 this.api.spotifyApi.getPlaylistTracks,
                 (e) => new Track(e, this.api),
-                [this.playlist.owner.id, this.playlist.id]);
+                [this.playlist.id]);
             await this.setTracks(tracks);
         }
         const cacheResponse = await playlistCache.get(this.playlist.id);
