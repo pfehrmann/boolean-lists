@@ -23,3 +23,11 @@ This project relies on .env files for an easy setup. The only file should have t
 - `PUBLIC_URL` the url, where the app is hosted
 - `REACT_APP_API_BASE` base url for the api
 - `REACT_APP_BASE` base url for the react application
+
+
+api.yaml
+--------
+To regenerate the api for the frontend, use the following command with swagger codegen:
+``` shell
+java -jar swagger-codegen-cli.jar generate -i api.yaml -l typescript-fetch -o frontend/src/api -DsupportsES6=true
+```

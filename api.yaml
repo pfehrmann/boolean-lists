@@ -150,6 +150,29 @@ paths:
               playlistUri:
                 type: "string"
       x-swagger-router-controller: "Me"
+  /me/playlist/save:
+    post:
+      tags:
+      - "user"
+      - "playlist"
+      - "me"
+      summary: "Save a playlist to Spotify"
+      operationId: "savePlaylistToSpotify"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "playlistName"
+        description: "Name of the playlist to be save to Spotify"
+        schema:
+          type: "object"
+          properties:
+            playlistName:
+              type: "string"
+      responses:
+        200:
+          description: "successful operation"
+      x-swagger-router-controller: "Me"
   /me/playlist/{id}:
     parameters:
       - in: "path"
