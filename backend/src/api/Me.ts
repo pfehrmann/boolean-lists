@@ -69,6 +69,14 @@ router.post("/playlist", async (req, res) => {
     res.json(response);
 });
 
+router.post("/playlist/save", async (req, res) => {
+    const user: InstanceType<User> = (req as any).user;
+
+    const response = await savePlaylistToSpotify(user.spotifyId, req.body.playlistName);
+
+    res.json(response);
+});
+
 router.delete("/playlist/:id", async (req, res) => {
     const user: InstanceType<User> = (req as any).user;
     await user.deletePlaylist(req.params.id);

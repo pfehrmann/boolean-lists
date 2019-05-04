@@ -16,7 +16,7 @@ import PlaylistItem from "../components/PlaylistItem";
 
 class Landing extends React.Component {
     public state: {
-        playlists: Array<{ name: string, description: string, graph: string, image?: {url: string} }>,
+        playlists: Array<{ name: string, description: string, graph: string, image?: { url: string } }>,
         open: boolean,
         deletePlaylist: string,
         redirect?: string,
@@ -37,6 +37,7 @@ class Landing extends React.Component {
         this.deletePlaylist = this.deletePlaylist.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.savePlaylist = this.savePlaylist.bind(this);
     }
 
     public render() {
@@ -138,6 +139,7 @@ class Landing extends React.Component {
                             <PlaylistItem
                                 playlist={playlist}
                                 handleDelete={this.deletePlaylist(playlist.name)}
+                                handleSave={this.savePlaylist(playlist.name)}
                             />
                             <Divider inset={true}/>
                         </div>
@@ -164,6 +166,14 @@ class Landing extends React.Component {
                 deletePlaylist: playlistName,
                 open: true,
             });
+        };
+    }
+
+    private savePlaylist(playlistName: string): () => any {
+        return async () => {
+            return await api
+                .MeApiFp()
+                .savePlaylistToSpotify({playlistName}, {credentials: "include"})();
         };
     }
 
