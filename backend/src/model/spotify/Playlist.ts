@@ -51,6 +51,17 @@ export class Playlist {
         };
     }
 
+    public description() {
+        return this.playlist.description;
+    }
+
+    public async updateDescription(description: string) {
+        return await (async () => {
+            await this.api.spotifyApi.changePlaylistDetails(this.id(), {description});
+            this.playlist.description = description;
+        })();
+    }
+
     public async addTracks(tracks: Track[]) {
         // filter out local tracks
         tracks = tracks.filter((track) => !track.isLocal());

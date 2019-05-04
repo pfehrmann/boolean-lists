@@ -49,10 +49,16 @@ async function getOrCreateSpotifyPlaylist(playlistEntity: PlaylistEntity, api: I
         if (playlist.name() !== playlistEntity.name) {
             logger.info("Name of Spotify playlist '" + playlist.name() + "' is different from playlistEntity name" +
                 "'" + playlistEntity.name + "'");
-            playlist = await me.createPlaylist(playlistEntity.name);
+            playlist = await me.createPlaylist(playlistEntity.name, playlistEntity.description);
+        }
+
+        // check description and maybe update that
+        if (playlist.description() !== playlistEntity.description) {
+            logger.info(`Description of playlist ${playlist.name()} was changed. Updating it.`);
+            await playlist.updateDescription(playlistEntity.description);
         }
     } else if (playlistEntity.name) {
-        playlist = await me.createPlaylist(playlistEntity.name);
+        playlist = await me.createPlaylist(playlistEntity.name, playlistEntity.description);
     } else {
         throw new Error("Enter a name of a playlist");
     }
