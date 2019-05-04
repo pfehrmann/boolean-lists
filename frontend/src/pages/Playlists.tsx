@@ -171,9 +171,10 @@ class Landing extends React.Component {
 
     private savePlaylist(playlistName: string): () => any {
         return async () => {
-            return await api
+            await api
                 .MeApiFp()
                 .savePlaylistToSpotify({playlistName}, {credentials: "include"})();
+            window.alert("Saved playlist");
         };
     }
 
