@@ -1,6 +1,6 @@
 require("dotenv").config();
 require("source-map-support").install();
-process.on("unhandledRejection", console.log);
+process.on("unhandledRejection", console.log); // tslint:disable-line
 
 const session = require("cookie-session");
 import * as cors from "cors";
