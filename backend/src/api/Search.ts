@@ -4,6 +4,7 @@ import {InstanceType} from "typegoose";
 import * as logger from "winston";
 import {User} from "../model/database/User";
 import {Album} from "../model/spotify/Album";
+import {Artist} from "../model/spotify/Artist";
 import {getApiFromUser} from "../model/spotify/Authorization";
 import {Playlist} from "../model/spotify/Playlist";
 
@@ -75,6 +76,32 @@ router.get("/album", async (req, res) => {
 
     res.json({
         albums,
+        // TODO: get actual elements count
+        elements: 0,
+        elementsPerPage,
+        page,
+    });
+});
+
+router.get("/artist", async (req, res) => {
+    const user: InstanceType<User> = (req as any).user;
+    const api = await getApiFromUser(user);
+    const page = req.query.page ? req.query.page : 0;
+    const elementsPerPage = 20;
+    const internalArtists = await api.searchForArtists(req.query.q, {
+        limit: elementsPerPage,
+        offset: page * elementsPerPage,
+    });
+    const artists = internalArtists.map((artist: Artist) => {
+        return {
+            id: artist.id(),
+            image: artist.image(),
+            name: artist.name(),
+        };
+    });
+
+    res.json({
+        artists,
         // TODO: get actual elements count
         elements: 0,
         elementsPerPage,

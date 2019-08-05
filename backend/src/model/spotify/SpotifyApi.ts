@@ -12,6 +12,7 @@ import {User} from "./User";
 
 import * as _ from "lodash";
 import * as logger from "winston";
+import {Artist} from "./Artist";
 
 export enum TimeRanges {
     LONG = "long_term",
@@ -71,6 +72,14 @@ export class InitializedSpotifyApi {
     }): Promise<Album[]> {
         const rawAlbums = await this.spotifyApi.searchAlbums(query, options);
         return rawAlbums.body.albums.items.map((item: any) => new Album(this, item));
+    }
+
+    public async searchForArtists(query: string, options: { market?: string, limit?: number, offset?: number } = {
+        limit: 20,
+        offset: 0,
+    }): Promise<Artist[]> {
+        const rawArtists = await this.spotifyApi.searchArtists(query, options);
+        return rawArtists.body.artists.items.map((item: any) => new Artist(this, item));
     }
 
     /**
