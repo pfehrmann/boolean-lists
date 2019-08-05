@@ -42,6 +42,7 @@ import PlaylistNodeModel from "../nodes/PlaylistNode/PlaylistNodeModel";
 
 import * as _ from "lodash";
 import * as api from "../api";
+import ArtistTopTracksNodeFactory from "../nodes/ArtistTopTracksNode/ArtistTopTracksNodeFactory";
 
 interface IEditorState {
     configOpen: boolean;
@@ -99,6 +100,7 @@ class Editor extends React.Component<IEditorProps> {
         engine.registerNodeFactory(new AlbumNodeFactory());
         engine.registerNodeFactory(new MyLibraryNodeFactory());
         engine.registerNodeFactory(new FilterByAudioFeatureNodeFactory());
+        engine.registerNodeFactory(new ArtistTopTracksNodeFactory());
 
         engine.registerPortFactory(new AbstractPortFactory());
         engine.registerPortFactory(new DefaultPortFactory());

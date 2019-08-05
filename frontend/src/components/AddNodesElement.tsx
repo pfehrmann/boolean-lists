@@ -19,6 +19,7 @@ import RandomizeNodeModel from "../nodes/RandomizeNode/RandomizeNodeModel";
 import SubtractNodeModel from "../nodes/SubtractNode/SubtractNodeModel";
 
 import * as _ from "lodash";
+import ArtistTopTracksNodeModel from "../nodes/ArtistTopTracksNode/ArtistTopTracksNodeModel";
 
 interface IAddNodesElementProps {
     engine: SRD.DiagramEngine;
@@ -86,6 +87,9 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
                         </ListItem>
                         <ListItem button={true} onClick={this.addNode(AlbumNodeModel.getInstance)}>
                             <ListItemText>Add a AlbumNode</ListItemText>
+                        </ListItem>
+                        <ListItem button={true} onClick={this.addNode(ArtistTopTracksNodeModel.getInstance)}>
+                            <ListItemText>Add ArtistTopTracksNode</ListItemText>
                         </ListItem>
                         <ListItem button={true} onClick={this.addNode(MyLibraryNodeModel.getInstance)}>
                             <ListItemText>Add a MyLibraryNode</ListItemText>
