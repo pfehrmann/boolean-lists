@@ -111,3 +111,10 @@ export function convertFilterByAudioFeaturesNode(srdNode: any, serialized: any):
         type: "FilterAudioFeaturesNode",
     };
 }
+
+export function convertArtistTopTracksNode(srdNode: any, serialized: any): any {
+    return {
+        id: srdNode.configuration.id,
+        type: "ArtistTopTracksNode",
+    };
+}
