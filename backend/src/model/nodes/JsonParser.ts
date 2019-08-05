@@ -1,6 +1,7 @@
 import {InitializedSpotifyApi} from "../spotify/SpotifyApi";
 import {AddNode} from "./AddNode";
 import {AlbumNode} from "./AlbumNode";
+import {ArtistTopTracksNode} from "./ArtistTopTracksNode";
 import {FilterAudioFeaturesNode} from "./FilterAudioFeaturesNode";
 import {IntermediatePlaylist} from "./IntermediatePlaylist";
 import {LibraryNode} from "./LibraryNode";
@@ -38,6 +39,9 @@ export function fromJSON(api: InitializedSpotifyApi, json: { type: string }): Pr
         }
         case FilterAudioFeaturesNode.type: {
             return FilterAudioFeaturesNode.fromJSON(api, json);
+        }
+        case ArtistTopTracksNode.type: {
+            return ArtistTopTracksNode.fromJSON(api, json);
         }
     }
     throw new Error("Cannot deserialize json node.");
