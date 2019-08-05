@@ -112,6 +112,26 @@ class Landing extends React.Component {
                 .MeApiFp()
                 .getMyPlaylists({credentials: "include"})();
 
+            // render all playlists, render images later.
+            const playlistItemsTemp = pageablePlaylists.playlists.map((playlist, index) => {
+                return (
+                    <Grid item={true} md={6} sm={10} xs={12} key={index}>
+                        <div key={index}>
+                            <PlaylistItem
+                                playlist={playlist}
+                                handleDelete={this.deletePlaylist(playlist.name)}
+                                handleSave={this.savePlaylist(playlist.name)}
+                            />
+                            <Divider inset={true}/>
+                        </div>
+                    </Grid>
+                );
+            });
+
+            this.setState({
+                playlistItems: playlistItemsTemp,
+            });
+
             const playlists = await Promise.all(pageablePlaylists.playlists.map(async (playlist) => {
                 if (playlist.uri) {
                     try {
