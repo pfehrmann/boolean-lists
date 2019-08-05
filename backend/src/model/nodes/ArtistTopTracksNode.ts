@@ -18,7 +18,6 @@ export class ArtistTopTracksNode extends IntermediatePlaylist {
     public static async from(artist: Artist): Promise<ArtistTopTracksNode> {
         logger.debug(`Creating IntermediatePlaylist from artists top tracks ${artist.name()}...`);
         const tracks = await artist.topTracks();
-        logger.debug(`Album has ${tracks.length} tracks.`);
         const artistTopTrackNode = new ArtistTopTracksNode(tracks);
         artistTopTrackNode.id = artist.id();
         return artistTopTrackNode;
