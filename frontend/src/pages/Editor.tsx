@@ -43,6 +43,7 @@ import PlaylistNodeModel from "../nodes/PlaylistNode/PlaylistNodeModel";
 import * as _ from "lodash";
 import * as api from "../api";
 import ArtistTopTracksNodeFactory from "../nodes/ArtistTopTracksNode/ArtistTopTracksNodeFactory";
+import ArtistTopTracksNodeModel from "../nodes/ArtistTopTracksNode/ArtistTopTracksNodeModel";
 
 interface IEditorState {
     configOpen: boolean;
@@ -393,6 +394,22 @@ class Editor extends React.Component<IEditorProps> {
                     const firstChild: any = new DOMParser().parseFromString(event.dataTransfer.getData('text/html'), 'text/xml').firstChild;
                     if(firstChild) {
                         node.name = `Album '${firstChild.innerHTML}'`;
+                    }
+                }
+
+                if(track.type === "artist") {
+
+                    const node = ArtistTopTracksNodeModel.getInstance();
+
+                    this.model.addNode(node);
+                    node.setPosition(position.x, position.y);
+
+                    this.engine.repaintCanvas();
+
+                    node.configuration.id = track.id;
+                    const firstChild: any = new DOMParser().parseFromString(event.dataTransfer.getData('text/html'), 'text/xml').firstChild;
+                    if(firstChild) {
+                        node.name = `Artists Top Tracks '${firstChild.innerHTML}'`;
                     }
                 }
             });
