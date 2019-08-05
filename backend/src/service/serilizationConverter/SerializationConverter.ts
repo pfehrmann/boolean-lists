@@ -93,6 +93,9 @@ export function convertSrdNodeToBooleanList(srdNode: any, serialized: any): any 
             return convert.convertArtistTopTracksNode(srdNode, serialized);
         }
     }
+    const message = `Node type '${srdNode.type}' is unknown`;
+    logger.error(message);
+    throw new UnknownNodeTypeError(message);
 }
 
 export function getChildNodes(srdNode: any, serialized: any): any[] {
