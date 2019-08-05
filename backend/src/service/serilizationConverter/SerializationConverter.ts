@@ -89,8 +89,10 @@ export function convertSrdNodeToBooleanList(srdNode: any, serialized: any): any 
         case "filter-by-audio-features-node": {
             return convert.convertFilterByAudioFeaturesNode(srdNode, serialized);
         }
+        case "artist-top-tracks-node": {
+            return convert.convertArtistTopTracksNode(srdNode, serialized);
+        }
     }
-    throw new UnknownNodeTypeError("Node type '" + srdNode.type + "' is unknown.");
 }
 
 export function getChildNodes(srdNode: any, serialized: any): any[] {
