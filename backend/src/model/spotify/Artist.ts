@@ -30,6 +30,9 @@ export class Artist {
     }
 
     public image() {
+        if (!this.artist.images[0]) {
+            return {};
+        }
         return {
             height: this.artist.images[0].height,
             url: this.artist.images[0].url,
