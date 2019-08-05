@@ -44,7 +44,7 @@ export class Artist {
             let tracks;
             try {
                 rawTracks = await this.api.spotifyApi.getArtistTopTracks(this.id(), "DE");
-                tracks = rawTracks.map((rawTrack) => new Track(rawTrack, this.api));
+                tracks = rawTracks.body.tracks.map((rawTrack) => new Track(rawTrack, this.api));
                 await this.setTopTracks(tracks);
             } catch (e) {
                 logger.info(`Failed to load top tracks of artist with id ${this.id()} from API`);
