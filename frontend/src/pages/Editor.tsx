@@ -273,7 +273,7 @@ class Editor extends React.Component<IEditorProps> {
         }
 
         try {
-            const id = this.props.match.params.id;
+            const id = atob(this.props.match.params.id);
             if (id) {
                 const playlist = await api
                     .MeApiFp()

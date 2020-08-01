@@ -81,7 +81,7 @@ export class PlaylistItem extends React.Component<IPlaylistProps> {
                         {this.getDeleteButton()}
                         {this.getSaveButton()}
                         <Link
-                            to={this.props.link || `/editor/${this.props.playlist.name}`}
+                            to={this.props.link || `/editor/${btoa(this.props.playlist.name)}`}
                             style={{textDecoration: "none"}}
                         >
                             <IconButton>
