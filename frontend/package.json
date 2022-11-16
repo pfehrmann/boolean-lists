@@ -11,7 +11,7 @@
     "react-dom": "^16.4.0",
     "react-parallax": "^2.0.0",
     "react-router-dom": "^4.3.1",
-    "react-scripts-ts": "2.16.0",
+    "react-scripts-ts": "4.0.8",
     "storm-react-diagrams": "^5.2.1",
     "winston": "^3.0.0"
   },
