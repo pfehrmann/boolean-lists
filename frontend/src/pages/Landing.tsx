@@ -9,20 +9,8 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 // noinspection TsLint
 import { Parallax } from "react-parallax";
-import { withStyles } from "@mui/styles";
 
-const styles = {
-  base: {},
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
-  root: {
-    flexGrow: 1,
-  },
-};
-
-const _Landing = () => {
+export const Landing = () => {
   return (
     <div>
       <Parallax bgImage={concert} strength={500}>
@@ -91,5 +79,3 @@ const FeatureCard = ({ title, children }: FeatureCardProps) => {
     </Grid>
   );
 };
-
-export const Landing = withStyles(styles)(_Landing);
