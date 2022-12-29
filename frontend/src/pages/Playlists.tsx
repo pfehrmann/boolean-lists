@@ -11,7 +11,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useNavigate } from "react-router-dom";
-import PlaylistItem from "../components/PlaylistItem";
+import { PlaylistItem } from "../components/PlaylistItem";
 import { logger } from "src/utils/logger";
 
 interface IPlaylist {

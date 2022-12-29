@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 
-import Editor from "./pages/Editor";
+import { Editor } from "./pages/Editor";
 import { Landing } from "./pages/Landing";
-import LoginSuccess from "./pages/LoginSuccess";
+import { LoginSuccess } from "./pages/LoginSuccess";
 import { Playlists } from "./pages/Playlists";
 
 import AppBar from "@mui/material/AppBar";

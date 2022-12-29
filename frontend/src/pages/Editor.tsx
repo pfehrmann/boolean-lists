@@ -1,5 +1,3 @@
-import { withStyles } from "@mui/styles";
-import { StyleRules } from "@mui/styles/withStyles";
 import Add from "@mui/icons-material/Add";
 import PlaylistAddCheck from "@mui/icons-material/PlaylistAddCheck";
 import SaveIcon from "@mui/icons-material/Save";
@@ -42,7 +40,7 @@ import * as api from "../api";
 import ArtistTopTracksNodeFactory from "../nodes/ArtistTopTracksNode/ArtistTopTracksNodeFactory";
 import ArtistTopTracksNodeModel from "../nodes/ArtistTopTracksNode/ArtistTopTracksNodeModel";
 import { Redirect } from "src/components/Redirect";
-import { Theme } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import { logger } from "src/utils/logger";
 
 interface IEditorState {
@@ -62,10 +60,9 @@ interface IEditorState {
 
 interface IEditorProps {
   match?: any;
-  classes: any;
 }
 
-class Editor extends React.Component<IEditorProps> {
+export class Editor extends React.Component<IEditorProps> {
   public state: IEditorState;
 
   private readonly engine: SRD.DiagramEngine;
@@ -211,16 +208,14 @@ class Editor extends React.Component<IEditorProps> {
         onDragOver={this.handleDragOver}
       >
         <Graph engine={this.engine} />
-        <AddNodesElement
+        <StyledFab
           engine={this.engine}
           model={this.model}
-          className={this.props.classes.fab}
           open={this.state.addNodeOpen}
           onClose={this.handleClose}
         />
-        <SpeedDial
+        <StyledSpeedDial
           ariaLabel="SpeedDial example"
-          className={this.props.classes.speedDial}
           icon={<SpeedDialIcon />}
           onBlur={this.handleCloseDial}
           onClick={this.handleSpeedDialOpen}
@@ -251,7 +246,7 @@ class Editor extends React.Component<IEditorProps> {
             tooltipTitle={"Add Node ([Alt]+[Shift]+A)"}
             onClick={this.handleOpenAddNode}
           />
-        </SpeedDial>
+        </StyledSpeedDial>
         <SerializationDialog
           model={this.model}
           onSave={this.handleSave}
@@ -530,19 +525,14 @@ class Editor extends React.Component<IEditorProps> {
   }
 }
 
-function styles(theme: Theme): StyleRules {
-  return {
-    fab: {
-      bottom: theme.spacing(2),
-      position: "absolute",
-      right: theme.spacing(5),
-    },
-    speedDial: {
-      bottom: theme.spacing(2),
-      position: "absolute",
-      right: theme.spacing(3),
-    },
-  };
-}
+const StyledFab = styled(AddNodesElement)(({ theme }) => ({
+  bottom: theme.spacing(2),
+  position: "absolute",
+  right: theme.spacing(5),
+}));
 
-export default withStyles(styles, { withTheme: true })(Editor);
+const StyledSpeedDial = styled(SpeedDial)(({ theme }) => ({
+  bottom: theme.spacing(2),
+  position: "absolute",
+  right: theme.spacing(3),
+}));

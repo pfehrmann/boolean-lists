@@ -24,7 +24,7 @@ import ArtistTopTracksNodeModel from "../nodes/ArtistTopTracksNode/ArtistTopTrac
 interface IAddNodesElementProps {
   engine: SRD.DiagramEngine;
   model: SRD.DiagramModel;
-  className: any;
+  className?: any;
   open: boolean;
   onClose: () => any;
 }
