@@ -23,6 +23,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SendIcon from "@mui/icons-material/Send";
 import Cookie from "js-cookie";
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
+import { Editor2 } from "./pages/Editor2";
 
 export const App = () => {
   const [loggedIn, setLoggedIn] = useState(Boolean(Cookie.get("logged_in")));
@@ -100,6 +101,7 @@ export const App = () => {
         <div style={{ display: "flex", flexFlow: "column", flex: "1 1 auto" }}>
           <Routes>
             <Route path="/editor/:id?" element={<Editor />} />
+            <Route path="/editor2/:id?" element={<Editor2 />} />
             <Route path="/playlists" element={<Playlists />} />
             <Route path="/loginSuccess" element={<LoginSuccess />} />
             <Route path="/login" element={<Landing />} />

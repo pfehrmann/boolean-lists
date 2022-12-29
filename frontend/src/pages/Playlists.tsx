@@ -46,7 +46,7 @@ export const Playlists = () => {
                     setDeletePlaylist(playlist.name);
                     setOpen(true);
                   }}
-                  handleSave={savePlaylist(playlist.name)}
+                  handleSave={() => savePlaylist(playlist.name)}
                 />
                 <Divider />
               </div>
@@ -87,7 +87,7 @@ export const Playlists = () => {
                   setDeletePlaylist(playlist.name);
                   setOpen(true);
                 }}
-                handleSave={savePlaylist(playlist.name)}
+                handleSave={() => savePlaylist(playlist.name)}
               />
               <Divider />
             </div>
@@ -104,13 +104,11 @@ export const Playlists = () => {
     }
   }
 
-  function savePlaylist(playlistName: string): () => any {
-    return async () => {
-      await api
-        .MeApiFp()
-        .savePlaylistToSpotify({ playlistName }, { credentials: "include" })();
-      window.alert("Saved playlist");
-    };
+  async function savePlaylist(playlistName: string) {
+    await api
+      .MeApiFp()
+      .savePlaylistToSpotify({ playlistName }, { credentials: "include" })();
+    window.alert("Saved playlist");
   }
 
   function handleClose() {
