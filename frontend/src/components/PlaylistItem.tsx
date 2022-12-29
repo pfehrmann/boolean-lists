@@ -9,7 +9,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { Playlist } from "../api";
 
-import * as listIcon from "./list_icon.svg";
+import listIcon from "./list_icon.svg";
 
 import { withStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
