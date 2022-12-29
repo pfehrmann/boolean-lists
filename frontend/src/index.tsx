@@ -1,5 +1,5 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import React from "react";
+import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
 import registerServiceWorker from "./registerServiceWorker";
@@ -61,13 +61,14 @@ async function initialize() {
   document.addEventListener("touchend", touchHandler, true);
   document.addEventListener("touchcancel", touchHandler, true);
 
-  ReactDOM.render(
+  const container = document.getElementById("root");
+  const root = createRoot(container!);
+  root.render(
     <ThemeProvider theme={theme}>
       <CssBaseline>
         <App />
       </CssBaseline>
-    </ThemeProvider>,
-    document.getElementById("root") as HTMLElement
+    </ThemeProvider>
   );
 }
 
