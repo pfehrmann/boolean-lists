@@ -67,73 +67,75 @@ class App extends React.Component<{ classes: any }> {
 
   public render() {
     return (
-      <div
-        style={{
-          minHeight: "100vh",
-          maxHeight: "100vh",
-          display: "flex",
-          flexFlow: "column",
-        }}
-      >
-        <AppBar position="static" elevation={0} style={{ flex: "0 1 auto" }}>
-          <Toolbar />
-        </AppBar>
-        <AppBar position="fixed">
-          <Toolbar>
-            {this.menuButton()}
-            <Typography
-              variant="h6"
-              color="inherit"
-              className={this.props.classes.grow}
-            >
-              BooleanLists
-            </Typography>
-            <Button color="inherit" onClick={this.loginOut}>
-              {this.state.loggedIn ? "Logout" : "Login"}
-            </Button>
-          </Toolbar>
-        </AppBar>
-        <Drawer
-          open={this.state.menuVisible}
-          onClose={this.toggleDrawer(false)}
+      <BrowserRouter>
+        <div
+          style={{
+            minHeight: "100vh",
+            maxHeight: "100vh",
+            display: "flex",
+            flexFlow: "column",
+          }}
         >
-          <div
-            tabIndex={0}
-            role="button"
-            onClick={this.toggleDrawer(false)}
-            onKeyDown={this.toggleDrawer(false)}
+          <AppBar position="static" elevation={0} style={{ flex: "0 1 auto" }}>
+            <Toolbar />
+          </AppBar>
+          <AppBar position="fixed">
+            <Toolbar>
+              {this.menuButton()}
+              <Typography
+                variant="h6"
+                color="inherit"
+                className={this.props.classes.grow}
+              >
+                BooleanLists
+              </Typography>
+              <Button color="inherit" onClick={this.loginOut}>
+                {this.state.loggedIn ? "Logout" : "Login"}
+              </Button>
+            </Toolbar>
+          </AppBar>
+          <Drawer
+            open={this.state.menuVisible}
+            onClose={this.toggleDrawer(false)}
           >
-            <List>
-              <Link to="/" style={{ textDecoration: "none" }}>
-                <ListItem button={true}>
-                  <ListItemIcon>
-                    <HomeIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Home" />
-                </ListItem>
-              </Link>
-              <Link to="/editor" style={{ textDecoration: "none" }}>
-                <ListItem button={true}>
-                  <ListItemIcon>
-                    <EditIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Editor" />
-                </ListItem>
-              </Link>
-              <Divider />
-              <Link to="/playlists" style={{ textDecoration: "none" }}>
-                <ListItem button={true}>
-                  <ListItemIcon>
-                    <SendIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Playlists" />
-                </ListItem>
-              </Link>
-            </List>
-          </div>
-        </Drawer>
-        <div style={{ display: "flex", flexFlow: "column", flex: "1 1 auto" }}>
-          <BrowserRouter>
+            <div
+              tabIndex={0}
+              role="button"
+              onClick={this.toggleDrawer(false)}
+              onKeyDown={this.toggleDrawer(false)}
+            >
+              <List>
+                <Link to="/" style={{ textDecoration: "none" }}>
+                  <ListItem button={true}>
+                    <ListItemIcon>
+                      <HomeIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Home" />
+                  </ListItem>
+                </Link>
+                <Link to="/editor" style={{ textDecoration: "none" }}>
+                  <ListItem button={true}>
+                    <ListItemIcon>
+                      <EditIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Editor" />
+                  </ListItem>
+                </Link>
+                <Divider />
+                <Link to="/playlists" style={{ textDecoration: "none" }}>
+                  <ListItem button={true}>
+                    <ListItemIcon>
+                      <SendIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Playlists" />
+                  </ListItem>
+                </Link>
+              </List>
+            </div>
+          </Drawer>
+          <div
+            style={{ display: "flex", flexFlow: "column", flex: "1 1 auto" }}
+          >
             <Routes>
               <Route path="/editor/:id?" element={<Editor />} />
               <Route path="/playlists" element={<Playlists />} />
@@ -141,9 +143,9 @@ class App extends React.Component<{ classes: any }> {
               <Route path="/login" element={<Landing />} />
               <Route path="/" element={<Landing />} />
             </Routes>
-          </BrowserRouter>
+          </div>
         </div>
-      </div>
+      </BrowserRouter>
     );
   }
 
