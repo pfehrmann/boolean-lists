@@ -79,7 +79,7 @@ export const Playlists = () => {
 
       const playlistItems = playlists.map((playlist, index) => {
         return (
-          <Grid item={true} md={6} sm={10} xs={12} key={index}>
+          <Grid item md={6} sm={10} xs={12} key={index}>
             <div key={index}>
               <PlaylistItem
                 playlist={playlist}
@@ -139,10 +139,10 @@ export const Playlists = () => {
   return (
     <div style={{ padding: 8 }}>
       <Grid
-        container={true}
-        columnSpacing={"center"}
+        container
+        justifyContent="center"
         style={{ marginTop: "2em" }}
-        spacing={16}
+        spacing={1}
         component="div"
       >
         <Grid item={true} xs={12} sm={10}>
