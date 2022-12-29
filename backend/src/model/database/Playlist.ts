@@ -1,15 +1,16 @@
-import {prop, Typegoose} from "typegoose";
+import { Schema } from "mongoose";
+import { prop, Typegoose } from "typegoose";
 
-export class Playlist extends Typegoose {
-    @prop()
-    public description: string;
-
-    @prop()
-    public graph: string;
-
-    @prop()
-    public name: string;
-
-    @prop()
-    public uri: string;
+export interface IPlaylist {
+  description: string;
+  graph: string;
+  name: string;
+  uri: string;
 }
+
+export const PlaylistSchema = new Schema<IPlaylist>({
+  description: { type: String },
+  graph: { type: String },
+  name: { type: String },
+  uri: { type: String },
+});
