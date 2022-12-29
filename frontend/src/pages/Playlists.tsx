@@ -1,18 +1,18 @@
-import Grid from "@mui/material/Grid";
-import Divider from "@mui/material/Divider";
-import Typography from "@mui/material/Typography";
-import React, { useEffect, useState } from "react";
-import * as api from "../api";
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { logger } from 'src/utils/logger';
 
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import { useNavigate } from "react-router-dom";
-import { PlaylistItem } from "../components/PlaylistItem";
-import { logger } from "src/utils/logger";
+import * as api from '../api';
+import { PlaylistItem } from '../components/PlaylistItem';
 
 interface IPlaylist {
   name: string;
@@ -24,7 +24,7 @@ interface IPlaylist {
 export const Playlists = () => {
   const [, setPlaylists] = useState<IPlaylist[]>([]);
   const [open, setOpen] = useState(false);
-  const [deletePlaylist, setDeletePlaylist] = useState("");
+  const [deletePlaylist, setDeletePlaylist] = useState('');
   const [playlistItems, setPlaylistItems] = useState<any[]>([]);
   const navigate = useNavigate();
 
@@ -32,7 +32,7 @@ export const Playlists = () => {
     try {
       const pageablePlaylists = await api
         .MeApiFp()
-        .getMyPlaylists({ credentials: "include" })();
+        .getMyPlaylists({ credentials: 'include' })();
 
       // render all playlists, render images later.
       const playlistItemsTemp = pageablePlaylists.playlists.map(
@@ -52,7 +52,7 @@ export const Playlists = () => {
               </div>
             </Grid>
           );
-        }
+        },
       );
 
       setPlaylistItems(playlistItemsTemp);
@@ -63,18 +63,18 @@ export const Playlists = () => {
             try {
               const apiPlaylist = await api
                 .PlaylistApiFp()
-                .getPlaylistByUri(playlist.uri, { credentials: "include" })();
+                .getPlaylistByUri(playlist.uri, { credentials: 'include' })();
               if (apiPlaylist.image) {
                 playlist.image = apiPlaylist.image;
               }
             } catch (error) {
               if (error.status === 401) {
-                navigate("/login");
+                navigate('/login');
               }
             }
           }
           return playlist;
-        })
+        }),
       );
 
       const playlistItems = playlists.map((playlist, index) => {
@@ -99,7 +99,7 @@ export const Playlists = () => {
       setPlaylists(playlists);
     } catch (error) {
       if (error.status === 401) {
-        navigate("/login");
+        navigate('/login');
       }
     }
   }
@@ -107,8 +107,8 @@ export const Playlists = () => {
   async function savePlaylist(playlistName: string) {
     await api
       .MeApiFp()
-      .savePlaylistToSpotify({ playlistName }, { credentials: "include" })();
-    window.alert("Saved playlist");
+      .savePlaylistToSpotify({ playlistName }, { credentials: 'include' })();
+    window.alert('Saved playlist');
   }
 
   function handleClose() {
@@ -118,13 +118,13 @@ export const Playlists = () => {
   async function handleDelete() {
     try {
       await api.MeApiFp().deleteMyPlaylistById(deletePlaylist, {
-        credentials: "include",
+        credentials: 'include',
       })();
       updatePlaylists();
     } catch (error) {
       logger.error(error.stack);
       if (error.status === 401) {
-        navigate("/login");
+        navigate('/login');
       }
     }
     setOpen(false);
@@ -139,7 +139,7 @@ export const Playlists = () => {
       <Grid
         container
         justifyContent="center"
-        style={{ marginTop: "2em" }}
+        style={{ marginTop: '2em' }}
         spacing={1}
         component="div"
       >
@@ -154,9 +154,9 @@ export const Playlists = () => {
             <div>
               <PlaylistItem
                 playlist={{
-                  name: "New Playlist",
-                  id: "new-playlist",
-                  userId: "",
+                  name: 'New Playlist',
+                  id: 'new-playlist',
+                  userId: '',
                 }}
               />
               <Divider />

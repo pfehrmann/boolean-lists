@@ -1,19 +1,19 @@
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import FormControl from "@mui/material/FormControl/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import TextField from "@mui/material/TextField";
-import * as React from "react";
-import * as SRD from "storm-react-diagrams";
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import FormControl from '@mui/material/FormControl/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import TextField from '@mui/material/TextField';
+import * as React from 'react';
+import * as SRD from 'storm-react-diagrams';
 
-import { AbstractNodeWidget, IAbstractNodeProps } from "../AbstractNodeWidget";
-import FilterByAudioFeatureNodeModel from "./FilterByAudioFeatureNodeModel";
+import { AbstractNodeWidget, IAbstractNodeProps } from '../AbstractNodeWidget';
+import FilterByAudioFeatureNodeModel from './FilterByAudioFeatureNodeModel';
 
 export interface IFilterByAudioFeatureNodeProps
   extends IAbstractNodeProps<FilterByAudioFeatureNodeModel> {
@@ -39,13 +39,13 @@ export default class FilterByAudioFeatureNodeWidget extends AbstractNodeWidget<I
   public state: IFilterByAudioFeatureNodeState;
 
   constructor(props: IFilterByAudioFeatureNodeProps) {
-    super("filter-by-audio-features-node", props);
+    super('filter-by-audio-features-node', props);
 
     this.state = {
       configOpen: props.configOpen,
-      feature: this.props.node.configuration.feature || "tempo",
+      feature: this.props.node.configuration.feature || 'tempo',
       from: this.props.node.configuration.from || 120,
-      oldFeature: this.props.node.configuration.feature || "tempo",
+      oldFeature: this.props.node.configuration.feature || 'tempo',
       oldFrom: this.props.node.configuration.from || 120,
       oldTo: this.props.node.configuration.to || 130,
       to: this.props.node.configuration.to || 130,
@@ -76,7 +76,7 @@ export default class FilterByAudioFeatureNodeWidget extends AbstractNodeWidget<I
             <TextField
               autoFocus={true}
               margin="dense"
-              inputProps={{ id: "from", name: "from" }}
+              inputProps={{ id: 'from', name: 'from' }}
               label="From"
               type="number"
               fullWidth={true}
@@ -86,7 +86,7 @@ export default class FilterByAudioFeatureNodeWidget extends AbstractNodeWidget<I
             <TextField
               autoFocus={true}
               margin="dense"
-              inputProps={{ id: "to", name: "to" }}
+              inputProps={{ id: 'to', name: 'to' }}
               label="To"
               type="number"
               fullWidth={true}
@@ -99,17 +99,17 @@ export default class FilterByAudioFeatureNodeWidget extends AbstractNodeWidget<I
                 autoFocus={true}
                 margin="dense"
                 type="text"
-                inputProps={{ id: "feature", name: "feature" }}
+                inputProps={{ id: 'feature', name: 'feature' }}
                 fullWidth={true}
                 value={this.state.feature}
                 onChange={this.handleChange}
               >
-                <MenuItem value={"danceability"}>Danceability</MenuItem>
-                <MenuItem value={"energy"}>Energy</MenuItem>
-                <MenuItem value={"tempo"}>Tempo</MenuItem>
-                <MenuItem value={"valence"}>Valence</MenuItem>
-                <MenuItem value={"speechiness"}>Speechiness</MenuItem>
-                <MenuItem value={"instrumentalness"}>Instrumentalness</MenuItem>
+                <MenuItem value={'danceability'}>Danceability</MenuItem>
+                <MenuItem value={'energy'}>Energy</MenuItem>
+                <MenuItem value={'tempo'}>Tempo</MenuItem>
+                <MenuItem value={'valence'}>Valence</MenuItem>
+                <MenuItem value={'speechiness'}>Speechiness</MenuItem>
+                <MenuItem value={'instrumentalness'}>Instrumentalness</MenuItem>
               </Select>
             </FormControl>
           </DialogContent>

@@ -28,6 +28,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.0.0",
     "@types/history": "^5.0.0",
     "@types/jest": "^22.2.3",
     "@types/js-cookie": "^3.0.2",

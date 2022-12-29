@@ -1,21 +1,21 @@
-import * as React from "react";
-import "../App.css";
-import concert from "./concert.jpg";
-import turntables from "./turntables.jpg";
-
-import { Grid } from "@mui/material";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
+import { Grid } from '@mui/material';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import * as React from 'react';
 // noinspection TsLint
-import { Parallax } from "react-parallax";
+import { Parallax } from 'react-parallax';
+
+import '../App.css';
+import concert from './concert.jpg';
+import turntables from './turntables.jpg';
 
 export const Landing = () => {
   return (
     <div>
       <Parallax bgImage={concert} strength={500}>
         <div style={{ minHeight: 400 }}>
-          <Grid container style={{ marginTop: "50px" }} justifyContent="center">
+          <Grid container style={{ marginTop: '50px' }} justifyContent="center">
             <Grid item xs={11} md={8}>
               <Typography variant="h1" color="textSecondary">
                 BooleanLists
@@ -47,8 +47,8 @@ export const Landing = () => {
             of this.
           </FeatureCard>
           <FeatureCard title="Questions?">
-            In case you have any questions, feel free to write an email to{" "}
-            <a href={"mailto:philipp.fehrmann@gmx.de"}>
+            In case you have any questions, feel free to write an email to{' '}
+            <a href={'mailto:philipp.fehrmann@gmx.de'}>
               philipp.fehrmann@gmx.de
             </a>
           </FeatureCard>

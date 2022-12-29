@@ -1,12 +1,12 @@
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import TextField from "@mui/material/TextField";
-import * as React from "react";
-import * as SRD from "storm-react-diagrams";
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import TextField from '@mui/material/TextField';
+import * as React from 'react';
+import * as SRD from 'storm-react-diagrams';
 
 interface ISerializationDialog {
   model: SRD.DiagramModel;
@@ -24,8 +24,8 @@ export class SerializationDialog extends React.Component<ISerializationDialog> {
   constructor(props: ISerializationDialog) {
     super(props);
     this.state = {
-      newGraph: "",
-      serializedGraph: "",
+      newGraph: '',
+      serializedGraph: '',
     };
 
     this.handleClose = this.handleClose.bind(this);
@@ -103,7 +103,7 @@ export class SerializationDialog extends React.Component<ISerializationDialog> {
       serializedGraph: JSON.stringify(
         this.props.model.serializeDiagram(),
         null,
-        2
+        2,
       ),
     });
   }

@@ -1,12 +1,13 @@
-import { AbstractPortFactory } from "storm-react-diagrams";
-import { LimitPortModel } from "./LimitPortModel";
+import { AbstractPortFactory } from 'storm-react-diagrams';
+
+import { LimitPortModel } from './LimitPortModel';
 
 export default class LimitPortFactory extends AbstractPortFactory<LimitPortModel> {
   constructor() {
-    super("LimitPort");
+    super('LimitPort');
   }
 
   public getNewInstance(initialConfig?: any): LimitPortModel {
-    return new LimitPortModel(true, "unknown");
+    return new LimitPortModel(true, 'unknown');
   }
 }

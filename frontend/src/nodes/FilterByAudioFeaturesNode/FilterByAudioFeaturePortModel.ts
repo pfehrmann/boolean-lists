@@ -1,6 +1,7 @@
-import * as _ from "lodash";
-import * as SRD from "storm-react-diagrams";
-import { AbstractPortModel } from "../AbstractPortModel";
+import * as _ from 'lodash';
+import * as SRD from 'storm-react-diagrams';
+
+import { AbstractPortModel } from '../AbstractPortModel';
 
 export class FilterByAudioFeaturePortModel extends AbstractPortModel {
   public in: boolean;
@@ -8,7 +9,7 @@ export class FilterByAudioFeaturePortModel extends AbstractPortModel {
   public links: { [id: string]: SRD.DefaultLinkModel };
 
   constructor(isInput: boolean, name: string, label?: string, id?: string) {
-    super(isInput, name, label, "FilterByAudioFeaturePort", id);
+    super(isInput, name, label, 'FilterByAudioFeaturePort', id);
   }
 
   public deSerialize(object: any, engine: SRD.DiagramEngine) {
@@ -35,7 +36,7 @@ export class FilterByAudioFeaturePortModel extends AbstractPortModel {
         );
       })
     ) {
-      alert("This node accepts only one input");
+      alert('This node accepts only one input');
       return false;
     }
 

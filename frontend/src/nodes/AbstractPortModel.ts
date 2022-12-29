@@ -1,6 +1,7 @@
-import * as _ from "lodash";
-import * as SRD from "storm-react-diagrams";
-import { AbstractNodeModel } from "./AbstractNodeModel";
+import * as _ from 'lodash';
+import * as SRD from 'storm-react-diagrams';
+
+import { AbstractNodeModel } from './AbstractNodeModel';
 
 export class AbstractPortModel extends SRD.PortModel {
   public in: boolean;
@@ -11,8 +12,8 @@ export class AbstractPortModel extends SRD.PortModel {
     isInput: boolean,
     name: string,
     label?: string,
-    type: string = "AbstractPort",
-    id?: string
+    type: string = 'AbstractPort',
+    id?: string,
   ) {
     super(name, type, id);
     this.in = isInput;
@@ -58,11 +59,11 @@ export class AbstractPortModel extends SRD.PortModel {
         _.includes(port.getReachableParents(), this) ||
         _.includes(port.getReachableChildren(), this)
       ) {
-        alert("You are creating a loop, these nodes cannot be connected.");
+        alert('You are creating a loop, these nodes cannot be connected.');
         return false;
       }
     } else {
-      alert("One of the nodes is an old node, can not connect.");
+      alert('One of the nodes is an old node, can not connect.');
       return false;
     }
 

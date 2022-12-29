@@ -1,17 +1,17 @@
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import * as React from "react";
-import * as SRD from "storm-react-diagrams";
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import * as React from 'react';
+import * as SRD from 'storm-react-diagrams';
 
-import { AbstractNodeWidget, IAbstractNodeProps } from "../AbstractNodeWidget";
-import MyTopTracksNodeModel from "./MyTopTracksNodeModel";
+import { AbstractNodeWidget, IAbstractNodeProps } from '../AbstractNodeWidget';
+import MyTopTracksNodeModel from './MyTopTracksNodeModel';
 
 export interface IMyTopTracksNodeProps
   extends IAbstractNodeProps<MyTopTracksNodeModel> {
@@ -33,12 +33,12 @@ export default class MyTopTracksNodeWidget extends AbstractNodeWidget<IMyTopTrac
   public state: IMyTopTracksNodeState;
 
   constructor(props: IMyTopTracksNodeProps) {
-    super("my-top-tracks-node", props);
+    super('my-top-tracks-node', props);
 
     this.state = {
       configOpen: props.configOpen,
-      oldTimeRange: "medium_term",
-      timeRange: "medium_term",
+      oldTimeRange: 'medium_term',
+      timeRange: 'medium_term',
     };
 
     this.render = this.render.bind(this);
@@ -48,7 +48,7 @@ export default class MyTopTracksNodeWidget extends AbstractNodeWidget<IMyTopTrac
     this.handleChange = this.handleChange.bind(this);
     this.setRange = this.setRange.bind(this);
 
-    this.setRange("medium_term");
+    this.setRange('medium_term');
   }
 
   public render() {
@@ -73,14 +73,14 @@ export default class MyTopTracksNodeWidget extends AbstractNodeWidget<IMyTopTrac
               autoFocus={true}
               margin="dense"
               type="number"
-              inputProps={{ id: "time-range", name: "timeRange" }}
+              inputProps={{ id: 'time-range', name: 'timeRange' }}
               fullWidth={true}
               value={this.state.timeRange}
               onChange={this.handleChange}
             >
-              <MenuItem value={"short_term"}>Short term</MenuItem>
-              <MenuItem value={"medium_term"}>Medium term</MenuItem>
-              <MenuItem value={"long_term"}>Long term</MenuItem>
+              <MenuItem value={'short_term'}>Short term</MenuItem>
+              <MenuItem value={'medium_term'}>Medium term</MenuItem>
+              <MenuItem value={'long_term'}>Long term</MenuItem>
             </Select>
           </DialogContent>
           <DialogActions>
@@ -108,8 +108,8 @@ export default class MyTopTracksNodeWidget extends AbstractNodeWidget<IMyTopTrac
     });
     this.props.node.configuration.timeRange = this.state.timeRange;
     this.props.node.name = `Top Tracks (${this.state.timeRange.replace(
-      "_",
-      " "
+      '_',
+      ' ',
     )})`;
   }
 

@@ -1,10 +1,10 @@
-declare module "spotify-uri" {
+declare module 'spotify-uri' {
   export enum types {
-    "track",
-    "playlist",
-    "artist",
-    "album",
-    "show",
+    'track',
+    'playlist',
+    'artist',
+    'album',
+    'show',
   }
   export interface IParsedSpotifyUri {
     uri: string;

@@ -1,6 +1,7 @@
-import * as _ from "lodash";
-import * as SRD from "storm-react-diagrams";
-import { AbstractPortModel } from "./AbstractPortModel";
+import * as _ from 'lodash';
+import * as SRD from 'storm-react-diagrams';
+
+import { AbstractPortModel } from './AbstractPortModel';
 
 export class AbstractNodeModel extends SRD.NodeModel {
   public name: string;
@@ -11,7 +12,7 @@ export class AbstractNodeModel extends SRD.NodeModel {
   constructor(
     className: string,
     name: string,
-    color: string = "rgb(0,192,255)"
+    color: string = 'rgb(0,192,255)',
   ) {
     super(className);
     this.name = name;

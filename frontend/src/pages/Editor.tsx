@@ -1,47 +1,44 @@
-import Add from "@mui/icons-material/Add";
-import PlaylistAddCheck from "@mui/icons-material/PlaylistAddCheck";
-import SaveIcon from "@mui/icons-material/Save";
-import TextFields from "@mui/icons-material/TextFields";
-import SpeedDial from "@mui/material/SpeedDial";
-import SpeedDialAction from "@mui/material/SpeedDialAction";
-import SpeedDialIcon from "@mui/material/SpeedDialIcon";
-import * as React from "react";
-import * as spotifyUri from "spotify-uri";
-import * as SRD from "storm-react-diagrams";
-import Graph from "../components/Graph";
-import { SaveDialog } from "../components/SaveDialog";
-import { SerializationDialog } from "../components/SerializationDialog";
-import "./Editor.css";
+import Add from '@mui/icons-material/Add';
+import PlaylistAddCheck from '@mui/icons-material/PlaylistAddCheck';
+import SaveIcon from '@mui/icons-material/Save';
+import TextFields from '@mui/icons-material/TextFields';
+import SpeedDial from '@mui/material/SpeedDial';
+import SpeedDialAction from '@mui/material/SpeedDialAction';
+import SpeedDialIcon from '@mui/material/SpeedDialIcon';
+import { styled } from '@mui/material/styles';
+import * as _ from 'lodash';
+import * as React from 'react';
+import * as spotifyUri from 'spotify-uri';
+import { Redirect } from 'src/components/Redirect';
+import { logger } from 'src/utils/logger';
+import * as SRD from 'storm-react-diagrams';
 
-import AddNodeFactory from "../nodes/AddNode/AddNodeFactory";
-import AlbumNodeFactory from "../nodes/AlbumNode/AlbumNodeFactory";
-import FilterByAudioFeatureNodeFactory from "../nodes/FilterByAudioFeaturesNode/FilterByAudioFeatureNodeFactory";
-import LimitNodeFactory from "../nodes/LimitNode/LimitNodeFactory";
-import MyLibraryNodeFactory from "../nodes/MyLibraryNode/MyLibraryNodeFactory";
-import MyTopTracksNodeFactory from "../nodes/MyTopTracksNode/MyTopTracksNodeFactory";
-import PlaylistNodeFactory from "../nodes/PlaylistNode/PlaylistNodeFactory";
-import RandomizeNodeFactory from "../nodes/RandomizeNode/RandomizeNodeFactory";
-import SubtractNodeFactory from "../nodes/SubtractNode/SubtractNodeFactory";
-
-import AbstractPortFactory from "../nodes/AbstractPortFactory";
-import DefaultPortFactory from "../nodes/DefaultPortFactory";
-import FilterByAudioFeaturePortFactory from "../nodes/FilterByAudioFeaturesNode/FilterByAudioFeaturePortFactory";
-import LimitPortFactory from "../nodes/LimitNode/LimitPortFactory";
-import RandomizePortFactory from "../nodes/RandomizeNode/RandomizePortFactory";
-import SubtractPortFactory from "../nodes/SubtractNode/SubtractPortFactory";
-
-import { AddNodesElement } from "../components/AddNodesElement";
-import AddNodeModel from "../nodes/AddNode/AddNodeModel";
-import AlbumNodeModel from "../nodes/AlbumNode/AlbumNodeModel";
-import PlaylistNodeModel from "../nodes/PlaylistNode/PlaylistNodeModel";
-
-import * as _ from "lodash";
-import * as api from "../api";
-import ArtistTopTracksNodeFactory from "../nodes/ArtistTopTracksNode/ArtistTopTracksNodeFactory";
-import ArtistTopTracksNodeModel from "../nodes/ArtistTopTracksNode/ArtistTopTracksNodeModel";
-import { Redirect } from "src/components/Redirect";
-import { styled } from "@mui/material/styles";
-import { logger } from "src/utils/logger";
+import * as api from '../api';
+import { AddNodesElement } from '../components/AddNodesElement';
+import Graph from '../components/Graph';
+import { SaveDialog } from '../components/SaveDialog';
+import { SerializationDialog } from '../components/SerializationDialog';
+import AbstractPortFactory from '../nodes/AbstractPortFactory';
+import AddNodeFactory from '../nodes/AddNode/AddNodeFactory';
+import AddNodeModel from '../nodes/AddNode/AddNodeModel';
+import AlbumNodeFactory from '../nodes/AlbumNode/AlbumNodeFactory';
+import AlbumNodeModel from '../nodes/AlbumNode/AlbumNodeModel';
+import ArtistTopTracksNodeFactory from '../nodes/ArtistTopTracksNode/ArtistTopTracksNodeFactory';
+import ArtistTopTracksNodeModel from '../nodes/ArtistTopTracksNode/ArtistTopTracksNodeModel';
+import DefaultPortFactory from '../nodes/DefaultPortFactory';
+import FilterByAudioFeatureNodeFactory from '../nodes/FilterByAudioFeaturesNode/FilterByAudioFeatureNodeFactory';
+import FilterByAudioFeaturePortFactory from '../nodes/FilterByAudioFeaturesNode/FilterByAudioFeaturePortFactory';
+import LimitNodeFactory from '../nodes/LimitNode/LimitNodeFactory';
+import LimitPortFactory from '../nodes/LimitNode/LimitPortFactory';
+import MyLibraryNodeFactory from '../nodes/MyLibraryNode/MyLibraryNodeFactory';
+import MyTopTracksNodeFactory from '../nodes/MyTopTracksNode/MyTopTracksNodeFactory';
+import PlaylistNodeFactory from '../nodes/PlaylistNode/PlaylistNodeFactory';
+import PlaylistNodeModel from '../nodes/PlaylistNode/PlaylistNodeModel';
+import RandomizeNodeFactory from '../nodes/RandomizeNode/RandomizeNodeFactory';
+import RandomizePortFactory from '../nodes/RandomizeNode/RandomizePortFactory';
+import SubtractNodeFactory from '../nodes/SubtractNode/SubtractNodeFactory';
+import SubtractPortFactory from '../nodes/SubtractNode/SubtractPortFactory';
+import './Editor.css';
 
 interface IEditorState {
   configOpen: boolean;
@@ -74,12 +71,12 @@ export class Editor extends React.Component<IEditorProps> {
     this.state = {
       addNodeOpen: false,
       configOpen: false,
-      description: "",
+      description: '',
       keydownListener: undefined,
       keyupListener: undefined,
       loginSpotifyOpen: false,
       mouseDown: false,
-      name: "",
+      name: '',
       saveOpen: false,
       speedDialOpen: false,
       uri: undefined,
@@ -130,48 +127,48 @@ export class Editor extends React.Component<IEditorProps> {
   }
 
   public componentWillMount() {
-    window.addEventListener("mousedown", (event) => {
+    window.addEventListener('mousedown', (event) => {
       this.setState({
         mouseDown: true,
       });
     });
 
-    window.addEventListener("mouseup", (event) => {
+    window.addEventListener('mouseup', (event) => {
       this.setState({
         mouseDown: false,
       });
     });
 
-    window.addEventListener("mousemove", (event) => {
+    window.addEventListener('mousemove', (event) => {
       if (this.state.mouseDown) {
         this.updateLinks();
       }
     });
 
-    const keyupListener = window.addEventListener("keyup", (event) => {
+    const keyupListener = window.addEventListener('keyup', (event) => {
       event.preventDefault();
-      if (event.altKey === true && event.key === "A") {
+      if (event.altKey === true && event.key === 'A') {
         this.handleOpenAddNode();
       }
 
-      if (event.altKey === true && event.key === "S") {
+      if (event.altKey === true && event.key === 'S') {
         this.savePlaylist();
       }
 
-      if (event.altKey === true && event.key === "D") {
+      if (event.altKey === true && event.key === 'D') {
         this.cloneSelected();
       }
 
-      if (!event.ctrlKey && event.key === "Control") {
+      if (!event.ctrlKey && event.key === 'Control') {
         this.model.setGridSize();
       }
 
-      if (event.ctrlKey && event.key === "Shift") {
+      if (event.ctrlKey && event.key === 'Shift') {
         this.model.setGridSize(30);
       }
     });
 
-    const keydownListener = window.addEventListener("keydown", (event) => {
+    const keydownListener = window.addEventListener('keydown', (event) => {
       if (event.ctrlKey) {
         this.model.setGridSize(30);
       }
@@ -188,8 +185,8 @@ export class Editor extends React.Component<IEditorProps> {
   }
 
   public componentWillUnmount() {
-    window.removeEventListener("keyup", this.state.keyupListener);
-    window.removeEventListener("keydown", this.state.keydownListener);
+    window.removeEventListener('keyup', this.state.keyupListener);
+    window.removeEventListener('keydown', this.state.keydownListener);
     this.setState({
       keydownListener: undefined,
       keyupListener: undefined,
@@ -224,26 +221,26 @@ export class Editor extends React.Component<IEditorProps> {
           onMouseEnter={this.handleSpeedDialOpen}
           onMouseLeave={this.handleCloseDial}
           open={this.state.speedDialOpen}
-          direction={"up"}
+          direction={'up'}
         >
           <SpeedDialAction
             icon={<SaveIcon />}
-            tooltipTitle={"Save graph ([Alt]+[Shift]+S)"}
+            tooltipTitle={'Save graph ([Alt]+[Shift]+S)'}
             onClick={this.savePlaylist}
           />
           <SpeedDialAction
             icon={<PlaylistAddCheck />}
-            tooltipTitle={"Save to Spotify"}
+            tooltipTitle={'Save to Spotify'}
             onClick={this.saveToSpotify}
           />
           <SpeedDialAction
             icon={<TextFields />}
-            tooltipTitle={"Serialization"}
+            tooltipTitle={'Serialization'}
             onClick={this.handleOpen}
           />
           <SpeedDialAction
             icon={<Add />}
-            tooltipTitle={"Add Node ([Alt]+[Shift]+A)"}
+            tooltipTitle={'Add Node ([Alt]+[Shift]+A)'}
             onClick={this.handleOpenAddNode}
           />
         </StyledSpeedDial>
@@ -265,9 +262,9 @@ export class Editor extends React.Component<IEditorProps> {
   }
 
   public async componentDidMount() {
-    if (sessionStorage.getItem("loggedIn") !== "true") {
+    if (sessionStorage.getItem('loggedIn') !== 'true') {
       this.setState({
-        redirect: "/login",
+        redirect: '/login',
       });
     }
 
@@ -276,7 +273,7 @@ export class Editor extends React.Component<IEditorProps> {
       if (id) {
         const playlist = await api
           .MeApiFp()
-          .getMyPlaylistById(id, { credentials: "include" })();
+          .getMyPlaylistById(id, { credentials: 'include' })();
         this.setState({
           description: playlist.description,
           name: playlist.name,
@@ -290,7 +287,7 @@ export class Editor extends React.Component<IEditorProps> {
     } catch (error) {
       if (error.status === 401) {
         this.setState({
-          redirect: "/login",
+          redirect: '/login',
         });
       }
     }
@@ -361,13 +358,13 @@ export class Editor extends React.Component<IEditorProps> {
 
     if (
       event.dataTransfer.types.filter((type: any) =>
-        /text\/x-spotify.*/.test(type)
+        /text\/x-spotify.*/.test(type),
       ).length > 0
     ) {
-      const links = event.dataTransfer.getData("text/plain").split("\n");
+      const links = event.dataTransfer.getData('text/plain').split('\n');
       const spotifyObjects = links.map((link: any) => spotifyUri.parse(link));
       spotifyObjects.forEach((track: spotifyUri.IParsedSpotifyUri) => {
-        if (track.type === "playlist") {
+        if (track.type === 'playlist') {
           const node = PlaylistNodeModel.getInstance();
 
           this.model.addNode(node);
@@ -378,15 +375,15 @@ export class Editor extends React.Component<IEditorProps> {
           node.configuration.id = track.id;
           node.configuration.userId = track.user;
           const firstChild: any = new DOMParser().parseFromString(
-            event.dataTransfer.getData("text/html"),
-            "text/xml"
+            event.dataTransfer.getData('text/html'),
+            'text/xml',
           ).firstChild;
           if (firstChild) {
             node.name = `Playlist '${firstChild.innerHTML}'`;
           }
         }
 
-        if (track.type === "album") {
+        if (track.type === 'album') {
           const node = AlbumNodeModel.getInstance();
 
           this.model.addNode(node);
@@ -396,15 +393,15 @@ export class Editor extends React.Component<IEditorProps> {
 
           node.configuration.id = track.id;
           const firstChild: any = new DOMParser().parseFromString(
-            event.dataTransfer.getData("text/html"),
-            "text/xml"
+            event.dataTransfer.getData('text/html'),
+            'text/xml',
           ).firstChild;
           if (firstChild) {
             node.name = `Album '${firstChild.innerHTML}'`;
           }
         }
 
-        if (track.type === "artist") {
+        if (track.type === 'artist') {
           const node = ArtistTopTracksNodeModel.getInstance();
 
           this.model.addNode(node);
@@ -414,8 +411,8 @@ export class Editor extends React.Component<IEditorProps> {
 
           node.configuration.id = track.id;
           const firstChild: any = new DOMParser().parseFromString(
-            event.dataTransfer.getData("text/html"),
-            "text/xml"
+            event.dataTransfer.getData('text/html'),
+            'text/xml',
           ).firstChild;
           if (firstChild) {
             node.name = `Artists Top Tracks '${firstChild.innerHTML}'`;
@@ -498,27 +495,27 @@ export class Editor extends React.Component<IEditorProps> {
           saveToSpotify: true,
           uri: this.state.uri,
         },
-        { credentials: "include" }
+        { credentials: 'include' },
       )();
       try {
         logger.info(response);
         this.setState({
           uri: response.playlistUri,
         });
-        alert("Success!");
+        alert('Success!');
       } catch (error) {
         logger.error(error);
-        alert("Could not save.");
+        alert('Could not save.');
         if (error.status === 401) {
           this.setState({
-            redirect: "/login",
+            redirect: '/login',
           });
         }
       }
     } catch (error) {
       if (error.status === 401) {
         this.setState({
-          redirect: "/login",
+          redirect: '/login',
         });
       }
     }
@@ -527,12 +524,12 @@ export class Editor extends React.Component<IEditorProps> {
 
 const StyledFab = styled(AddNodesElement)(({ theme }) => ({
   bottom: theme.spacing(2),
-  position: "absolute",
+  position: 'absolute',
   right: theme.spacing(5),
 }));
 
 const StyledSpeedDial = styled(SpeedDial)(({ theme }) => ({
   bottom: theme.spacing(2),
-  position: "absolute",
+  position: 'absolute',
   right: theme.spacing(3),
 }));

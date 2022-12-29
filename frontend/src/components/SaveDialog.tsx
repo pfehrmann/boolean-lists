@@ -1,15 +1,15 @@
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import TextField from "@mui/material/TextField";
-import * as React from "react";
-import * as SRD from "storm-react-diagrams";
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import TextField from '@mui/material/TextField';
+import * as React from 'react';
+import * as SRD from 'storm-react-diagrams';
 
-import * as api from "../api";
-import { Redirect } from "./Redirect";
+import * as api from '../api';
+import { Redirect } from './Redirect';
 
 interface ISerializationDialog {
   model: SRD.DiagramModel;
@@ -63,7 +63,7 @@ export class SaveDialog extends React.Component<ISerializationDialog> {
             label="Name"
             type="text"
             fullWidth={true}
-            inputProps={{ name: "name" }}
+            inputProps={{ name: 'name' }}
             onChange={this.handleChange}
             value={this.state.name}
           />
@@ -72,7 +72,7 @@ export class SaveDialog extends React.Component<ISerializationDialog> {
             label="Description"
             type="text"
             fullWidth={true}
-            inputProps={{ name: "description" }}
+            inputProps={{ name: 'description' }}
             onChange={this.handleChange}
             value={this.state.description}
           />
@@ -119,13 +119,13 @@ export class SaveDialog extends React.Component<ISerializationDialog> {
           graph: this.props.model.serializeDiagram(),
           name: this.state.name,
         },
-        { credentials: "include" }
+        { credentials: 'include' },
       )();
       this.handleClose();
     } catch (error) {
       if (error.status === 401) {
         this.setState({
-          redirect: "/login",
+          redirect: '/login',
         });
       }
     }

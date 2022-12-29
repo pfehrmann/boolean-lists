@@ -1,10 +1,10 @@
-import { AbstractNodeFactory } from "../AbstractNodeFactory";
-import SubtractNodeModel from "./SubtractNodeModel";
-import SubtractNodeWidget from "./SubtractNodeWidget";
+import { AbstractNodeFactory } from '../AbstractNodeFactory';
+import SubtractNodeModel from './SubtractNodeModel';
+import SubtractNodeWidget from './SubtractNodeWidget';
 
 export default class SubtractNodeFactory extends AbstractNodeFactory<SubtractNodeModel> {
   constructor() {
-    super("subtract-node");
+    super('subtract-node');
   }
 
   public getClassType() {

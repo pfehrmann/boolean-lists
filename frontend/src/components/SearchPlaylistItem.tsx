@@ -1,7 +1,7 @@
-import Avatar from "@mui/material/Avatar";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import * as React from "react";
+import Avatar from '@mui/material/Avatar';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import * as React from 'react';
 
 interface IPlaylistProps {
   playlist: {
@@ -28,7 +28,7 @@ export class SearchPlaylistItem extends React.Component<IPlaylistProps> {
       <ListItem button={true} onClick={this.close}>
         <Avatar
           alt={this.props.playlist.name}
-          src={this.props.playlist.image ? this.props.playlist.image.url : ""}
+          src={this.props.playlist.image ? this.props.playlist.image.url : ''}
         />
         <ListItemText primary={this.props.playlist.name} />
       </ListItem>

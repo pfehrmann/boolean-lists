@@ -1,25 +1,24 @@
-import * as React from "react";
-import * as SRD from "storm-react-diagrams";
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import List from '@mui/material/List/List';
+import ListItem from '@mui/material/ListItem/ListItem';
+import ListItemText from '@mui/material/ListItemText/ListItemText';
+import * as _ from 'lodash';
+import * as React from 'react';
+import * as SRD from 'storm-react-diagrams';
 
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import List from "@mui/material/List/List";
-import ListItem from "@mui/material/ListItem/ListItem";
-import ListItemText from "@mui/material/ListItemText/ListItemText";
-import AddNodeModel from "../nodes/AddNode/AddNodeModel";
-import AlbumNodeModel from "../nodes/AlbumNode/AlbumNodeModel";
-import FilterByAudioFeatureNodeModel from "../nodes/FilterByAudioFeaturesNode/FilterByAudioFeatureNodeModel";
-import LimitNodeModel from "../nodes/LimitNode/LimitNodeModel";
-import MyLibraryNodeModel from "../nodes/MyLibraryNode/MyLibraryNodeModel";
-import MyTopTracksNodeModel from "../nodes/MyTopTracksNode/MyTopTracksNodeModel";
-import PlaylistNodeModel from "../nodes/PlaylistNode/PlaylistNodeModel";
-import RandomizeNodeModel from "../nodes/RandomizeNode/RandomizeNodeModel";
-import SubtractNodeModel from "../nodes/SubtractNode/SubtractNodeModel";
-
-import * as _ from "lodash";
-import ArtistTopTracksNodeModel from "../nodes/ArtistTopTracksNode/ArtistTopTracksNodeModel";
+import AddNodeModel from '../nodes/AddNode/AddNodeModel';
+import AlbumNodeModel from '../nodes/AlbumNode/AlbumNodeModel';
+import ArtistTopTracksNodeModel from '../nodes/ArtistTopTracksNode/ArtistTopTracksNodeModel';
+import FilterByAudioFeatureNodeModel from '../nodes/FilterByAudioFeaturesNode/FilterByAudioFeatureNodeModel';
+import LimitNodeModel from '../nodes/LimitNode/LimitNodeModel';
+import MyLibraryNodeModel from '../nodes/MyLibraryNode/MyLibraryNodeModel';
+import MyTopTracksNodeModel from '../nodes/MyTopTracksNode/MyTopTracksNodeModel';
+import PlaylistNodeModel from '../nodes/PlaylistNode/PlaylistNodeModel';
+import RandomizeNodeModel from '../nodes/RandomizeNode/RandomizeNodeModel';
+import SubtractNodeModel from '../nodes/SubtractNode/SubtractNodeModel';
 
 interface IAddNodesElementProps {
   engine: SRD.DiagramEngine;
@@ -47,7 +46,7 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
   }
 
   public componentDidMount() {
-    window.addEventListener("mousemove", (event) => {
+    window.addEventListener('mousemove', (event) => {
       this.setState({
         lastMouseEvent: event,
       });
@@ -136,10 +135,10 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
       this.props.onClose();
       const node = nodeFunction();
       (this.props.engine.getNodeFactory(node.getType()) as any).setConfigOpen(
-        true
+        true,
       );
       const position = this.props.engine.getRelativeMousePoint(
-        this.state.lastMouseEvent
+        this.state.lastMouseEvent,
       );
       node.setPosition(position.x, position.y);
 
@@ -150,7 +149,7 @@ export class AddNodesElement extends React.Component<IAddNodesElementProps> {
 
       _.delay(() => {
         (this.props.engine.getNodeFactory(node.getType()) as any).setConfigOpen(
-          false
+          false,
         );
       }, 100);
     };

@@ -1,7 +1,7 @@
-import * as SRD from "storm-react-diagrams";
+import * as SRD from 'storm-react-diagrams';
 
-import { AbstractNodeWidget, IAbstractNodeProps } from "../AbstractNodeWidget";
-import MyLibraryNodeModel from "./MyLibraryNodeModel";
+import { AbstractNodeWidget, IAbstractNodeProps } from '../AbstractNodeWidget';
+import MyLibraryNodeModel from './MyLibraryNodeModel';
 
 export interface IMyTopTracksNodeProps
   extends IAbstractNodeProps<MyLibraryNodeModel> {
@@ -11,7 +11,7 @@ export interface IMyTopTracksNodeProps
 
 export default class MyLibraryNodeWidget extends AbstractNodeWidget<IMyTopTracksNodeProps> {
   constructor(props: IMyTopTracksNodeProps) {
-    super("my-library-node", props);
+    super('my-library-node', props);
 
     this.onDoubleClick = this.onDoubleClick.bind(this);
   }

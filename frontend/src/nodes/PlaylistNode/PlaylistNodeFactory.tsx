@@ -1,10 +1,10 @@
-import { AbstractNodeFactory } from "../AbstractNodeFactory";
-import PlaylistNodeModel from "./PlaylistNodeModel";
-import PlaylistNodeWidget from "./PlaylistNodeWidget";
+import { AbstractNodeFactory } from '../AbstractNodeFactory';
+import PlaylistNodeModel from './PlaylistNodeModel';
+import PlaylistNodeWidget from './PlaylistNodeWidget';
 
 export default class PlaylistNodeFactory extends AbstractNodeFactory<PlaylistNodeModel> {
   constructor() {
-    super("playlist-node");
+    super('playlist-node');
   }
 
   public getClassType() {

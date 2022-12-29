@@ -1,7 +1,7 @@
-import * as SRD from "storm-react-diagrams";
+import * as SRD from 'storm-react-diagrams';
 
-import { AbstractNodeWidget, IAbstractNodeProps } from "../AbstractNodeWidget";
-import SubtractNodeModel from "./SubtractNodeModel";
+import { AbstractNodeWidget, IAbstractNodeProps } from '../AbstractNodeWidget';
+import SubtractNodeModel from './SubtractNodeModel';
 
 export interface IAddNodeProps extends IAbstractNodeProps<SubtractNodeModel> {
   node: SubtractNodeModel;
@@ -10,7 +10,7 @@ export interface IAddNodeProps extends IAbstractNodeProps<SubtractNodeModel> {
 
 export default class SubtractNodeWidget extends AbstractNodeWidget<IAddNodeProps> {
   constructor(props: IAddNodeProps) {
-    super("subtract-node", props);
+    super('subtract-node', props);
     this.state = {};
   }
 

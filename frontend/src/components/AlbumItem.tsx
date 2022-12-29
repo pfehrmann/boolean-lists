@@ -1,7 +1,7 @@
-import Avatar from "@mui/material/Avatar";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import * as React from "react";
+import Avatar from '@mui/material/Avatar';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import * as React from 'react';
 
 interface IAlbumProps {
   album: {
@@ -30,8 +30,8 @@ export class AlbumItem extends React.Component<IAlbumProps> {
         <ListItemText
           primary={this.props.album.name}
           secondary={
-            "Album by " +
-            this.props.album.artists.map((artist) => artist.name).join(", ")
+            'Album by ' +
+            this.props.album.artists.map((artist) => artist.name).join(', ')
           }
         />
       </ListItem>

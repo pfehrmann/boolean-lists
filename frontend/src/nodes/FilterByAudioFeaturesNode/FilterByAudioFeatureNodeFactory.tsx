@@ -1,10 +1,10 @@
-import { AbstractNodeFactory } from "../AbstractNodeFactory";
-import FilterByAudioFeatureNodeModel from "./FilterByAudioFeatureNodeModel";
-import FilterByAudioFeatureNodeWidget from "./FilterByAudioFeatureNodeWidget";
+import { AbstractNodeFactory } from '../AbstractNodeFactory';
+import FilterByAudioFeatureNodeModel from './FilterByAudioFeatureNodeModel';
+import FilterByAudioFeatureNodeWidget from './FilterByAudioFeatureNodeWidget';
 
 export default class FilterByAudioFeatureNodeFactory extends AbstractNodeFactory<FilterByAudioFeatureNodeModel> {
   constructor() {
-    super("filter-by-audio-features-node");
+    super('filter-by-audio-features-node');
   }
 
   public getClassType() {

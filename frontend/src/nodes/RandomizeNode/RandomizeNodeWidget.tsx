@@ -1,7 +1,7 @@
-import * as SRD from "storm-react-diagrams";
+import * as SRD from 'storm-react-diagrams';
 
-import { AbstractNodeWidget, IAbstractNodeProps } from "../AbstractNodeWidget";
-import RandomizeNodeModel from "./RandomizeNodeModel";
+import { AbstractNodeWidget, IAbstractNodeProps } from '../AbstractNodeWidget';
+import RandomizeNodeModel from './RandomizeNodeModel';
 
 export interface IAddNodeProps extends IAbstractNodeProps<RandomizeNodeModel> {
   node: RandomizeNodeModel;
@@ -10,7 +10,7 @@ export interface IAddNodeProps extends IAbstractNodeProps<RandomizeNodeModel> {
 
 export default class RandomizeNodeWidget extends AbstractNodeWidget<IAddNodeProps> {
   constructor(props: IAddNodeProps) {
-    super("randomize-node", props);
+    super('randomize-node', props);
     this.state = {};
   }
 

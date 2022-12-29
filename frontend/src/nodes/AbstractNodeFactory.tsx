@@ -1,9 +1,10 @@
-import * as React from "react";
-import * as SRD from "storm-react-diagrams";
-import { AbstractNodeModel } from "./AbstractNodeModel";
+import * as React from 'react';
+import * as SRD from 'storm-react-diagrams';
+
+import { AbstractNodeModel } from './AbstractNodeModel';
 
 export abstract class AbstractNodeFactory<
-  T extends AbstractNodeModel
+  T extends AbstractNodeModel,
 > extends SRD.AbstractNodeFactory<T> {
   private configOpen: boolean = false;
 
@@ -13,11 +14,11 @@ export abstract class AbstractNodeFactory<
 
   public generateReactWidget(
     diagramEngine: SRD.DiagramEngine,
-    node: T
+    node: T,
   ): JSX.Element {
     return React.createElement(this.getClassType(), {
-      baseClass: "srd-default-node",
-      className: "srd-default-node",
+      baseClass: 'srd-default-node',
+      className: 'srd-default-node',
       configOpen: this.configOpen,
       diagramEngine,
       node,

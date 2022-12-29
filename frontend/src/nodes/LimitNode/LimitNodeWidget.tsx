@@ -1,15 +1,15 @@
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import TextField from "@mui/material/TextField";
-import * as React from "react";
-import * as SRD from "storm-react-diagrams";
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import TextField from '@mui/material/TextField';
+import * as React from 'react';
+import * as SRD from 'storm-react-diagrams';
 
-import { AbstractNodeWidget, IAbstractNodeProps } from "../AbstractNodeWidget";
-import LimitNodeModel from "./LimitNodeModel";
+import { AbstractNodeWidget, IAbstractNodeProps } from '../AbstractNodeWidget';
+import LimitNodeModel from './LimitNodeModel';
 
 export interface ILimitNodeProps extends IAbstractNodeProps<LimitNodeModel> {
   node: LimitNodeModel;
@@ -30,7 +30,7 @@ export default class LimitNodeWidget extends AbstractNodeWidget<ILimitNodeProps>
   public state: ILimitNodeState;
 
   constructor(props: ILimitNodeProps) {
-    super("limit-node", props);
+    super('limit-node', props);
 
     this.state = {
       configOpen: props.configOpen,

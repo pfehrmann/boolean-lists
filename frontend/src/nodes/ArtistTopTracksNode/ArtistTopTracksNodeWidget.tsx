@@ -1,21 +1,21 @@
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import TextField from "@mui/material/TextField";
-import * as _ from "lodash";
-import * as React from "react";
-import * as SRD from "storm-react-diagrams";
-import * as api from "../../api";
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import List from '@mui/material/List/List';
+import TextField from '@mui/material/TextField';
+import * as _ from 'lodash';
+import * as React from 'react';
+import { Redirect } from 'src/components/Redirect';
+import { logger } from 'src/utils/logger';
+import * as SRD from 'storm-react-diagrams';
 
-import List from "@mui/material/List/List";
-import { ArtistItem } from "../../components/ArtistItem";
-import { AbstractNodeWidget, IAbstractNodeProps } from "../AbstractNodeWidget";
-import ArtistTopTracksNodeModel from "./ArtistTopTracksNodeModel";
-import { Redirect } from "src/components/Redirect";
-import { logger } from "src/utils/logger";
+import * as api from '../../api';
+import { ArtistItem } from '../../components/ArtistItem';
+import { AbstractNodeWidget, IAbstractNodeProps } from '../AbstractNodeWidget';
+import ArtistTopTracksNodeModel from './ArtistTopTracksNodeModel';
 
 export interface IArtistTopTracksNodeProps
   extends IAbstractNodeProps<ArtistTopTracksNodeModel> {
@@ -39,13 +39,13 @@ export default class ArtistTopTracksNodeWidget extends AbstractNodeWidget<IArtis
   public state: IArtistTopTracksNodeState;
 
   constructor(props: IArtistTopTracksNodeProps) {
-    super("artist-top-tracks-node", props);
+    super('artist-top-tracks-node', props);
 
     this.state = {
       artistItems: [],
       artistResults: [],
       configOpen: props.configOpen,
-      searchQuery: "",
+      searchQuery: '',
     };
 
     this.render = this.render.bind(this);
@@ -90,7 +90,7 @@ export default class ArtistTopTracksNodeWidget extends AbstractNodeWidget<IArtis
               onChange={this.updateSearchQuery}
               onKeyUp={_.throttle(this.handleKeypress, 250)}
             />
-            <List style={{ maxWidth: "300px" }}>
+            <List style={{ maxWidth: '300px' }}>
               {this.state.artistItems as any}
             </List>
           </DialogContent>
@@ -108,7 +108,7 @@ export default class ArtistTopTracksNodeWidget extends AbstractNodeWidget<IArtis
   }
 
   public onDoubleClick() {
-    logger.info("Clicked.");
+    logger.info('Clicked.');
     this.setState({
       configOpen: true,
     });
@@ -125,7 +125,7 @@ export default class ArtistTopTracksNodeWidget extends AbstractNodeWidget<IArtis
       const pageableArtists = await api
         .SearchApiFp()
         .searchArtist(this.state.searchQuery, undefined, {
-          credentials: "include",
+          credentials: 'include',
         })();
       const artistItems = pageableArtists.artists.map((artist: any) => (
         <ArtistItem
@@ -142,7 +142,7 @@ export default class ArtistTopTracksNodeWidget extends AbstractNodeWidget<IArtis
     } catch (error) {
       if (error.status === 401) {
         this.setState({
-          redirect: "/login",
+          redirect: '/login',
         });
       }
     }

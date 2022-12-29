@@ -1,6 +1,6 @@
-import * as React from "react";
-import * as SRD from "storm-react-diagrams";
-import "storm-react-diagrams/dist/style.min.css";
+import * as React from 'react';
+import * as SRD from 'storm-react-diagrams';
+import 'storm-react-diagrams/dist/style.min.css';
 
 interface IGraphState {
   position: string;

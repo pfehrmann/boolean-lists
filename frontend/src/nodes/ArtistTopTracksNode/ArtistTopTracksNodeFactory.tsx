@@ -1,10 +1,10 @@
-import { AbstractNodeFactory } from "../AbstractNodeFactory";
-import ArtistTopTracksNodeModel from "./ArtistTopTracksNodeModel";
-import ArtistTopTracksNodeWidget from "./ArtistTopTracksNodeWidget";
+import { AbstractNodeFactory } from '../AbstractNodeFactory';
+import ArtistTopTracksNodeModel from './ArtistTopTracksNodeModel';
+import ArtistTopTracksNodeWidget from './ArtistTopTracksNodeWidget';
 
 export default class ArtistTopTracksNodeFactory extends AbstractNodeFactory<ArtistTopTracksNodeModel> {
   constructor() {
-    super("artist-top-tracks-node");
+    super('artist-top-tracks-node');
   }
 
   public getClassType() {

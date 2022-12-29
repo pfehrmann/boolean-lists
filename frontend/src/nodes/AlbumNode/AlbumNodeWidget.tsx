@@ -1,21 +1,21 @@
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import TextField from "@mui/material/TextField";
-import * as _ from "lodash";
-import * as React from "react";
-import * as SRD from "storm-react-diagrams";
-import * as api from "../../api";
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import List from '@mui/material/List/List';
+import TextField from '@mui/material/TextField';
+import * as _ from 'lodash';
+import * as React from 'react';
+import { Redirect } from 'src/components/Redirect';
+import { logger } from 'src/utils/logger';
+import * as SRD from 'storm-react-diagrams';
 
-import List from "@mui/material/List/List";
-import { AlbumItem } from "../../components/AlbumItem";
-import { AbstractNodeWidget, IAbstractNodeProps } from "../AbstractNodeWidget";
-import AlbumNodeModel from "./AlbumNodeModel";
-import { Redirect } from "src/components/Redirect";
-import { logger } from "src/utils/logger";
+import * as api from '../../api';
+import { AlbumItem } from '../../components/AlbumItem';
+import { AbstractNodeWidget, IAbstractNodeProps } from '../AbstractNodeWidget';
+import AlbumNodeModel from './AlbumNodeModel';
 
 export interface IAlbumNodeProps extends IAbstractNodeProps<AlbumNodeModel> {
   node: AlbumNodeModel;
@@ -38,13 +38,13 @@ export default class AlbumNodeWidget extends AbstractNodeWidget<IAlbumNodeProps>
   public state: IAlbumNodeState;
 
   constructor(props: IAlbumNodeProps) {
-    super("album-node", props);
+    super('album-node', props);
 
     this.state = {
       albumItems: [],
       albumResults: [],
       configOpen: props.configOpen,
-      searchQuery: "",
+      searchQuery: '',
     };
 
     this.render = this.render.bind(this);
@@ -89,7 +89,7 @@ export default class AlbumNodeWidget extends AbstractNodeWidget<IAlbumNodeProps>
               onChange={this.updateSearchQuery}
               onKeyUp={_.throttle(this.handleKeypress, 250)}
             />
-            <List style={{ maxWidth: "300px" }}>
+            <List style={{ maxWidth: '300px' }}>
               {this.state.albumItems as any}
             </List>
           </DialogContent>
@@ -107,7 +107,7 @@ export default class AlbumNodeWidget extends AbstractNodeWidget<IAlbumNodeProps>
   }
 
   public onDoubleClick() {
-    logger.info("Clicked.");
+    logger.info('Clicked.');
     this.setState({
       configOpen: true,
     });
@@ -124,7 +124,7 @@ export default class AlbumNodeWidget extends AbstractNodeWidget<IAlbumNodeProps>
       const pageableAlbums = await api
         .SearchApiFp()
         .searchAlbum(this.state.searchQuery, undefined, {
-          credentials: "include",
+          credentials: 'include',
         })();
       const albumItems = pageableAlbums.albums.map((album: any) => (
         <AlbumItem
@@ -141,7 +141,7 @@ export default class AlbumNodeWidget extends AbstractNodeWidget<IAlbumNodeProps>
     } catch (error) {
       if (error.status === 401) {
         this.setState({
-          redirect: "/login",
+          redirect: '/login',
         });
       }
     }

@@ -1,20 +1,20 @@
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import List from "@mui/material/List";
-import TextField from "@mui/material/TextField";
-import * as _ from "lodash";
-import * as React from "react";
-import { Redirect } from "src/components/Redirect";
-import * as SRD from "storm-react-diagrams";
-import * as api from "../../api";
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import List from '@mui/material/List';
+import TextField from '@mui/material/TextField';
+import * as _ from 'lodash';
+import * as React from 'react';
+import { Redirect } from 'src/components/Redirect';
+import * as SRD from 'storm-react-diagrams';
 
-import { SearchPlaylistItem } from "../../components/SearchPlaylistItem";
-import { AbstractNodeWidget, IAbstractNodeProps } from "../AbstractNodeWidget";
-import PlaylistNodeModel from "./PlaylistNodeModel";
+import * as api from '../../api';
+import { SearchPlaylistItem } from '../../components/SearchPlaylistItem';
+import { AbstractNodeWidget, IAbstractNodeProps } from '../AbstractNodeWidget';
+import PlaylistNodeModel from './PlaylistNodeModel';
 
 export interface IPlaylistNodeProps
   extends IAbstractNodeProps<PlaylistNodeModel> {
@@ -38,13 +38,13 @@ export default class PlaylistNodeWidget extends AbstractNodeWidget<IPlaylistNode
   public state: IPlaylistNodeState;
 
   constructor(props: IPlaylistNodeProps) {
-    super("playlist-node", props);
+    super('playlist-node', props);
 
     this.state = {
       configOpen: props.configOpen,
       playlistItems: [],
       playlistResults: [],
-      searchQuery: "",
+      searchQuery: '',
     };
 
     this.render = this.render.bind(this);
@@ -89,7 +89,7 @@ export default class PlaylistNodeWidget extends AbstractNodeWidget<IPlaylistNode
               onChange={this.updateSearchQuery}
               onKeyUp={_.throttle(this.handleKeypress, 250)}
             />
-            <List style={{ maxWidth: "300px" }}>
+            <List style={{ maxWidth: '300px' }}>
               {this.state.playlistItems as any}
             </List>
           </DialogContent>
@@ -123,7 +123,7 @@ export default class PlaylistNodeWidget extends AbstractNodeWidget<IPlaylistNode
       const pageablePlaylists = await api
         .SearchApiFp()
         .searchPlaylist(this.state.searchQuery, undefined, {
-          credentials: "include",
+          credentials: 'include',
         })();
       const playlistItems = pageablePlaylists.playlists.map((playlist: any) => (
         <SearchPlaylistItem
@@ -140,7 +140,7 @@ export default class PlaylistNodeWidget extends AbstractNodeWidget<IPlaylistNode
     } catch (error) {
       if (error.status === 401) {
         this.setState({
-          redirect: "/login",
+          redirect: '/login',
         });
       }
     }
