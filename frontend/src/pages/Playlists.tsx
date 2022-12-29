@@ -1,7 +1,7 @@
 import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as api from "../api";
 
 import Button from "@mui/material/Button";
@@ -131,6 +131,10 @@ export const Playlists = () => {
     }
     setOpen(false);
   }
+
+  useEffect(() => {
+    updatePlaylists();
+  }, []);
 
   return (
     <div style={{ padding: 8 }}>
