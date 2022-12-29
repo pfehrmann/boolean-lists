@@ -1,11 +1,7 @@
 {
   "extends": ["tslint:recommended", "tslint-react"],
   "linterOptions": {
-    "exclude": [
-      "config/**/*.js",
-      "node_modules/**/*.ts",
-      "src/api/**/*.ts"
-    ]
+    "exclude": ["config/**/*.js", "node_modules/**/*.ts", "src/api/**/*.ts"]
   },
   "rules": {
     "no-reference": false

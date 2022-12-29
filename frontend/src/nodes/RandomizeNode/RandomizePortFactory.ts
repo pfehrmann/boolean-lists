@@ -1,12 +1,12 @@
-import {AbstractPortFactory} from "storm-react-diagrams";
-import {RandomizePortModel} from "./RandomizePortModel";
+import { AbstractPortFactory } from "storm-react-diagrams";
+import { RandomizePortModel } from "./RandomizePortModel";
 
 export default class RandomizePortFactory extends AbstractPortFactory<RandomizePortModel> {
-    constructor() {
-        super("RandomizePort");
-    }
+  constructor() {
+    super("RandomizePort");
+  }
 
-    public getNewInstance(initialConfig?: any): RandomizePortModel {
-        return new RandomizePortModel(true, "unknown");
-    }
+  public getNewInstance(initialConfig?: any): RandomizePortModel {
+    return new RandomizePortModel(true, "unknown");
+  }
 }

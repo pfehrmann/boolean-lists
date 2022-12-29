@@ -1,17 +1,17 @@
-import {AbstractNodeFactory} from "../AbstractNodeFactory";
+import { AbstractNodeFactory } from "../AbstractNodeFactory";
 import RandomizeNodeModel from "./RandomizeNodeModel";
 import RandomizeNodeWidget from "./RandomizeNodeWidget";
 
 export default class RandomizeNodeFactory extends AbstractNodeFactory<RandomizeNodeModel> {
-    constructor() {
-        super("randomize-node");
-    }
+  constructor() {
+    super("randomize-node");
+  }
 
-    public getClassType() {
-        return RandomizeNodeWidget;
-    }
+  public getClassType() {
+    return RandomizeNodeWidget;
+  }
 
-    public getNewInstance() {
-        return new RandomizeNodeModel();
-    }
+  public getNewInstance() {
+    return new RandomizeNodeModel();
+  }
 }

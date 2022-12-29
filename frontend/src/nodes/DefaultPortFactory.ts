@@ -1,12 +1,12 @@
 import * as SRD from "storm-react-diagrams";
-import {AbstractPortModel} from "./AbstractPortModel";
+import { AbstractPortModel } from "./AbstractPortModel";
 
 export default class AbstractPortFactory extends SRD.AbstractPortFactory<AbstractPortModel> {
-    constructor() {
-        super("default");
-    }
+  constructor() {
+    super("default");
+  }
 
-    public getNewInstance(initialConfig?: any): AbstractPortModel {
-        return new AbstractPortModel(true, "unknown");
-    }
+  public getNewInstance(initialConfig?: any): AbstractPortModel {
+    return new AbstractPortModel(true, "unknown");
+  }
 }

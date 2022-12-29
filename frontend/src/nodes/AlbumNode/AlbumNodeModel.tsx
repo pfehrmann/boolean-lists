@@ -1,20 +1,20 @@
-import {AbstractNodeModel} from "../AbstractNodeModel";
+import { AbstractNodeModel } from "../AbstractNodeModel";
 
 export default class AlbumNodeModel extends AbstractNodeModel {
-    public static getInstance(): AlbumNodeModel {
-        const node = new AlbumNodeModel();
+  public static getInstance(): AlbumNodeModel {
+    const node = new AlbumNodeModel();
 
-        node.addOutPort("Out");
+    node.addOutPort("Out");
 
-        return node;
-    }
+    return node;
+  }
 
-    constructor() {
-        super("album-node", "Album", "rgb(0, 255, 100)");
+  constructor() {
+    super("album-node", "Album", "rgb(0, 255, 100)");
 
-        this.configuration = {
-            id: "14ytmU7xtCIigHDRRYm0Hq",
-            type: "AlbumNode",
-        };
-    }
+    this.configuration = {
+      id: "14ytmU7xtCIigHDRRYm0Hq",
+      type: "AlbumNode",
+    };
+  }
 }

@@ -1,17 +1,17 @@
-import {AbstractNodeFactory} from "../AbstractNodeFactory";
+import { AbstractNodeFactory } from "../AbstractNodeFactory";
 import MyTopTracksNodeModel from "./MyTopTracksNodeModel";
 import MyTopTracksNodeWidget from "./MyTopTracksNodeWidget";
 
 export default class MyTopTracksNodeFactory extends AbstractNodeFactory<MyTopTracksNodeModel> {
-    constructor() {
-        super("my-top-tracks-node");
-    }
+  constructor() {
+    super("my-top-tracks-node");
+  }
 
-    public getClassType() {
-        return MyTopTracksNodeWidget;
-    }
+  public getClassType() {
+    return MyTopTracksNodeWidget;
+  }
 
-    public getNewInstance() {
-        return new MyTopTracksNodeModel();
-    }
+  public getNewInstance() {
+    return new MyTopTracksNodeModel();
+  }
 }
