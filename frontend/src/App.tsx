@@ -15,7 +15,6 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { withStyles } from "@mui/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import EditIcon from "@mui/icons-material/Edit";
@@ -25,26 +24,9 @@ import SendIcon from "@mui/icons-material/Send";
 import Cookie from "js-cookie";
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 
-const styles = {
-  grow: {
-    flexGrow: 1,
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
-  root: {
-    flexGrow: 1,
-  },
-};
-
-const App = ({ classes }: { classes: any }) => {
+export const App = () => {
   const [loggedIn, setLoggedIn] = useState(Boolean(Cookie.get("logged_in")));
   const [menuVisible, setMenuVisible] = useState(false);
-
-  const toggleDrawer = (open: boolean) => {
-    setMenuVisible(true);
-  };
 
   const loginOut = async () => {
     if (sessionStorage.getItem("loggedIn") === "true") {
@@ -62,7 +44,7 @@ const App = ({ classes }: { classes: any }) => {
       Cookie.get("logged_in") === "true" ||
         sessionStorage.getItem("loggedIn") === "true"
     );
-  }, []);
+  });
 
   return (
     <BrowserRouter>
@@ -78,18 +60,17 @@ const App = ({ classes }: { classes: any }) => {
           <Toolbar />
         </AppBar>
         <AppBar position="fixed">
-          <Toolbar>
+          <Toolbar sx={{ gap: 2 }}>
             {loggedIn && (
               <IconButton
-                className={classes.menuButton}
                 color="inherit"
                 aria-label="Menu"
-                onClick={() => toggleDrawer(true)}
+                onClick={() => setMenuVisible(true)}
               >
                 <MenuIcon />
               </IconButton>
             )}
-            <Typography variant="h6" color="inherit" className={classes.grow}>
+            <Typography variant="h6" color="inherit" sx={{ flexGrow: 1 }}>
               BooleanLists
             </Typography>
             <Button color="inherit" onClick={() => loginOut()}>
@@ -97,12 +78,12 @@ const App = ({ classes }: { classes: any }) => {
             </Button>
           </Toolbar>
         </AppBar>
-        <Drawer open={menuVisible} onClose={() => toggleDrawer(false)}>
+        <Drawer open={menuVisible} onClose={() => setMenuVisible(false)}>
           <div
             tabIndex={0}
             role="button"
-            onClick={() => toggleDrawer(false)}
-            onKeyDown={() => toggleDrawer(false)}
+            onClick={() => setMenuVisible(false)}
+            onKeyDown={() => setMenuVisible(false)}
           >
             <List>
               <DrawerLink to="/" icon={<HomeIcon />} text="Home" />
@@ -144,5 +125,3 @@ const DrawerLink = ({ to, icon, text }: DrawerLinkProps) => (
     </ListItem>
   </Link>
 );
-
-export default withStyles(styles)(App);
