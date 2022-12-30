@@ -2,15 +2,26 @@ import { Box, styled } from '@mui/material';
 import React, { useContext, useState } from 'react';
 
 import { Node as NodeType } from '../types/Node';
+import { NodeContent } from '../types/NodeContent';
 import { DragContext, DragContextProvider, DragRoot } from './DragRoot';
 import { Node } from './Node';
 
-export interface NodeEditorProps<NodeTypes = string, DataType = string> {
+export interface NodeEditorProps<
+  NodeTypes extends string = string,
+  DataType extends string = string,
+> {
   nodes: NodeType<NodeTypes, DataType>[];
   onChange?: (updatedNodes: NodeType<NodeTypes, DataType>[]) => void;
+  nodeTypes: Record<NodeTypes, NodeContent<NodeTypes, DataType>>;
 }
 
-export const NodeEditor = ({ nodes }: NodeEditorProps) => {
+export const NodeEditor = <
+  NodeTypes extends string = string,
+  DataType extends string = string,
+>({
+  nodes,
+  nodeTypes,
+}: NodeEditorProps<NodeTypes, DataType>) => {
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
   const onMove = (movementX: number, movementY: number) => {
@@ -24,7 +35,11 @@ export const NodeEditor = ({ nodes }: NodeEditorProps) => {
       <DragRoot defaultOnMove={onMove}>
         <StyledCanvas offsetX={offsetX} offsetY={offsetY} onMove={onMove}>
           {nodes.map((node) => (
-            <Node key={node.id} node={node} />
+            <Node<NodeTypes, DataType>
+              key={node.id}
+              node={node}
+              nodeTypes={nodeTypes}
+            />
           ))}
         </StyledCanvas>
       </DragRoot>

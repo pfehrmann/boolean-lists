@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Node as NodeType } from '../types/Node';
+import { NodeContent } from '../types/NodeContent';
 import { NodeEditor } from './NodeEditor';
 
 type ExampleNodes = 'MyLibrary' | 'Add';
@@ -31,7 +32,11 @@ export const Example = () => {
 
   return (
     <Root>
-      <NodeEditor nodes={nodes} onChange={(nodes) => console.log(nodes)} />
+      <NodeEditor
+        nodes={nodes}
+        onChange={(nodes) => console.log(nodes)}
+        nodeTypes={nodeTypes}
+      />
       <AddButton onClick={handleAdd}>Add</AddButton>
     </Root>
   );
@@ -50,3 +55,28 @@ const AddButton = styled(Button)`
   bottom: ${({ theme }) => theme.spacing(1)};
   right: ${({ theme }) => theme.spacing(1)};
 `;
+
+const MyLibraryNode: NodeContent<
+  Extract<ExampleNodes, 'MyLibrary'>,
+  ExampleDataType
+> = ({ node, className }) => {
+  return <div className={className}>Hello My Library</div>;
+};
+
+const StyledMyLibraryNode = styled(MyLibraryNode)`
+  padding: ${({ theme }) => theme.spacing(1)};
+  background: ${({ theme }) => theme.palette.background.paper};
+  border: 1px solid ${({ theme }) => theme.palette.primary.light};
+  border-radius: ${({ theme }) => theme.shape.borderRadius * 20}px;
+`;
+
+const AddNode: NodeContent<Extract<ExampleNodes, 'Add'>, ExampleDataType> = ({
+  node,
+}) => {
+  return <div>Hello My Library</div>;
+};
+
+const nodeTypes: { [T in ExampleNodes]: NodeContent<T, ExampleDataType> } = {
+  Add: AddNode,
+  MyLibrary: (props) => <StyledMyLibraryNode {...props} />,
+};
