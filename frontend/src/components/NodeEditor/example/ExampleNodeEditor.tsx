@@ -38,29 +38,29 @@ const MyLibraryNode: NodeContent<
   Extract<ExampleNodes, 'MyLibrary'>,
   ExampleDataType
 > = ({ node, className }) => {
-  return <div className={className}>Hello My Library</div>;
+  return <BasicNode className={className}>Hello My Library</BasicNode>;
 };
 
-const StyledMyLibraryNode = styled(MyLibraryNode)`
+const BasicNode = styled('div')`
   padding: ${({ theme }) => theme.spacing(1)};
   background: ${({ theme }) => theme.palette.background.paper};
   border: 1px solid ${({ theme }) => theme.palette.primary.light};
-  border-radius: ${({ theme }) => theme.shape.borderRadius * 20}px;
+  border-radius: ${({ theme }) => theme.shape.borderRadius * 2}px;
 `;
 
 const AddNode: NodeContent<Extract<ExampleNodes, 'Add'>, ExampleDataType> = ({
   node,
 }) => {
-  return <div>Hello Add</div>;
+  return <BasicNode>Add Node</BasicNode>;
 };
 
 const GenericNode: NodeContent<ExampleNodes, ExampleDataType> = ({ node }) => (
-  <div>{node.type}</div>
+  <BasicNode>{node.type}</BasicNode>
 );
 
 const nodeTypes: { [T in ExampleNodes]: NodeContent<T, ExampleDataType> } = {
   Add: AddNode,
-  MyLibrary: (props) => <StyledMyLibraryNode {...props} />,
+  MyLibrary: MyLibraryNode,
   Album: GenericNode,
   ArtistTopTracks: GenericNode,
   FilterByAudioFeature: GenericNode,
