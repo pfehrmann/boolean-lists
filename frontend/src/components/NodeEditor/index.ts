@@ -1,2 +1,2 @@
 export * from './components/NodeEditor';
-export * from './components/ExampleNodeEditor';
+export * from './example/ExampleNodeEditor';
