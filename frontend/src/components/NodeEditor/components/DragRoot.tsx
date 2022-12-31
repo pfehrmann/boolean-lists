@@ -14,8 +14,11 @@ export const DragRoot: React.FC<
   const [isDragging, setIsDragging] = useState(false);
   const { currentlyDraggingElements, setDraggingElements } =
     useContext(DragContext);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+
   return (
     <Root
+      style={{ backgroundPosition: `${offset.x}px ${offset.y}px` }}
       onMouseDownCapture={(event) => {
         setIsDragging(true);
       }}
@@ -31,12 +34,15 @@ export const DragRoot: React.FC<
 
         event.preventDefault();
         currentlyDraggingElements.forEach((elem) => {
-          console.log('onMove', event.movementX, event.movementY);
-          return elem.onMove(event.movementX, event.movementY);
+          elem.onMove(event.movementX, event.movementY);
         });
 
         if (currentlyDraggingElements.length === 0) {
           defaultOnMove?.(event.movementX, event.movementY);
+          setOffset((prev) => ({
+            x: prev.x + event.movementX,
+            y: prev.y + event.movementY,
+          }));
         }
       }}
     >
@@ -83,7 +89,33 @@ export const DragContextProvider = ({ children }: React.PropsWithChildren) => {
 
 const Root = styled('div')`
   width: 100%;
-  background: gray;
+  background-image: linear-gradient(
+      0deg,
+      transparent 24%,
+      hsla(0, 0%, 100%, 0.05) 25%,
+      hsla(0, 0%, 100%, 0.05) 26%,
+      transparent 27%,
+      transparent 74%,
+      hsla(0, 0%, 100%, 0.05) 75%,
+      hsla(0, 0%, 100%, 0.05) 76%,
+      transparent 77%,
+      transparent
+    ),
+    linear-gradient(
+      90deg,
+      transparent 24%,
+      hsla(0, 0%, 100%, 0.05) 25%,
+      hsla(0, 0%, 100%, 0.05) 26%,
+      transparent 27%,
+      transparent 74%,
+      hsla(0, 0%, 100%, 0.05) 75%,
+      hsla(0, 0%, 100%, 0.05) 76%,
+      transparent 77%,
+      transparent
+    );
+  background-color: #3c3c3c !important;
+  background-size: 62.505px 62.505px;
+  background-position: -143.728px -39.0024px;
   flex-grow: 1;
   position: relative;
   display: flex;

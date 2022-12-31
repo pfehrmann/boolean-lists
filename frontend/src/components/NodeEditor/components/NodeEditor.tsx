@@ -1,9 +1,9 @@
-import { Box, styled } from '@mui/material';
-import React, { useContext, useState } from 'react';
+import { styled } from '@mui/material';
+import React, { useState } from 'react';
 
 import { Node as NodeType } from '../types/Node';
 import { NodeContent } from '../types/NodeContent';
-import { DragContext, DragContextProvider, DragRoot } from './DragRoot';
+import { DragContextProvider, DragRoot } from './DragRoot';
 import { Node } from './Node';
 
 export interface NodeEditorProps<
@@ -22,18 +22,16 @@ export const NodeEditor = <
   nodes,
   nodeTypes,
 }: NodeEditorProps<NodeTypes, DataType>) => {
-  const [offsetX, setOffsetX] = useState(0);
-  const [offsetY, setOffsetY] = useState(0);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
   const onMove = (movementX: number, movementY: number) => {
     console.log('moving editor');
-    setOffsetX((prev) => prev + movementX);
-    setOffsetY((prev) => prev + movementY);
+    setOffset((prev) => ({ x: prev.x + movementX, y: prev.y + movementY }));
   };
 
   return (
     <DragContextProvider>
       <DragRoot defaultOnMove={onMove}>
-        <StyledCanvas offsetX={offsetX} offsetY={offsetY} onMove={onMove}>
+        <RealtiveRoot style={{ left: `${offset.x}px`, top: `${offset.y}px` }}>
           {nodes.map((node) => (
             <Node<NodeTypes, DataType>
               key={node.id}
@@ -41,49 +39,12 @@ export const NodeEditor = <
               nodeTypes={nodeTypes}
             />
           ))}
-        </StyledCanvas>
+        </RealtiveRoot>
       </DragRoot>
     </DragContextProvider>
   );
 };
 
-const Canvas = ({
-  children,
-  offsetX,
-  offsetY,
-  onMove,
-}: React.PropsWithChildren<{
-  offsetX: number;
-  offsetY: number;
-  onMove: (x: number, y: number) => void;
-}>) => {
-  const { setDraggingElements } = useContext(DragContext);
-
-  return (
-    <Box
-      sx={{
-        marginLeft: `${offsetX}px`,
-        marginTop: `${offsetY}px`,
-        width: '100%',
-        background: 'gray',
-        flexGrow: 1,
-        position: 'relative',
-      }}
-      onMouseDown={(event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        console.log('registered editor for movement');
-        setDraggingElements([{ onMove }]);
-      }}
-    >
-      {children}
-    </Box>
-  );
-};
-
-const StyledCanvas = styled(Canvas)`
-  width: 100%;
-  background: blue;
-  flex-grow: 1;
+const RealtiveRoot = styled('div')`
   position: relative;
 `;
