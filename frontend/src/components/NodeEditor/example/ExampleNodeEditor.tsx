@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 
 import { NodeEditor } from '../components/NodeEditor';
 import { Node } from '../types/Node';
-import { NodeContent } from '../types/NodeContent';
+import { NodeOverrides } from '../types/NodeContent';
 import { EditorSpeedDial } from './EditorSpeedStyle';
 import { ExampleDataType, ExampleNodes } from './types';
 
@@ -34,13 +34,6 @@ const Root = styled('div')`
   display: flex;
 `;
 
-const MyLibraryNode: NodeContent<
-  Extract<ExampleNodes, 'MyLibrary'>,
-  ExampleDataType
-> = ({ node, className }) => {
-  return <BasicNode className={className}>Hello My Library</BasicNode>;
-};
-
 const BasicNode = styled('div')`
   padding: ${({ theme }) => theme.spacing(1)};
   background: ${({ theme }) => theme.palette.background.paper};
@@ -48,17 +41,22 @@ const BasicNode = styled('div')`
   border-radius: ${({ theme }) => theme.shape.borderRadius * 2}px;
 `;
 
-const AddNode: NodeContent<Extract<ExampleNodes, 'Add'>, ExampleDataType> = ({
-  node,
-}) => {
-  return <BasicNode>Add Node</BasicNode>;
+const AddNode: NodeOverrides<Extract<ExampleNodes, 'Add'>, ExampleDataType> = {
+  container: BasicNode,
+  header: () => <div>Add Node</div>,
 };
 
-const GenericNode: NodeContent<ExampleNodes, ExampleDataType> = ({ node }) => (
-  <BasicNode>{node.type}</BasicNode>
-);
+const GenericNode: NodeOverrides<ExampleNodes, ExampleDataType> = {
+  container: BasicNode,
+  header: ({ node }) => <div>{node.type}</div>,
+};
 
-const nodeTypes: { [T in ExampleNodes]: NodeContent<T, ExampleDataType> } = {
+const MyLibraryNode: NodeOverrides<
+  Extract<ExampleNodes, 'MyLibrary'>,
+  ExampleDataType
+> = { ...GenericNode };
+
+const nodeTypes: { [T in ExampleNodes]: NodeOverrides<T, ExampleDataType> } = {
   Add: AddNode,
   MyLibrary: MyLibraryNode,
   Album: GenericNode,

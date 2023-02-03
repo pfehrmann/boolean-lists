@@ -2,7 +2,7 @@ import { styled } from '@mui/material';
 import React, { useState } from 'react';
 
 import { Node as NodeType } from '../types/Node';
-import { NodeContent } from '../types/NodeContent';
+import { NodeOverrides } from '../types/NodeContent';
 import { DragContextProvider, DragRoot } from './DragRoot';
 import { Node } from './Node';
 
@@ -12,7 +12,7 @@ export interface NodeEditorProps<
 > {
   nodes: NodeType<NodeTypes, DataType>[];
   onChange?: (updatedNodes: NodeType<NodeTypes, DataType>[]) => void;
-  nodeTypes: Record<NodeTypes, NodeContent<NodeTypes, DataType>>;
+  nodeTypes: Record<NodeTypes, NodeOverrides<NodeTypes, DataType>>;
 }
 
 export const NodeEditor = <

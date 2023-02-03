@@ -3,13 +3,15 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import List from '@mui/material/List/List';
-import ListItem from '@mui/material/ListItem/ListItem';
+import ListItemButton from '@mui/material/ListItemButton/ListItemButton';
 import ListItemText from '@mui/material/ListItemText/ListItemText';
 import * as _ from 'lodash';
 import * as React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Node } from '../types/Node';
+import { generateAddNode } from './nodes/AddNode';
+import { generateMyLibraryNode } from './nodes/MyLibraryNode';
 import { ExampleDataType, ExampleNodes } from './types';
 
 export interface AddNodeDialogProps {
@@ -25,42 +27,51 @@ export const AddNodeDialog = ({ onAdd, open, onClose }: AddNodeDialogProps) => {
       <DialogContent>
         <DialogContentText>Add a node to the graph</DialogContentText>
         <List>
-          <ListItem button onClick={() => onAdd(generateNode('Playlist'))}>
+          <ListItemButton onClick={() => onAdd(generateNode('Playlist'))}>
             <ListItemText>Add a PlaylistNode</ListItemText>
-          </ListItem>
-          <ListItem button onClick={() => onAdd(generateNode('Add'))}>
+          </ListItemButton>
+          <ListItemButton
+            onClick={() =>
+              onAdd({ ...generateNode('Add'), ...generateAddNode() })
+            }
+          >
             <ListItemText>Add an AddNode</ListItemText>
-          </ListItem>
-          <ListItem button onClick={() => onAdd(generateNode('Subtract'))}>
+          </ListItemButton>
+          <ListItemButton onClick={() => onAdd(generateNode('Subtract'))}>
             <ListItemText>Add a SubtractNode</ListItemText>
-          </ListItem>
-          <ListItem button onClick={() => onAdd(generateNode('Limit'))}>
+          </ListItemButton>
+          <ListItemButton onClick={() => onAdd(generateNode('Limit'))}>
             <ListItemText>Add a LimitNode</ListItemText>
-          </ListItem>
-          <ListItem button onClick={() => onAdd(generateNode('Randomize'))}>
+          </ListItemButton>
+          <ListItemButton onClick={() => onAdd(generateNode('Randomize'))}>
             <ListItemText>Add a RandomizeNode</ListItemText>
-          </ListItem>
-          <ListItem button onClick={() => onAdd(generateNode('MyTopTracks'))}>
+          </ListItemButton>
+          <ListItemButton onClick={() => onAdd(generateNode('MyTopTracks'))}>
             <ListItemText>Add a MyTopTracksNode</ListItemText>
-          </ListItem>
-          <ListItem button onClick={() => onAdd(generateNode('Album'))}>
+          </ListItemButton>
+          <ListItemButton onClick={() => onAdd(generateNode('Album'))}>
             <ListItemText>Add a AlbumNode</ListItemText>
-          </ListItem>
-          <ListItem
-            button
+          </ListItemButton>
+          <ListItemButton
             onClick={() => onAdd(generateNode('ArtistTopTracks'))}
           >
             <ListItemText>Add ArtistTopTracksNode</ListItemText>
-          </ListItem>
-          <ListItem button onClick={() => onAdd(generateNode('MyLibrary'))}>
+          </ListItemButton>
+          <ListItemButton
+            onClick={() =>
+              onAdd({
+                ...generateNode('MyLibrary'),
+                ...generateMyLibraryNode(),
+              })
+            }
+          >
             <ListItemText>Add a MyLibraryNode</ListItemText>
-          </ListItem>
-          <ListItem
-            button
+          </ListItemButton>
+          <ListItemButton
             onClick={() => onAdd(generateNode('FilterByAudioFeature'))}
           >
             <ListItemText>Add a FilterByAudioFeatureNode</ListItemText>
-          </ListItem>
+          </ListItemButton>
         </List>
       </DialogContent>
     </Dialog>
