@@ -1,6 +1,8 @@
+import { Box } from '@mui/material';
 import { styled } from '@mui/system';
 import React, { useState } from 'react';
 
+import { Container } from '../components/Node/Container';
 import { NodeEditor } from '../components/NodeEditor';
 import { Node } from '../types/Node';
 import { NodeOverrides } from '../types/NodeContent';
@@ -34,7 +36,7 @@ const Root = styled('div')`
   display: flex;
 `;
 
-const BasicNode = styled('div')`
+const BasicNode = styled(Container)`
   padding: ${({ theme }) => theme.spacing(1)};
   background: ${({ theme }) => theme.palette.background.paper};
   border: 1px solid ${({ theme }) => theme.palette.primary.light};
@@ -43,12 +45,12 @@ const BasicNode = styled('div')`
 
 const AddNode: NodeOverrides<Extract<ExampleNodes, 'Add'>, ExampleDataType> = {
   container: BasicNode,
-  header: () => <div>Add Node</div>,
+  header: () => <Box sx={{ gridArea: 'header' }}>Add Node</Box>,
 };
 
 const GenericNode: NodeOverrides<ExampleNodes, ExampleDataType> = {
   container: BasicNode,
-  header: ({ node }) => <div>{node.type}</div>,
+  header: ({ node }) => <Box sx={{ gridArea: 'header' }}>{node.type}</Box>,
 };
 
 const MyLibraryNode: NodeOverrides<
