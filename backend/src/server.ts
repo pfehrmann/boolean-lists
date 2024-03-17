@@ -3,19 +3,19 @@ require("source-map-support").install();
 process.on("unhandledRejection", console.log); // tslint:disable-line
 
 const session = require("cookie-session");
-import * as cors from "cors";
-import * as  express from "express";
-import * as mongoose from "mongoose";
-import * as morgan from "morgan";
-import * as winston from "winston";
-import * as logger from "winston";
+import cors from "cors";
+import express from "express";
+import mongoose from "mongoose";
+import morgan from "morgan";
+import winston from "winston";
+import logger from "winston";
 
 mongoose.connect(process.env.MONGOOSE_CONNECTION_STRING);
 
 import api from "./api";
-import * as SpotifyAuthorization from "./model/spotify/Authorization";
+import { getRouter as getSpotifyAuthzRouter } from "./model/spotify/Authorization";
 
-import * as passport from "passport";
+import passport from "passport";
 
 winston.add(new winston.transports.Console({
     format: winston.format.combine(
@@ -46,7 +46,7 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use("/auth/spotify", SpotifyAuthorization.getRouter());
+app.use("/auth/spotify", getSpotifyAuthzRouter());
 app.use("/v1", api());
 
 app.use((err, req, res, next) => {

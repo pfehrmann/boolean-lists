@@ -1,17 +1,17 @@
 import * as logger from "winston";
 
-import {Playlist as PlaylistEntity} from "../model/database/Playlist";
-import {UserModel} from "../model/database/User";
+import { IPlaylist as PlaylistEntity } from "../model/database/Playlist";
+import { User as UserModel } from "../model/database/User";
 
-import {fromJSON} from "../model/nodes/JsonParser";
-import {getApiFromUser} from "../model/spotify/Authorization";
-import {Playlist as SpotifyPlaylist} from "../model/spotify/Playlist";
-import {InitializedSpotifyApi} from "../model/spotify/SpotifyApi";
+import { fromJSON } from "../model/nodes/JsonParser";
+import { getApiFromUser } from "../model/spotify/Authorization";
+import { Playlist as SpotifyPlaylist } from "../model/spotify/Playlist";
+import { InitializedSpotifyApi } from "../model/spotify/SpotifyApi";
 
-import {convert} from "./serilizationConverter";
+import { convert } from "./serilizationConverter";
 
 export default async function savePlaylistToSpotify(spotifyId: string, playlistName: string) {
-    const user = await UserModel.findOne({spotifyId});
+    const user = await UserModel.findOne({ spotifyId });
     if (!user) {
         throw new Error("User was not in the database");
     }

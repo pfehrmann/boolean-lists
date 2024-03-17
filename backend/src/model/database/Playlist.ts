@@ -1,5 +1,4 @@
 import { Schema } from "mongoose";
-import { prop, Typegoose } from "typegoose";
 
 export interface IPlaylist {
   description: string;

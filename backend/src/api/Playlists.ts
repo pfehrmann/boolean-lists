@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
       const rawPlaylist = await Playlist.fromSpotifyUri(
         api,
         await (await api.me()).id(),
-        req.query.uri
+        req.query.uri as string
       );
       res.send({
         id: rawPlaylist.id(),

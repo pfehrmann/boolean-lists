@@ -4,8 +4,9 @@ Project for generating new Spotify Playlists with a node based logic.
 
 ## Setup
 
-- Install and setup docker and docker-compose
+- Install and setup docker and docker compose
 - Setup your .env file. See below for details
+- Generate the API files, see below
 - Run `docker-compose up`
 
 ## General information

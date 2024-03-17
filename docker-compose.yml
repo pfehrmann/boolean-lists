@@ -2,7 +2,7 @@ version: '3'
 
 volumes:
   mongodb_data:
-      driver: local
+    driver: local
 
 services:
   mongodb:
@@ -14,15 +14,20 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
     container_name: "mongodb"
-    ports:
-      - 27017:27017
+    # ports:
+    #   - 27017:27017
+    networks:
+      - backend
   frontend:
     build:
       dockerfile: frontend.Dockerfile
       context: .
     restart: always
-    ports:
-      - 5000:5000
+    # ports:
+    #   - 5000:5000
+    networks:
+      - web
+      - backend
     environment:
       - PORT=5000
       - PUBLIC_URL
@@ -31,13 +36,21 @@ services:
       - NODE_ENV=production
     depends_on:
       - api
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.boolean-lists-frontend.rule=Host(`boolean-lists.dillipp.de`)
+      - traefik.http.services.boolean-lists-frontend.loadbalancer.server.port=5000
+      - traefik.docker.network=web
   api:
     build:
       dockerfile: api.Dockerfile
       context: .
     restart: always
-    ports:
-      - 3000:3000
+    # ports:
+    #   - 3000:3000    
+    networks:
+      - web
+      - backend
     environment:
       - SONG_COUNTS
       - SHUFFLE
@@ -45,7 +58,17 @@ services:
       - CLIENT_ID
       - CLIENT_SECRET
       - REDIRECT_URI
-      - MONGOOSE_CONNECTION_STRING
+      - MONGOOSE_CONNECTION_STRING=mongodb://root:example@mongodb
       - NODE_ENV=production
     depends_on:
       - mongodb
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.boolean-lists-api.rule=Host(`api-boolean-lists.dillipp.de`)
+      - traefik.http.services.boolean-lists-api.loadbalancer.server.port=3000
+      - traefik.docker.network=web
+
+networks:
+  web:
+    external: true
+  backend:

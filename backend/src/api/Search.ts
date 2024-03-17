@@ -15,9 +15,9 @@ router.get("/playlist", async (req, res) => {
   try {
     const user: IUser & IUserMethods = (req as any).user;
     const api = await getApiFromUser(user);
-    const page = req.query.page ? req.query.page : 0;
+    const page = req.query.page ? Number(req.query.page) : 0;
     const elementsPerPage = 20;
-    const internalPlaylists = await api.searchForPlaylists(req.query.q, {
+    const internalPlaylists = await api.searchForPlaylists(req.query.q as string, {
       limit: elementsPerPage,
       offset: page * elementsPerPage,
     });
@@ -52,9 +52,9 @@ router.get("/playlist", async (req, res) => {
 router.get("/album", async (req, res) => {
   const user: IUser & IUserMethods = (req as any).user;
   const api = await getApiFromUser(user);
-  const page = req.query.page ? req.query.page : 0;
+  const page = req.query.page ? Number(req.query.page) : 0;
   const elementsPerPage = 20;
-  const internalAlbums = await api.searchForAlbums(req.query.q, {
+  const internalAlbums = await api.searchForAlbums(req.query.q as string, {
     limit: elementsPerPage,
     offset: page * elementsPerPage,
   });
@@ -87,9 +87,9 @@ router.get("/album", async (req, res) => {
 router.get("/artist", async (req, res) => {
   const user: IUser & IUserMethods = (req as any).user;
   const api = await getApiFromUser(user);
-  const page = req.query.page ? req.query.page : 0;
+  const page = req.query.page ? Number(req.query.page) : 0;
   const elementsPerPage = 20;
-  const internalArtists = await api.searchForArtists(req.query.q, {
+  const internalArtists = await api.searchForArtists(req.query.q as string, {
     limit: elementsPerPage,
     offset: page * elementsPerPage,
   });

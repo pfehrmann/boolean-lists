@@ -1,10 +1,10 @@
-import * as express from "express";
-import * as SpotifyWebApi from "spotify-web-api-node";
-import * as logger from "winston";
+import express from "express";
+import SpotifyWebApi from "spotify-web-api-node";
+import logger from "winston";
 import { IUser, User } from "../database/User";
 
-import * as passport from "passport";
-import * as PassportSpotify from "passport-spotify";
+import passport from "passport";
+import PassportSpotify from "passport-spotify";
 import { InitializedSpotifyApi } from "./SpotifyApi";
 const SpotifyStrategy = PassportSpotify.Strategy;
 

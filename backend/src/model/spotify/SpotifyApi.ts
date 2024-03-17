@@ -1,18 +1,17 @@
-import * as wrapper from "./SpotifyWebApiWrapper";
-wrapper.test();
+import "./SpotifyWebApiWrapper";
 
-import * as DataLoader from "dataloader";
-import * as SpotifyWebApi from "spotify-web-api-node";
-import {getAll} from "../../util";
-import {Album} from "./Album";
-import {AudioFeatures} from "./AudioFeatures";
-import {Playlist} from "./Playlist";
-import {Track} from "./Track";
-import {User} from "./User";
+import DataLoader from "dataloader";
+import SpotifyWebApi from "spotify-web-api-node";
+import { getAll } from "../../util";
+import { Album } from "./Album";
+import { AudioFeatures } from "./AudioFeatures";
+import { Playlist } from "./Playlist";
+import { Track } from "./Track";
+import { User } from "./User";
 
 import * as _ from "lodash";
 import * as logger from "winston";
-import {Artist} from "./Artist";
+import { Artist } from "./Artist";
 
 export enum TimeRanges {
     LONG = "long_term",
@@ -41,7 +40,7 @@ export class InitializedSpotifyApi {
 
     public async getMyTopTracks(timeRange: TimeRanges): Promise<Track[]> {
         const tracks: Track[] = [];
-        const rawTracks = await this.spotifyApi.getMyTopTracks({time_range: timeRange, limit: 50});
+        const rawTracks = await this.spotifyApi.getMyTopTracks({ time_range: timeRange, limit: 50 });
         for (const rawTrack of rawTracks.body.items) {
             tracks.push(new Track(rawTrack, this));
         }
@@ -53,7 +52,7 @@ export class InitializedSpotifyApi {
             this.spotifyApi.getMySavedTracks,
             (i) => new Track(i, this),
             [],
-            {offset: 0, limit: 50});
+            { offset: 0, limit: 50 });
     }
 
     public async searchForPlaylists(query: string, options: { market?: string, limit?: number, offset?: number } = {
