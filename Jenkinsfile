@@ -17,7 +17,7 @@ pipeline {
 							def scannerHome = tool 'SonarScanner Default';
 							withSonarQubeEnv('sonarqube.dillipp.de') {
 								dir('frontend') {
-									sh "npm install"
+									sh "bun install"
 									sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=boolean-lists:frontend -Dsonar.sources='src,public' -Dsonar.projectName='Boolean Lists (Frontend)'"
 								}
 							}
@@ -31,7 +31,7 @@ pipeline {
 							def scannerHome = tool 'SonarScanner Default';
 							withSonarQubeEnv('sonarqube.dillipp.de') {
 								dir('backend') {
-									sh "npm install"
+									sh "bun install"
 									sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=boolean-lists:backend -Dsonar.sources='src' -Dsonar.projectName='Boolean Lists (Backend)'"
 								}
 							}
